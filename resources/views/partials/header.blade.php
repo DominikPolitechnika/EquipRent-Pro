@@ -1,4 +1,4 @@
-
+<link rel="stylesheet" href="{{ asset('style-head.css') }}">
 {{-- Cały header zrobiony --}}
 <header class="header">
     <div class="header-container">

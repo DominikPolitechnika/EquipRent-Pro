@@ -1,0 +1,722 @@
+/* =========================
+   header
+========================= */
+
+.header {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 15px 40px;
+    font-family: Arial, sans-serif;
+    
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 18px;
+    color: #111827;
+}
+
+.nav {
+    display: flex;
+    gap: 30px;
+    margin-left: 40px;
+    flex: 1;
+}
+
+.nav a {
+    text-decoration: none;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.nav a:hover {
+    color: #111827;
+}
+
+.icons {
+    display: flex;
+    gap: 20px;
+    font-size: 18px;
+    cursor: pointer;
+    
+    
+   
+}
+
+.icon:hover {
+    opacity: 0.7;
+    float: right;
+}
+/* =========================
+   FOOTER
+========================= */
+.footer {
+  background: #eef1f4;
+  padding: 60px 80px 30px;
+  font-family: Arial, sans-serif;
+  color: #6b7280;
+}
+
+.footer-container {
+  display: flex;
+justify-content: flex-start;  
+  gap: 100px; 
+  width: 100%;
+  margin: 0 auto;
+}
+
+.footer-col {
+  max-width: 300px;
+    text-align: left;
+}
+
+.footer-col h3 {
+  font-size: 18px;
+  color: #111827;
+  margin-bottom: 20px;
+}
+
+.footer-col h4 {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #9ca3af;
+  margin-bottom: 15px;
+}
+
+.footer-col p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-col ul li {
+  margin-bottom: 10px;
+}
+
+.footer-col ul li a {
+  text-decoration: none;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.footer-col ul li a:hover {
+  color: #111827;
+}
+
+.footer-bottom {
+  border-top: 1px solid #d1d5db;
+  margin-top: 50px;
+  padding-top: 20px;
+  display: flex;
+  gap: 30px;
+  font-size: 12px;
+}
+
+.footer-bottom a {
+  text-decoration: none;
+  color: #9ca3af;
+}
+
+.footer-bottom a:hover {
+  color: #111827;
+}
+
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+footer {
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  margin-top: 30px;
+}
+
+/* =========================
+srodek
+========================= */
+
+
+
+html, body {
+  height: 100%;
+}
+ 
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+ 
+main {
+  flex: 0;
+}
+ 
+/* ================================================
+   product.css — EquipRent Pro / Product Page
+   Kolorystyka: jasne tło, czarny tekst, niebieski CTA
+   ================================================ */
+ 
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap');
+ 
+:root {
+    --c-bg:        #f7f9fb;
+    --c-surface:   #f0f4f7;
+    --c-border:    #e8ebee;
+    --c-text:      #2a3439;
+    --c-muted:     #777777;
+    --c-muted2:    #aaaaaa;
+    --c-accent:    #2563eb;   /* niebieski CTA */
+    --c-accent-h:  #1d4ed8;   /* hover CTA */
+    --c-green:     #16a34a;
+    --c-green-bg:  #dcfce7;
+    --c-orange:    #ea580c;
+    --c-orange-bg: #ffedd5;
+    --c-yellow:    #ca8a04;
+    --c-yellow-bg: #fef9c3;
+    --c-red:       #dc2626;
+}
+.product-main-content {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+ 
+footer {
+    margin-top: 0;
+}
+/* ---- RESET ---- */
+.product-page * { box-sizing: border-box; }
+ 
+/* ================================================
+   PAGE WRAPPER
+   ================================================ */
+.product-page {
+    font-family: 'Barlow', sans-serif;
+    background: var(--c-bg);
+    color: var(--c-text);
+    min-height: 100vh;
+ padding-bottom: 0;
+}
+ 
+/* ================================================
+   BREADCRUMB
+   ================================================ */
+.product-breadcrumb {
+    padding: 14px 40px;
+    font-size: 12px;
+    color: var(--c-muted);
+    text-transform: uppercase;
+    background: var(--c-surface);
+   
+}
+.product-breadcrumb a {
+    color: var(--c-muted);
+    text-decoration: none;
+}
+.product-breadcrumb a:hover { color: var(--c-accent); }
+.product-breadcrumb span { margin: 0 8px; }
+.product-breadcrumb-active { color: var(--c-text); font-weight: 600; }
+ 
+/* ================================================
+   TWO-COLUMN LAYOUT
+   ================================================ */
+.product-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    gap: 0;
+}
+ 
+.product-left {
+    padding: 32px 48px 40px 0;
+    border-right: 1px solid var(--c-border);
+}
+ 
+.product-full {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px 60px;
+}
+ 
+/* ================================================
+   GALLERY — FULL WIDTH ABOVE LAYOUT
+   ================================================ */
+.product-gallery-fullwidth {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 40px 0;
+}
+ 
+.product-gallery {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 6px;
+    margin-bottom: 0;
+    overflow: hidden;
+    width: 100%;
+}
+.product-gallery-main {
+    height: 420px;
+    background: #e8e8e8;
+}
+.product-gallery-main img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+}
+.product-gallery-side {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 6px;
+    height: 420px;
+}
+.product-gallery-side img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    background: #ddd;
+}
+.product-gallery-side-last {
+    position: relative;
+}
+.product-gallery-side-last img {
+    filter: brightness(0.5);
+}
+.product-see-all-btn {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: .1em; color: #fff;
+    text-transform: uppercase; gap: 6px;
+}
+.product-see-all-btn:hover { text-decoration: underline; }
+ 
+/* ================================================
+   BADGES
+   ================================================ */
+.product-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid #e0e0e0;
+    background: #f5f5f5;
+    font-size: 13px;
+    font-weight: 700;
+margin-bottom: 15px;
+    text-transform: uppercase;
+    color: #111;
+}
+ 
+.product-status-dot {
+    width: 10px;
+    height: 10px;
+  
+    flex-shrink: 0;
+}
+ 
+.product-status-available .product-status-dot { background: #16a34a; }
+.product-status-rented    .product-status-dot { background: #ea580c; }
+.product-status-service   .product-status-dot { background: #9ca3af; }
+/* ================================================
+   PRODUCT TITLE & DESCRIPTION
+   ================================================ */
+.product-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 42px;
+    line-height: 1; text-transform: uppercase;
+    letter-spacing: -.01em;
+    color: var(--c-text);
+    margin: 0 0 14px;
+}
+.product-description {
+    font-size: 14px; line-height: 1.7;
+    color: #555;
+    max-width: 100%;
+    margin-bottom: 28px;
+}
+ 
+/* ================================================
+   SPECS TABLE
+   ================================================ */
+.product-specs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: #f0f4f7;
+    overflow: hidden;
+    margin-bottom: 36px;
+}
+ 
+.product-specs-header {
+    grid-column: 1 / -1; 
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #999;
+    padding: 14px 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+ 
+.product-spec-item {
+    padding: 18px 20px;
+ 
+}
+ 
+ 
+.product-spec-item:nth-child(3n)   { border-right: none; }
+.product-spec-item:nth-last-child(-n+3) { border-bottom: none; }
+ 
+.product-spec-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 6px;
+}
+ 
+.product-spec-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: #111;
+}
+ 
+.product-spec-value strong { font-weight: 700; }
+ 
+.product-spec-value a {
+    color: #2563eb;
+    text-decoration: none;
+}
+.product-spec-value a:hover { text-decoration: underline; }
+ 
+/* ================================================
+   SECTION TITLES
+   ================================================ */
+.product-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px; font-weight: 600;
+    letter-spacing: .05em; text-transform: uppercase;
+    color: var(--c-text);
+    margin: 36px 0 14px;
+}
+.product-sub-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--c-muted2); margin-bottom: 10px;
+}
+ 
+/* ================================================
+   ACTIVE RESERVATION CARD
+   ================================================ */
+.product-reservation-card {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 32px;
+    padding: 18px 20px;
+    background: #f2f7fb;
+    
+    border-left: 4px solid #2563eb;
+ 
+    margin-bottom: 8px;
+}
+ 
+.product-res-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+.product-res-status {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+ 
+    background: #1a6fa8;  /* dokładny odcień ze screena */
+    color: #fff;
+    width: fit-content;
+}
+ 
+.product-btn-cancel {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid #dc2626;
+    color: #dc2626;
+ 
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .2s, color .2s;
+}
+.product-btn-cancel:hover { background: #dc2626; color: #fff; }
+ 
+/* ================================================
+   HISTORY TABLE
+   ================================================ */
+.product-history-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px; margin-top: 10px;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+     overflow: hidden;
+}
+.product-history-table th {
+    text-align: left; padding: 10px 16px;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--c-muted2);
+    background: #f0f4f7;
+    border-bottom: 1px solid var(--c-border);
+}
+.product-history-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--c-border);
+    background: #f7f9fb;
+    color: #444;
+}
+.product-history-table tr:last-child td { border-bottom: none; }
+.product-action-link {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--c-accent); text-decoration: none;
+}
+.product-action-link:hover { text-decoration: underline; }
+ 
+/* ================================================
+   REVIEWS
+   ================================================ */
+.product-reviews-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-top: 14px;
+}
+.product-review-card {
+    padding: 18px;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+   
+ 
+    margin-bottom: 10px;
+}
+.product-review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.product-reviewer-name  { font-size: 13px; font-weight: 600; color: var(--c-text); }
+.product-reviewer-tag   { font-size: 11px; color: var(--c-muted2); font-weight: 400; }
+.product-review-date    { font-size: 11px; color: var(--c-muted2); }
+.product-stars          { color: #006398; font-size: 14px; margin-bottom: 6px; letter-spacing: 2px; }
+.product-review-text    { font-size: 13px; line-height: 1.6; color: #555; }
+ 
+.product-rating-summary {
+    padding: 20px;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    
+}
+.product-rating-big {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 56px; font-weight: 900;
+    line-height: 1; color: var(--c-text);
+}
+.product-rating-stars { font-size: 18px; color: #006398; margin: 6px 0; letter-spacing: 2px; }
+.product-rating-count { font-size: 12px; color: var(--c-muted2); margin-bottom: 20px; }
+ 
+.product-add-review-title {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--c-muted2); margin-bottom: 10px;
+}
+.product-star-input {
+    font-size: 22px; color: #d1d5db;
+    cursor: pointer; letter-spacing: 4px; margin-bottom: 10px;
+}
+.product-review-textarea {
+    width: 100%;
+    background: var(--c-bg);
+    border: 1px solid var(--c-border);
+    color: var(--c-text);
+    padding: 10px 12px;
+    font-family: 'Barlow', sans-serif; font-size: 13px;
+    resize: vertical; min-height: 80px;
+}
+.product-review-textarea::placeholder { color: var(--c-muted2); }
+.product-review-textarea:focus { outline: none; border-color: var(--c-accent); }
+ 
+.product-btn-submit {
+    margin-top: 10px; width: 100%; padding: 11px;
+    background: var(--c-text); color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; border: none;
+ cursor: pointer;
+    transition: background .2s;
+}
+.product-btn-submit:hover { background: #333; }
+ 
+/* ================================================
+   BOOKING PANEL (right column)
+   ================================================ */
+.product-booking-panel {
+    padding: 32px 0 32px 36px;
+    position: sticky;
+    top: 80px;
+    align-self: start;
+}
+.product-booking-price {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 44px; font-weight: 900; line-height: 1;
+    color: var(--c-text); margin-bottom: 4px;
+}
+.product-booking-price span {
+    font-size: 16px; font-weight: 400;
+    color: var(--c-muted);
+}
+.product-booking-rating {
+    display: flex; align-items: center;
+    gap: 6px; margin-bottom: 20px;
+}
+.product-booking-rating .product-stars { font-size: 12px; margin: 0; }
+.product-booking-rating small  { font-size: 12px; color: var(--c-muted); }
+ 
+/* CALENDAR */
+.product-calendar {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+   padding: 14px;
+    margin-bottom: 14px;
+}
+.product-calendar-header {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 10px;
+}
+.product-calendar-month {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--c-text);
+}
+.product-cal-nav {
+    background: none; border: 1px solid var(--c-border);
+    color: var(--c-text); width: 26px; height: 26px;
+    cursor: pointer; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s;
+}
+.product-cal-nav:hover { background: var(--c-bg); }
+ 
+.product-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.product-cal-day-label {
+    text-align: center; font-size: 10px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+    color: var(--c-muted2); padding: 5px 0;
+}
+.product-cal-day {
+    text-align: center; padding: 6px 2px;
+    font-size: 12px; 
+    cursor: pointer; transition: background .12s;
+    color: var(--c-text);
+    border: 1px solid transparent;
+}
+.product-cal-day:hover         { background: var(--c-bg); }
+.product-cal-day.product-selected      { background: var(--c-accent); color: #fff; font-weight: 700; border-color: var(--c-accent); }
+.product-cal-day.product-in-range      { background: #dbeafe; color: var(--c-accent); }
+.product-cal-day.product-disabled      { color: #ccc; cursor: default; pointer-events: none; }
+ 
+/* PRICE BREAKDOWN */
+.product-price-breakdown {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+   padding: 14px;
+    margin-bottom: 14px;
+}
+.product-price-row {
+    display: flex; justify-content: space-between;
+    font-size: 13px; padding: 6px 0;
+    color: #555; border-bottom: 1px solid var(--c-border);
+}
+.product-price-row:last-child  { border-bottom: none; }
+.product-price-row.product-total {
+    font-size: 15px; font-weight: 700;
+    color: var(--c-text); padding-top: 10px;
+}
+.product-price-row.product-total span:last-child { color: var(--c-accent); }
+ 
+/* CTA BUTTON */
+.product-btn-reserve {
+    width: 100%; padding: 15px;
+    background: var(--c-accent); color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 800;
+    letter-spacing: .12em; text-transform: uppercase;
+    border: none;  cursor: pointer;
+    display: flex; align-items: center;
+    justify-content: center; gap: 8px;
+    transition: background .2s, transform .1s;
+}
+.product-btn-reserve:hover  { background: var(--c-accent-h); transform: translateY(-1px); }
+.product-btn-reserve:active { transform: translateY(0); }
+ 
+.product-booking-note {
+    font-size: 11px; color: var(--c-muted2);
+    text-align: center; margin-top: 10px; line-height: 1.6;
+}
+ 
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+@media (max-width: 900px) {
+    .product-layout {
+        grid-template-columns: 1fr;
+        padding: 0 20px;
+    }
+    .product-left {
+        padding-right: 0;
+        border-right: none;
+        border-bottom: 1px solid var(--c-border);
+    }
+    .product-booking-panel {
+        padding: 28px 0 0;
+        position: static;
+    }
+    .product-gallery { grid-template-columns: 1fr; }
+    .product-gallery-side { display: none; }
+    .product-gallery-main { height: 240px; }
+    .product-reviews-layout { grid-template-columns: 1fr; }
+    .product-reservation-card { grid-template-columns: 1fr; gap: 10px; }
+    .product-specs-grid { grid-template-columns: 1fr 1fr; }
+    .product-specs-grid .product-spec-item:nth-child(2n)       { border-right: none; }
+    .product-specs-grid .product-spec-item:nth-child(3n)       { border-right: 1px solid var(--c-border); }
+    .product-breadcrumb { padding: 12px 20px; }
+}
+

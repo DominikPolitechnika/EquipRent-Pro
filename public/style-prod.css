@@ -572,3 +572,90 @@ margin-bottom: 15px;
     .product-breadcrumb { padding: 12px 20px; }
 }
 
+/* ================================================
+   KALENDARZ — wybór dat
+   ================================================ */
+
+.product-range-display {
+    font-size: 13px;
+    color: #2563eb;
+    font-weight: 600;
+    margin-bottom: 8px;
+    min-height: 20px;
+}
+
+.product-calendar-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 10px;
+}
+
+.product-cal-day.product-blocked {
+    background: #fee2e2;
+    color: #fca5a5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.product-cal-day.product-range-start {
+    background: #2563eb !important;
+    color: #fff !important;
+   
+}
+
+.product-cal-day.product-range-end {
+    background: #2563eb !important;
+    color: #fff !important;
+   
+}
+
+.product-cal-day.product-in-range {
+    background: #dbeafe;
+    color: #1d4ed8;
+
+}
+
+.product-cal-day.product-selected {
+    background: #2563eb;
+    color: #fff;
+    font-weight: 700;
+}
+
+.product-cal-day.product-disabled {
+    color: #d1d5db;
+    cursor: default;
+    pointer-events: none;
+}
+
+.product-cal-day:not(.product-disabled):not(.product-blocked):hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    cursor: pointer;
+}
+
+/* PRZYCISK — nieaktywny gdy brak dat */
+.product-btn-reserve.product-btn-disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.product-btn-reserve.product-btn-disabled:hover {
+    background: #9ca3af;
+    transform: none;
+}
+
+/* SUMA — wyróżnienie */
+.product-price-row.product-total {
+    font-size: 18px;
+    font-weight: 800;
+    color: #111;
+    border-top: 2px solid #e0e0e0;
+    padding-top: 12px;
+    margin-top: 4px;
+}
+.product-price-row.product-total span:last-child {
+    color: #2563eb;
+}

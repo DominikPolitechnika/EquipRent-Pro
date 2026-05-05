@@ -1,4 +1,5 @@
-<link rel="stylesheet" href="{{ asset('style-head.css') }}">
+ <link rel="stylesheet" href="{{ asset('style-head.css') }}">
+
 {{-- Cały header zrobiony --}}
 <header class="header">
     <div class="header-container">
@@ -8,8 +9,8 @@
         </div>
  {{-- nawigajca header --}}
         <nav class="nav">
-            <a href="{{ route('Katalog') }}" 
-               class="{{ request()->routeIs('Katalog') ? 'active' : '' }}">
+            <a href="{{ route('katalog') }}" 
+               class="{{ request()->routeIs('katalog') ? 'active' : '' }}">
                 Katalog
             </a>
             <a href="#" 

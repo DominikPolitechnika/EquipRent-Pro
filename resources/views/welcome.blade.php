@@ -22,7 +22,9 @@
     </style>
 </head>
 <body>
+    @include('partials.header')
     <main class="container">
+
         <h1>Przykladowy widok + przykladowe API</h1>
         <p>
             Dane sa pobierane z endpointu <code>/api/sample-equipment</code>.
@@ -113,5 +115,6 @@
         reloadButton.addEventListener('click', loadEquipment);
         loadEquipment();
     </script>
+    @include('partials.footer')
 </body>
 </html>

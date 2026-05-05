@@ -659,3 +659,8 @@ margin-bottom: 15px;
 .product-price-row.product-total span:last-child {
     color: #2563eb;
 }
+body {
+    background: #f7f9fb;
+    margin: 0;
+    padding: 0;
+}

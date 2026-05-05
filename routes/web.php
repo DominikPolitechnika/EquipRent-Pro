@@ -22,7 +22,7 @@ Route::view('/register', 'auth.register')
 // Trasy dostępne tylko dla zalogowanych użytkowników
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/katalog', [KatalogController::class, 'index'])->name('Katalog');
+    Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog');
     Route::get('/produkt/{id}', [ProductController::class, 'showPage'])->name('product');
     Route::view('/demo-layout', 'pages.demo-layout');
 });

@@ -13,11 +13,10 @@
                class="{{ request()->routeIs('katalog') ? 'active' : '' }}">
                 Katalog
             </a>
-            <a href="#" 
-        
-               class="{{ request()->routeIs('Rezerwacje') ? 'active' : '' }}"> 
-                Moje Rezerwacje
-            </a>
+            <a href="{{ route('rezerwacje') }}" 
+   class="{{ request()->routeIs('rezerwacje') ? 'active' : '' }}"> 
+    Moje Rezerwacje
+</a>
         </nav>
 
      <div class="icons">

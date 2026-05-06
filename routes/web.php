@@ -18,7 +18,9 @@ Route::view('/login', 'auth.login')
 Route::view('/register', 'auth.register')
     ->middleware('guest')
     ->name('register');
-
+Route::view('/rezerwacje', 'rezerwacje')
+    ->middleware('auth')
+    ->name('rezerwacje');
 // Trasy dostępne tylko dla zalogowanych użytkowników
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');

@@ -62,4 +62,16 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
     });
 });
 
+Route::get('/catalog', function (){
+    return view('pages.catalog');
+});
+
+Route::get('/forgot-password', function() {
+    return view('auth.forgot-password');
+});
+
+Route::get("/reset-password", function() {
+    return view("/auth.reset-password");
+});
+
 require __DIR__.'/auth.php';

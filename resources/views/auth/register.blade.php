@@ -7,9 +7,9 @@
     <title>Rejestracja</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style-auth.css') }}">
 </head>
-<body>
+<body class="auth-page">
 <main class="auth-card">
     <section class="auth-hero">
         <div class="hero-content register-hero-content">
@@ -41,6 +41,17 @@
                 <input id="email" name="email" type="email" placeholder="email@firma.pl" required>
             </div>
 
+            <label for="role">Rola użytkownika</label>
+            <div class="input-icon">
+                <i class="fa-solid fa-user-tag input-left-icon"></i>
+
+                <select id="role" name="role" class="role-select" required>
+                    <option value="" disabled selected>Wybierz rolę</option>
+                    <option value="user">Zawodnik</option>
+                    <option value="admin">Trener</option>
+                </select>
+            </div>
+        
             <label for="club">Nazwa klubu sportowego</label>
             <div class="input-icon">
                 <i class="fa-solid fa-building input-left-icon"></i>
@@ -74,6 +85,8 @@
     </section>
 </main>
 
+@include('partials.footer')
+
 <script>
     const form = document.getElementById('register-form');
     const message = document.getElementById('message');
@@ -88,6 +101,7 @@
             name: form.name.value,
             email: form.email.value,
             club: form.club.value,
+            role: form.role.value,
             password: form.password.value,
             password_confirmation: form.password_confirmation.value,
         };

@@ -1,8 +1,9 @@
 /* ===================================================
    AUTH STYLES
-   Style dla widoków logowania i rejestracji
-   Używane w: login, register
+   Widoki: login, register
    =================================================== */
+
+/* ===== RESET / BASE ===== */
 
 * {
     box-sizing: border-box;
@@ -12,29 +13,32 @@ body {
     font-family: "Poppins", sans-serif;
     background: #f7f7f8;
     margin: 0;
-    padding: 24px;
 }
 
 /* ===== AUTH LAYOUT ===== */
 
+.auth-page {
+    padding-top: 24px;
+}
+
 .auth-card {
-    max-width: 70%;
+    max-width: 55%;
     min-height: 540px;
     margin: 10px auto;
-    background: #fff;
-    border-radius: 8px;
     display: grid;
     grid-template-columns: 50% 50%;
     overflow: hidden;
+    background: #fff;
+    border-radius: 8px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .auth-hero {
     position: relative;
-    padding: 28px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 28px;
     overflow: hidden;
 }
 
@@ -42,26 +46,26 @@ body {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 0;
     background:
         linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.8)),
         url("/images/background-photo.jpg") center/cover no-repeat;
-
     filter: grayscale(100%) brightness(99%);
-    z-index: 0;
 }
 
 .auth-hero > * {
     position: relative;
     z-index: 1;
-    color: #000000;
 }
 
 .auth-form {
-    padding: 25px 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding: 25px 40px;
 }
+
+/* ===== HERO CONTENT ===== */
 
 .brand {
     margin: 0;
@@ -72,39 +76,41 @@ body {
 
 .brand-subtitle {
     margin-top: 6px;
+    color: #000;
     font-size: 13px;
-    color: #000000;
 }
 
 .hero-content {
     margin-bottom: 20px;
 }
 
-/* ===== HERO ===== */
+.hero-content h2 {
+    margin-bottom: 12px;
+    color: #000;
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+.hero-content p {
+    margin-bottom: 12px;
+    color: #000;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+/* ===== REGISTER HERO EXTRAS ===== */
 
 .hero-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 52px;
     height: 52px;
     border-radius: 14px;
     background: #eef6fb;
     color: #075071;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: 22px;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-}
-
-.hero-content h2 {
-    font-size: 15px;
-    line-height: 1.2;
-    margin-bottom: 12px;
-}
-
-.hero-content p {
-    font-size: 12px;
-    line-height: 1.2;
-    margin-bottom: 12px;
 }
 
 .register-hero-content {
@@ -112,9 +118,9 @@ body {
 }
 
 .register-hero-content h2 {
+    margin-bottom: 12px;
     font-size: 30px;
     line-height: 1.2;
-    margin-bottom: 12px;
 }
 
 .register-hero-content p {
@@ -123,9 +129,9 @@ body {
 }
 
 .hero-list {
-    list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .hero-list li {
@@ -133,20 +139,20 @@ body {
     align-items: center;
     gap: 12px;
     margin-bottom: 14px;
+    color: #334155;
     font-size: 12px;
     font-weight: 500;
-    color: #334155;
 }
 
 .hero-list i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 24px;
     height: 24px;
     border-radius: 8px;
     background: #dff1fb;
     color: #075071;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: 11px;
 }
 
@@ -154,24 +160,24 @@ body {
 
 .title {
     margin: 0;
+    color: #1f2933;
     font-size: 20px;
     font-weight: 700;
-    color: #1f2933;
 }
 
 .subtitle {
     margin-top: 8px;
-    margin-bottom: 18px;
-    font-size: 13px;
+    margin-bottom: 14px;
     color: #7b8b95;
+    font-size: 13px;
 }
 
 label {
     display: block;
     margin-top: 14px;
-    font-weight: 500;
-    font-size: 12px;
     color: #6b7280;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 input::placeholder {
@@ -187,21 +193,15 @@ input::placeholder {
     margin-bottom: 10px;
 }
 
-.input-left-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-30%);
-    color: #9aa5ad;
-    font-size: 14px;
-    pointer-events: none;
-}
-
-.input-icon input {
+.input-icon input,
+.input-icon select {
     width: 100%;
+    height: 38px;
     padding: 9px 40px 9px 35px;
     border: 1px solid #cfcfd4;
     border-radius: 6px;
+    font-family: "Poppins", sans-serif;
+    font-size: 13px;
 }
 
 .input-icon input:focus {
@@ -209,10 +209,62 @@ input::placeholder {
     outline: none;
 }
 
+.input-left-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #9aa5ad;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 20px;
+    transform: translateY(-50%);
+    color: #9aa5ad;
+    text-align: center;
+    cursor: pointer;
+}
+
+.toggle-password:hover {
+    color: #075071;
+}
+
+.input-icon select {
+    color: #9aa5ad;
+    background: #fff;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.input-icon select:focus {
+    border-color: #075071;
+}
+
+.role-select {
+    color: #111827;
+}
+
+.role-select:invalid {
+    color: #9aa5ad;
+}
+
+.role-select option {
+    color: #111827;
+}
+
+/* ===== PASSWORD HEADER ===== */
+
 .password-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     margin-top: 14px;
 }
 
@@ -221,29 +273,14 @@ input::placeholder {
 }
 
 .forgot {
-    font-size: 12px;
     color: #075071;
-    text-decoration: none;
+    font-size: 12px;
     font-weight: 500;
+    text-decoration: none;
 }
 
 .forgot:hover {
     text-decoration: underline;
-}
-
-.toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-30%);
-    color: #9aa5ad;
-    cursor: pointer;
-    width: 20px;
-    text-align: center;
-}
-
-.toggle-password:hover {
-    color: #1f6feb;
 }
 
 /* ===== CHECKBOX ===== */
@@ -254,55 +291,56 @@ input::placeholder {
     gap: 8px;
     margin-top: 8px;
     margin-bottom: 12px;
-    font-size: 12px;
     color: #696d6f;
+    font-size: 12px;
     cursor: pointer;
 }
 
 /* ===== BUTTONS ===== */
 
-button {
-    margin-top: 16px;
+button,
+.register-button,
+.login-button {
     width: 100%;
-    border: 0;
-    background: #075071;
-    color: #fff;
     padding: 10px 14px;
     border-radius: 6px;
-    cursor: pointer;
     font-size: 14px;
     font-weight: 600;
     transition: 0.2s ease;
 }
 
-button:hover {
-    background: #155acb;
+button {
+    margin-top: 16px;
+    border: 0;
+    background: #075071;
+    color: #fff;
+    cursor: pointer;
 }
 
-button:active {
+button:hover {
+    background: #0a638b;
+}
+
+button:active,
+.register-button:active,
+.login-button:active {
     transform: scale(0.98);
 }
 
 .register-button,
 .login-button {
     display: block;
-    width: 100%;
-    text-align: center;
-    padding: 10px 14px;
-    border-radius: 6px;
+    margin-top: 10px;
     background: #e6edf3;
     color: #075071;
+    text-align: center;
     text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    margin-top: 10px;
-    transition: 0.2s ease;
 }
 
 .register-button:hover,
 .login-button:hover {
-    background: #babfc4;
-    color: #155acb;
+    background: #d7e1e8;
+    color: #075071;
 }
 
 /* ===== DIVIDER ===== */
@@ -312,9 +350,9 @@ button:active {
     align-items: center;
     gap: 10px;
     margin: 16px 0;
+    color: #9aa5ad;
     font-size: 10px;
     font-weight: 600;
-    color: #9aa5ad;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -327,25 +365,55 @@ button:active {
     background: #e2e8f0;
 }
 
+/* ===== FORGOT-PASSWORD ===== */
+
+.auth-form form {
+    margin-top: 20px;
+}
+
 /* ===== MESSAGES ===== */
 
 .message {
+    width: 100%;
+    padding: 1px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.password-message {
+    width: 100%;
     margin-top: 12px;
-    font-size: 0.9rem;
+    padding: 1px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .error {
+    background: #fdecea;
     color: #b42318;
+    border: 1px solid #f5c2c0;
 }
 
 .ok {
+    background: #ecfdf3;
     color: #067647;
+    border: 1px solid #abefc6;
 }
 
 /* ===== RESPONSIVE ===== */
 
 @media (max-width: 800px) {
     .auth-card {
+        max-width: 100%;
         grid-template-columns: 1fr;
     }
 

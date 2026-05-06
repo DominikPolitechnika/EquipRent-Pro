@@ -29,4 +29,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    //i tutaj mozna dodac wlasne funkcje do komunikacji z baza np:
+
+    /* 
+    public static function findByCustomId(int $id)
+{
+    // Tutaj możesz dodać własną logikę, np. sprawdzanie statusu
+    return self::where('id', $id)->where('active', true)->first();
+}
+    */
 }

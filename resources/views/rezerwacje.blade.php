@@ -9,12 +9,14 @@
         /* ================================================
            REZERWACJE PAGE
         ================================================ */
-        .rez-page {
-            font-family: 'Barlow', sans-serif;
-            background: #f7f9fb;
-            min-height: 100vh;
-            color: #2a3439;
-        }
+       .rez-page {
+    margin: 0;
+    padding: 0;
+    font-family: 'Barlow', sans-serif;
+    background: #f7f9fb;
+    min-height: 100vh;
+    color: #2a3439;
+}
 
         .rez-wrapper {
             max-width: 1200px;
@@ -33,6 +35,12 @@
         }
 
         .rez-sidebar-card {
+            background: #f0f4f7;
+            border: 1px solid #e8ebee;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+         .rez-sidebar-card-a{
             background: #fff;
             border: 1px solid #e8ebee;
             padding: 20px;
@@ -122,9 +130,12 @@
         /* ---- PRAWA KOLUMNA ---- */
         .rez-content {}
 
-        .rez-page-header {
-            margin-bottom: 28px;
-        }
+     .rez-page-header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 10px 1px 0px;
+    box-sizing: border-box;
+}
         .rez-page-header h1 {
             font-family: 'Barlow Condensed', sans-serif;
             font-size: 36px;
@@ -463,19 +474,22 @@
             .rez-card-img { width: 100%; height: 160px; }
             .rez-card-actions { padding: 0 18px 14px; }
             .rez-btn-rebook { margin: 0 18px 14px; }
-        }
+            .rez-page-header {padding: 20px;}
     </style>
 </head>
 <body class="rez-page">
 @include('partials.header')
-
+<div class="rez-page-header">
+            <h1>Moje rezerwacje</h1>
+            <p>Zarządzaj aktywnym sprzętem sportowym, śledź statystyki i pobieraj dokumentację.</p>
+        </div>
 <div class="rez-wrapper">
 
     {{-- ===== LEWA KOLUMNA ===== --}}
     <aside class="rez-sidebar">
 
         {{-- Terminy zwrotów --}}
-        <div class="rez-sidebar-card">
+        <div class="rez-sidebar-card-a">
             <div class="rez-sidebar-title">
                 Terminy zwrotów
                 <i class="fa-solid fa-circle-info" style="color:#2563eb; margin-left:6px;"></i>
@@ -518,10 +532,7 @@
     {{-- ===== PRAWA KOLUMNA ===== --}}
     <main class="rez-content">
 
-        <div class="rez-page-header">
-            <h1>Moje rezerwacje</h1>
-            <p>Zarządzaj aktywnym sprzętem sportowym, śledź statystyki i pobieraj dokumentację.</p>
-        </div>
+        
 
         {{-- AKTYWNE --}}
         <div class="rez-section-title">Aktywne wypożyczenia</div>
@@ -576,23 +587,42 @@
 
         {{-- ZAKOŃCZONE --}}
         <div class="rez-section-title done" style="margin-top: 32px;">Zakończone wypożyczenia</div>
-
-        {{-- Zakończona 1 --}}
-        <div class="rez-card-done" id="done-1">
-            <img class="rez-card-img"
-                 src="https://images.unsplash.com/photo-1531722569936-825d4eee19b7?w=200&h=160&fit=crop"
-                 alt="Deska SUP Red Paddle Co">
-            <div class="rez-card-body">
-                <div class="rez-card-name" style="margin-bottom:4px;">Deska SUP Red Paddle Co</div>
-                <div class="rez-done-meta">Zwrócono 05 paź 2023 • 14 dni wypożyczenia</div>
-                <div class="rez-done-cost">Łączny koszt: 980,00 zł</div>
-                <div>
-                    <span class="rez-stars">★★★★★</span>
-                    <span class="rez-review-quote">"Świetna stabilność na wodzie"</span>
-                </div>
-            </div>
-            <button class="rez-btn-rebook">Wypożycz ponownie</button>
+{{-- Zakończona 1 --}}
+<div class="rez-card-done" id="done-1">
+    <img class="rez-card-img"
+         src="https://images.unsplash.com/photo-1531722569936-825d4eee19b7?w=200&h=160&fit=crop"
+         alt="Deska SUP Red Paddle Co">
+    <div class="rez-card-body">
+        <div class="rez-card-name" style="margin-bottom:4px;">Deska SUP Red Paddle Co</div>
+        <div class="rez-done-meta">Zwrócono 05 paź 2023 • 14 dni wypożyczenia</div>
+        <div class="rez-done-cost">Łączny koszt: 980,00 zł</div>
+        <div>
+            <span class="rez-stars">★★★★★</span>
+            <span class="rez-review-quote">"Świetna stabilność na wodzie"</span>
         </div>
+        <button class="rez-add-review-toggle" onclick="toggleReview('review-1')">
+            <i class="fa-solid fa-plus"></i> Dodaj opinię
+        </button>
+    </div>
+    <button class="rez-btn-rebook">Wypożycz ponownie</button>
+</div>
+
+{{-- Panel dodawania opinii (Deska SUP) --}}
+<div class="rez-review-panel" id="review-1">
+    <div class="rez-review-panel-title">Podziel się swoją opinią</div>
+    <div class="rez-star-input" id="stars-1">
+        <span data-v="1">★</span>
+        <span data-v="2">★</span>
+        <span data-v="3">★</span>
+        <span data-v="4">★</span>
+        <span data-v="5">★</span>
+    </div>
+    <textarea class="rez-review-textarea" placeholder="Opisz swoje wrażenia..."></textarea>
+    <div class="rez-review-actions">
+        <button class="rez-btn-cancel-review" onclick="toggleReview('review-1')">Anuluj</button>
+        <button class="rez-btn-submit-review">Wyślij opinię</button>
+    </div>
+</div>
 
         {{-- Zakończona 2 --}}
         <div class="rez-card-done" id="done-2">

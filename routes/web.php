@@ -18,9 +18,26 @@ Route::view('/login', 'auth.login')
 Route::view('/register', 'auth.register')
     ->middleware('guest')
     ->name('register');
+
 Route::view('/rezerwacje', 'rezerwacje')
     ->middleware('auth')
     ->name('rezerwacje');
+
+// Profil użytkownika
+Route::view('/profil', 'profil')
+    ->middleware('auth')
+    ->name('profil');
+
+Route::view('/profil_edytuj', 'profil_edytuj')
+    ->middleware('auth')
+    ->name('profil_edytuj');
+
+// Zapis edycji profilu (zaślepka - na razie przekierowuje z powrotem na profil)
+Route::put('/profil', function () {
+    // TODO: implementacja zapisu danych użytkownika
+    return redirect()->route('profil')->with('success', 'Profil został zaktualizowany.');
+})->middleware('auth')->name('profil.update');
+
 // Trasy dostępne tylko dla zalogowanych użytkowników
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');

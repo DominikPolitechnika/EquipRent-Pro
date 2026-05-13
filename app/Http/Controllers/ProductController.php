@@ -1,51 +1,64 @@
 <?php
- 
+
 namespace App\Http\Controllers;
- 
+
+use App\Models\Product;
 use Illuminate\Http\Request;
- 
+
 class ProductController extends Controller
 {
-    private function getProducts(): array
+    public function index(int $id)
     {
-        return [
-            1 => [
-                'id'          => 1,
-                'name'        => 'Rower MTB Trek Marlin 7',
-                'category'    => 'Rowery MTB',
-                'price'       => 120,
-                'status'      => 'dostepny',
-                'description' => 'Rower górski idealny na trasy XC.',
-            ],
-            2 => [
-                'id'          => 2,
-                'name'        => 'Rower szosowy Giant Contend',
-                'category'    => 'Rowery szosowe',
-                'price'       => 150,
-                'status'      => 'dostepny',
-                'description' => 'Lekki rower szosowy do długich dystansów.',
-            ],
-            3 => [
-                'id'          => 3,
-                'name'        => 'E-bike Specialized Turbo',
-                'category'    => 'E-bikes',
-                'price'       => 200,
-                'status'      => 'wypozyczony',
-                'description' => 'Elektryczny rower z zasięgiem 100 km.',
-            ],
-        ];
+        $product = Product::findorFail($id);
+        
+        return view('product',['product' => $product]);
     }
- 
-    public function showPage(int $id)
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        $products = $this->getProducts();
- 
-        if (!isset($products[$id])) {
-            abort(404, 'Produkt nie istnieje.');
-        }
- 
-        $product = $products[$id];
- 
-        return view('product', compact('product'));
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Product $product)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Product $product)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Product $product)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Product $product)
+    {
+        //
     }
 }

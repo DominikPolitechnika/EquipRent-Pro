@@ -36,13 +36,13 @@ Route::view('/profil_edytuj', 'profil_edytuj')
 Route::put('/profil', function () {
     // TODO: implementacja zapisu danych użytkownika
     return redirect()->route('profil')->with('success', 'Profil został zaktualizowany.');
-})->middleware('auth')->name('profil.update');
+})->middleware('auth')->name('profil.update'); 
 
 // Trasy dostępne tylko dla zalogowanych użytkowników
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog');
-    Route::get('/produkt/{id}', [ProductController::class, 'showPage'])->name('product');
+    Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
     Route::view('/demo-layout', 'pages.demo-layout');
 });
 

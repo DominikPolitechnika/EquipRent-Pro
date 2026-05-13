@@ -30,12 +30,12 @@
         <div class="product-grid">
             @forelse ($products as $product)
                 <div class="product-card">
-
+                    {{-- z tym warunkiem w if to tymczasowo --}}
                     <div class="product-card-img">
-                        <img src="https://placehold.co/400x240/1a1a1a/444?text={{ urlencode($product['name']) }}" alt="{{ $product['name'] }}">
-                        @if($product['status'] === 'dostepny')
+                        <img src="https://placehold.co/400x240/1a1a1a/444?text={{ urlencode($product->title) }}" alt="{{ $product->title }}">
+                        @if('dostepny' === 'dostepny') 
                             <span class="product-card-badge badge-green">Dostępny</span>
-                        @elseif($product['status'] === 'wypozyczony')
+                        @elseif('tymczasowo'=== 'wypozyczony')
                             <span class="product-card-badge badge-orange">Wypożyczony</span>
                         @else
                             <span class="product-card-badge badge-gray">Serwis</span>
@@ -43,12 +43,12 @@
                     </div>
 
                     <div class="product-card-body">
-                        <div class="product-card-category">{{ $product['category'] }}</div>
-                        <h2 class="product-card-name">{{ $product['name'] }}</h2>
-                        <p class="product-card-desc">{{ $product['description'] }}</p>
+                        <div class="product-card-category">{{ $product->category->name }}</div>
+                        <h2 class="product-card-name">{{ $product->title }}</h2>
+                        <p class="product-card-desc">{{ $product->body }}</p>
                         <div class="product-card-footer">
-                            <span class="product-card-price">{{ $product['price'] }} zł <small>/ dzień</small></span>
-                            <a href="{{ route('product', $product['id']) }}" class="product-card-btn">Zobacz →</a>
+                            <span class="product-card-price">{{ $product->oneDayPrice }} zł <small>/ dzień</small></span>
+                            <a href="{{ route('product', $product->id) }}" class="product-card-btn">Zobacz →</a>
                         </div>
                     </div>
 

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $product['name'] }} — EquipRent Pro</title>
+    <title>{{ $product->title }} — EquipRent Pro</title>
    <link rel="stylesheet" href="{{ asset('style-head.css') }}">
     <link rel="stylesheet" href="{{ asset('style-foot.css') }}">
     <link rel="stylesheet" href="{{ asset('style-prod.css') }}">
@@ -27,7 +27,7 @@
     <div class="product-breadcrumb">
         <a href="{{ route('katalog') }}">Katalog</a>
         <span>›</span>
-        <span class="product-breadcrumb-active">{{ $product['name'] }}</span>
+        <span class="product-breadcrumb-active">{{ $product->name }}</span>
     </div>
 
     {{-- GALLERY FULL WIDTH --}}
@@ -50,9 +50,9 @@
 
         {{-- LEFT --}}
         <div class="product-left">
-
+            {{-- tymczasowo --}}
             <div class="product-badges">
-                @if($product['status'] === 'dostepny')
+                @if('dostepny' === 'dostepny')
                     <span class="product-status-badge product-status-available">
                         <span class="product-status-dot"></span>
                         Dostępny
@@ -71,11 +71,11 @@
             </div>
 
             <h1 class="product-title">
-                <span class="placeholder animate-pulse" style="width:70%;height:38px;border-radius:4px;display:block;"></span>
+                {{ $product->title }}
             </h1>
             <p class="product-description">
-                <span class="placeholder animate-pulse" style="width:90%;height:14px;border-radius:3px;display:block;margin-bottom:6px;"></span>
-                <span class="placeholder animate-pulse" style="width:60%;height:14px;border-radius:3px;display:block;"></span>
+                <span style="width:90%;height:14px;border-radius:3px;display:block;margin-bottom:6px;">{{$product->serialNumber}}</span>
+                <span style="width:60%;height:14px;border-radius:3px;display:block;">{{$product->body}}</span>
             </p>
 
   

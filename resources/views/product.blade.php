@@ -25,7 +25,7 @@
 <div class="product-page">
 
     <div class="product-breadcrumb">
-        <a href="{{ route('katalog') }}">Katalog</a>
+        <a href="{{ route('catalog') }}">Katalog</a>
         <span>›</span>
         <span class="product-breadcrumb-active">{{ $product->name }}</span>
     </div>

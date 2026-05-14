@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\KatalogController;
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ProductController;
 
 // Strona główna - przekierowanie do logowania
@@ -41,7 +41,11 @@ Route::put('/profil', function () {
 // Trasy dostępne tylko dla zalogowanych użytkowników
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+<<<<<<< Updated upstream
     Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog');
+=======
+    Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+>>>>>>> Stashed changes
     Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
     Route::view('/demo-layout', 'pages.demo-layout');
 });
@@ -79,10 +83,6 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
             ],
         ]);
     });
-});
-
-Route::get('/catalog', function (){
-    return view('pages.catalog');
 });
 
 Route::get('/forgot-password', function() {

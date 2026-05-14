@@ -9,8 +9,8 @@
         </div>
  {{-- nawigajca header --}}
         <nav class="nav">
-            <a href="{{ route('katalog') }}" 
-               class="{{ request()->routeIs('katalog') ? 'active' : '' }}">
+            <a href="{{ route('catalog') }}" 
+               class="{{ request()->routeIs('catalog') ? 'active' : '' }}">
                 Katalog
             </a>
             <a href="{{ route('rezerwacje') }}" 

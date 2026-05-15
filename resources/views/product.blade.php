@@ -9,9 +9,7 @@
     <link rel="stylesheet" href="{{ asset('style-foot.css') }}">
     <link rel="stylesheet" href="{{ asset('style-prod.css') }}">
     <style>
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
-        .placeholder { background: #e2e8f0; display: block; }
-        .animate-pulse { animation: pulse 1.6s ease-in-out infinite; }
+       
     </style>
   
 </head>
@@ -40,7 +38,7 @@
                 <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
                 <div class="product-gallery-side-last">
                     <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
-                    <button class="product-see-all-btn">⊞ ZOBACZ WSZYSTKIE ZDJĘCIA</button>
+                    <button type="button" class="product-see-all-btn" id="gallery-open-btn">⊞ ZOBACZ WSZYSTKIE ZDJĘCIA</button>
                 </div>
             </div>
         </div>
@@ -230,12 +228,38 @@
 </div>
 </main>
 
+{{-- ========================= MODAL GALERII ========================= --}}
+<div class="gallery-backdrop" id="gallery-backdrop">
+    <div class="gallery-modal">
+        <div class="gallery-header">
+            <span class="gallery-title">Galeria zdjęć</span>
+            <button type="button" class="gallery-close" id="gallery-close-btn" aria-label="Zamknij">✕</button>
+        </div>
+        <div class="gallery-body">
+            <div class="gallery-grid">
+                <div class="gallery-thumb animate-pulse" data-idx="1"></div>
+                <div class="gallery-thumb animate-pulse" data-idx="2"></div>
+                <div class="gallery-thumb animate-pulse" data-idx="3"></div>
+                <div class="gallery-thumb animate-pulse" data-idx="4"></div>
+                <div class="gallery-thumb animate-pulse" data-idx="5"></div>
+                <div class="gallery-thumb animate-pulse" data-idx="6"></div>
+            </div>
+        </div>
+
+        {{-- Powiększony widok pojedynczego zdjęcia --}}
+        <div class="gallery-zoom" id="gallery-zoom">
+            <button type="button" class="gallery-zoom-back" id="gallery-zoom-back">← Powrót do galerii</button>
+            <div class="gallery-zoom-img animate-pulse" id="gallery-zoom-img"></div>
+        </div>
+    </div>
+</div>
+
 {{-- ========================= FOOTER ========================= --}}
 @include('partials.footer')
 
 <script>
 (function() {
-    const PRICE_PER_DAY = {{ $product['price'] }};
+   const PRICE_PER_DAY = {{ $product->oneDayPrice }};
     const SERVICE_FEE   = 120;
     const LOGISTICS_FEE = 250;
     const STRIPE_URL    = 'https://stripe.com';
@@ -408,6 +432,59 @@
 
     renderCalendar();
     updatePriceBreakdown();
+})();
+</script>
+
+<script>
+(function() {
+    const backdrop  = document.getElementById('gallery-backdrop');
+    const openBtn   = document.getElementById('gallery-open-btn');
+    const closeBtn  = document.getElementById('gallery-close-btn');
+    const zoom      = document.getElementById('gallery-zoom');
+    const zoomImg   = document.getElementById('gallery-zoom-img');
+    const zoomBack  = document.getElementById('gallery-zoom-back');
+    const thumbs    = document.querySelectorAll('.gallery-thumb');
+
+    if (!backdrop || !openBtn) return;
+
+    function openGallery() {
+        backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeGallery() {
+        backdrop.classList.remove('open');
+        zoom.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    function openZoom(idx) {
+        // tu w przyszłości można podmienić tło na prawdziwe zdjęcie
+        zoomImg.setAttribute('data-current', idx);
+        zoom.classList.add('open');
+    }
+    function closeZoom() {
+        zoom.classList.remove('open');
+    }
+
+    openBtn.addEventListener('click', openGallery);
+    closeBtn.addEventListener('click', closeGallery);
+    zoomBack.addEventListener('click', closeZoom);
+
+    // klik w tło (poza modalem) zamyka galerię
+    backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) closeGallery();
+    });
+
+    // klik w miniaturę otwiera powiększenie
+    thumbs.forEach(t => {
+        t.addEventListener('click', () => openZoom(t.dataset.idx));
+    });
+
+    // Escape: jeśli otwarty zoom — zamyka tylko zoom, inaczej całą galerię
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (zoom.classList.contains('open')) closeZoom();
+        else if (backdrop.classList.contains('open')) closeGallery();
+    });
 })();
 </script>
 

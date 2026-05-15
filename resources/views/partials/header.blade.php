@@ -1,40 +1,209 @@
 <link rel="stylesheet" href="{{ asset('style-head.css') }}">
 
+<style>
+    /* ===== Popover powiadomień ===== */
+    @keyframes notif-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+    .notif-wrap { position: relative; }
+
+    .notif-btn {
+        background: transparent;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: inherit;
+        position: relative;
+    }
+    .notif-dot {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 8px;
+        height: 8px;
+        background: #e23b3b;
+        border-radius: 50%;
+        border: 2px solid #fff;
+    }
+
+    .notif-popover {
+        display: none;
+        position: absolute;
+        top: calc(100% + 12px);
+        right: -8px;
+        width: 340px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
+        z-index: 1000;
+        overflow: hidden;
+    }
+    .notif-popover.open { display: block; }
+    .notif-popover::before {
+        content: '';
+        position: absolute;
+        top: -7px;
+        right: 18px;
+        width: 14px;
+        height: 14px;
+        background: #fff;
+        transform: rotate(45deg);
+        box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .notif-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid #eef0f3;
+    }
+    .notif-header-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #1f2937;
+    }
+    .notif-header-badge {
+        background: #1a6fa8;
+        color: #fff;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
+
+    .notif-list { max-height: 360px; overflow-y: auto; }
+
+    .notif-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f3f4f6;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    .notif-item:last-child { border-bottom: 0; }
+    .notif-item-icon {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #1a6fa8;
+        margin-top: 6px;
+        flex-shrink: 0;
+    }
+    .notif-item.urgent .notif-item-icon { background: #e23b3b; }
+    .notif-item-body { flex: 1; min-width: 0; }
+
+    .notif-skel {
+        background: #e2e8f0;
+        display: block;
+        border-radius: 3px;
+        animation: notif-pulse 1.6s ease-in-out infinite;
+    }
+
+    .notif-footer {
+        padding: 10px 16px;
+        text-align: center;
+        border-top: 1px solid #eef0f3;
+    }
+    .notif-footer a {
+        color: #1a6fa8;
+        font-size: 13px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .notif-footer a:hover { text-decoration: underline; }
+</style>
+
 {{-- Cały header zrobiony --}}
 <header class="header">
     <div class="header-container">
-        
+
         <div class="logo">
             EquipRent Pro
         </div>
  {{-- nawigajca header --}}
         <nav class="nav">
-            <a href="{{ route('catalog') }}" 
+            <a href="{{ route('catalog') }}"
                class="{{ request()->routeIs('catalog') ? 'active' : '' }}">
                 Katalog
             </a>
-            <a href="{{ route('rezerwacje') }}" 
-   class="{{ request()->routeIs('rezerwacje') ? 'active' : '' }}"> 
+            <a href="{{ route('rezerwacje') }}"
+   class="{{ request()->routeIs('rezerwacje') ? 'active' : '' }}">
     Moje Rezerwacje
 </a>
         </nav>
 
      <div class="icons">
-    
-        {{-- Dzwonek --}}
-    <span class="icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9.75005 4.75C9.33584 4.75 9.00005 5.08579 9.00005 5.5C9.00005 5.91421 9.33584 6.25 9.75005 6.25V4.75ZM12.6751 6.25C13.0893 6.25 13.4251 5.91421 13.4251 5.5C13.4251 5.08579 13.0893 4.75 12.6751 4.75V6.25ZM9.48794 17.0191C9.48249 16.605 9.14232 16.2736 8.72814 16.2791C8.31396 16.2845 7.98262 16.6247 7.98807 17.0389L9.48794 17.0191ZM11.2126 19.5L11.2228 18.7501C11.216 18.75 11.2092 18.75 11.2023 18.7501L11.2126 19.5ZM14.437 17.0389C14.4425 16.6247 14.1111 16.2845 13.697 16.2791C13.2828 16.2736 12.9426 16.605 12.9372 17.0191L14.437 17.0389ZM8.73703 17.779C9.15124 17.779 9.48703 17.4432 9.48703 17.029C9.48703 16.6148 9.15124 16.279 8.73703 16.279V17.779ZM7.63723 17.029L7.631 17.779H7.63723V17.029ZM5.85005 15.168L6.60005 15.1732V15.168H5.85005ZM6.57058 12.676L5.82897 12.5641L5.82888 12.5647L6.57058 12.676ZM6.76558 11.276L7.50406 11.4069C7.50578 11.3972 7.50731 11.3875 7.50865 11.3777L6.76558 11.276ZM11.2126 7.147L11.2433 6.39763C11.2228 6.39679 11.2022 6.39679 11.1817 6.39763L11.2126 7.147ZM15.6595 11.273L14.9165 11.3751C14.9177 11.3836 14.919 11.392 14.9204 11.4004L15.6595 11.273ZM15.8545 12.673L16.5962 12.5617L16.596 12.5605L15.8545 12.673ZM16.5751 15.165L15.825 15.165L15.8251 15.1706L16.5751 15.165ZM14.7879 17.027L14.7879 17.777L14.7941 17.777L14.7879 17.027ZM13.6871 16.277C13.2729 16.277 12.9371 16.6128 12.9371 17.027C12.9371 17.4412 13.2729 17.777 13.6871 17.777V16.277ZM8.73703 16.277C8.32281 16.277 7.98703 16.6128 7.98703 17.027C7.98703 17.4412 8.32281 17.777 8.73703 17.777V16.277ZM13.6871 17.777C14.1013 17.777 14.4371 17.4412 14.4371 17.027C14.4371 16.6128 14.1013 16.277 13.6871 16.277V17.777ZM9.75005 6.25H12.6751V4.75H9.75005V6.25ZM7.98807 17.0389C8.01146 18.8183 9.4421 20.2742 11.2228 20.2499L11.2023 18.7501C10.2859 18.7625 9.50091 18.006 9.48794 17.0191L7.98807 17.0389ZM11.2023 20.2499C12.983 20.2742 14.4136 18.8183 14.437 17.0389L12.9372 17.0191C12.9242 18.006 12.1392 18.7625 11.2228 18.7501L11.2023 20.2499ZM8.73703 16.279H7.63723V17.779H8.73703V16.279ZM7.64345 16.279C7.08063 16.2744 6.59573 15.7972 6.60003 15.1732L5.10007 15.1628C5.09031 16.5785 6.20512 17.7671 7.631 17.779L7.64345 16.279ZM6.60005 15.168C6.60005 14.891 6.69326 14.6047 6.85708 14.1992C7.00452 13.8342 7.23096 13.3291 7.31227 12.7873L5.82888 12.5647C5.78052 12.8869 5.6467 13.1908 5.46629 13.6373C5.30227 14.0433 5.10005 14.571 5.10005 15.168H6.60005ZM7.31219 12.7879C7.40448 12.1759 7.4489 11.7181 7.50406 11.4069L6.02709 11.1451C5.97305 11.4499 5.90047 12.0901 5.82897 12.5641L7.31219 12.7879ZM7.50865 11.3777C7.77569 9.42625 9.35923 7.97389 11.2434 7.89637L11.1817 6.39763C8.54483 6.50613 6.38434 8.53009 6.0225 11.1743L7.50865 11.3777ZM11.1818 7.89637C13.0651 7.97369 14.6484 9.42473 14.9165 11.3751L16.4025 11.1709C16.0392 8.52798 13.8791 6.50584 11.2433 6.39763L11.1818 7.89637ZM14.9204 11.4004C14.9759 11.7223 15.0202 12.1736 15.113 12.7855L16.596 12.5605C16.525 12.0924 16.4504 11.4457 16.3986 11.1456L14.9204 11.4004ZM15.1128 12.7843C15.1941 13.3261 15.4206 13.8312 15.568 14.1962C15.7318 14.6017 15.8251 14.888 15.8251 15.165H17.3251C17.3251 14.568 17.1228 14.0403 16.9588 13.6343C16.7784 13.1878 16.6446 12.8839 16.5962 12.5617L15.1128 12.7843ZM15.8251 15.1706C15.8297 15.7949 15.3447 16.2724 14.7817 16.277L14.7941 17.777C16.2205 17.7651 17.3355 16.5756 17.325 15.1594L15.8251 15.1706ZM14.7879 16.277H13.6871V17.777H14.7879V16.277ZM8.73703 17.777H13.6871V16.277H8.73703V17.777Z" fill="currentColor"/>
-    </svg>
-        
-    </span>
+
+        {{-- Dzwonek z popoverem powiadomień --}}
+        <div class="notif-wrap">
+            <button type="button" class="icon notif-btn" id="notif-btn"
+                    aria-label="Powiadomienia" aria-haspopup="true" aria-expanded="false">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.75005 4.75C9.33584 4.75 9.00005 5.08579 9.00005 5.5C9.00005 5.91421 9.33584 6.25 9.75005 6.25V4.75ZM12.6751 6.25C13.0893 6.25 13.4251 5.91421 13.4251 5.5C13.4251 5.08579 13.0893 4.75 12.6751 4.75V6.25ZM9.48794 17.0191C9.48249 16.605 9.14232 16.2736 8.72814 16.2791C8.31396 16.2845 7.98262 16.6247 7.98807 17.0389L9.48794 17.0191ZM11.2126 19.5L11.2228 18.7501C11.216 18.75 11.2092 18.75 11.2023 18.7501L11.2126 19.5ZM14.437 17.0389C14.4425 16.6247 14.1111 16.2845 13.697 16.2791C13.2828 16.2736 12.9426 16.605 12.9372 17.0191L14.437 17.0389ZM8.73703 17.779C9.15124 17.779 9.48703 17.4432 9.48703 17.029C9.48703 16.6148 9.15124 16.279 8.73703 16.279V17.779ZM7.63723 17.029L7.631 17.779H7.63723V17.029ZM5.85005 15.168L6.60005 15.1732V15.168H5.85005ZM6.57058 12.676L5.82897 12.5641L5.82888 12.5647L6.57058 12.676ZM6.76558 11.276L7.50406 11.4069C7.50578 11.3972 7.50731 11.3875 7.50865 11.3777L6.76558 11.276ZM11.2126 7.147L11.2433 6.39763C11.2228 6.39679 11.2022 6.39679 11.1817 6.39763L11.2126 7.147ZM15.6595 11.273L14.9165 11.3751C14.9177 11.3836 14.919 11.392 14.9204 11.4004L15.6595 11.273ZM15.8545 12.673L16.5962 12.5617L16.596 12.5605L15.8545 12.673ZM16.5751 15.165L15.825 15.165L15.8251 15.1706L16.5751 15.165ZM14.7879 17.027L14.7879 17.777L14.7941 17.777L14.7879 17.027ZM13.6871 16.277C13.2729 16.277 12.9371 16.6128 12.9371 17.027C12.9371 17.4412 13.2729 17.777 13.6871 17.777V16.277ZM8.73703 16.277C8.32281 16.277 7.98703 16.6128 7.98703 17.027C7.98703 17.4412 8.32281 17.777 8.73703 17.777V16.277ZM13.6871 17.777C14.1013 17.777 14.4371 17.4412 14.4371 17.027C14.4371 16.6128 14.1013 16.277 13.6871 16.277V17.777ZM9.75005 6.25H12.6751V4.75H9.75005V6.25ZM7.98807 17.0389C8.01146 18.8183 9.4421 20.2742 11.2228 20.2499L11.2023 18.7501C10.2859 18.7625 9.50091 18.006 9.48794 17.0191L7.98807 17.0389ZM11.2023 20.2499C12.983 20.2742 14.4136 18.8183 14.437 17.0389L12.9372 17.0191C12.9242 18.006 12.1392 18.7625 11.2228 18.7501L11.2023 20.2499ZM8.73703 16.279H7.63723V17.779H8.73703V16.279ZM7.64345 16.279C7.08063 16.2744 6.59573 15.7972 6.60003 15.1732L5.10007 15.1628C5.09031 16.5785 6.20512 17.7671 7.631 17.779L7.64345 16.279ZM6.60005 15.168C6.60005 14.891 6.69326 14.6047 6.85708 14.1992C7.00452 13.8342 7.23096 13.3291 7.31227 12.7873L5.82888 12.5647C5.78052 12.8869 5.6467 13.1908 5.46629 13.6373C5.30227 14.0433 5.10005 14.571 5.10005 15.168H6.60005ZM7.31219 12.7879C7.40448 12.1759 7.4489 11.7181 7.50406 11.4069L6.02709 11.1451C5.97305 11.4499 5.90047 12.0901 5.82897 12.5641L7.31219 12.7879ZM7.50865 11.3777C7.77569 9.42625 9.35923 7.97389 11.2434 7.89637L11.1817 6.39763C8.54483 6.50613 6.38434 8.53009 6.0225 11.1743L7.50865 11.3777ZM11.1818 7.89637C13.0651 7.97369 14.6484 9.42473 14.9165 11.3751L16.4025 11.1709C16.0392 8.52798 13.8791 6.50584 11.2433 6.39763L11.1818 7.89637ZM14.9204 11.4004C14.9759 11.7223 15.0202 12.1736 15.113 12.7855L16.596 12.5605C16.525 12.0924 16.4504 11.4457 16.3986 11.1456L14.9204 11.4004ZM15.1128 12.7843C15.1941 13.3261 15.4206 13.8312 15.568 14.1962C15.7318 14.6017 15.8251 14.888 15.8251 15.165H17.3251C17.3251 14.568 17.1228 14.0403 16.9588 13.6343C16.7784 13.1878 16.6446 12.8839 16.5962 12.5617L15.1128 12.7843ZM15.8251 15.1706C15.8297 15.7949 15.3447 16.2724 14.7817 16.277L14.7941 17.777C16.2205 17.7651 17.3355 16.5756 17.325 15.1594L15.8251 15.1706ZM14.7879 16.277H13.6871V17.777H14.7879V16.277ZM8.73703 17.777H13.6871V16.277H8.73703V17.777Z" fill="currentColor"/>
+                </svg>
+                <span class="notif-dot" aria-hidden="true"></span>
+            </button>
+
+            <div class="notif-popover" id="notif-popover" role="menu" aria-labelledby="notif-btn">
+                <div class="notif-header">
+                    <span class="notif-header-title">Powiadomienia</span>
+                    <span class="notif-header-badge">
+                        <span class="notif-skel" style="width:40px;height:10px;background:#ffffff55;display:inline-block;"></span>
+                    </span>
+                </div>
+
+                <div class="notif-list">
+                    <div class="notif-item urgent">
+                        <div class="notif-item-icon"></div>
+                        <div class="notif-item-body">
+                            <span class="notif-skel" style="width:55%;height:12px;margin-bottom:6px;"></span>
+                            <span class="notif-skel" style="width:90%;height:11px;margin-bottom:4px;"></span>
+                            <span class="notif-skel" style="width:40%;height:10px;"></span>
+                        </div>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="notif-item-icon"></div>
+                        <div class="notif-item-body">
+                            <span class="notif-skel" style="width:70%;height:12px;margin-bottom:6px;"></span>
+                            <span class="notif-skel" style="width:85%;height:11px;margin-bottom:4px;"></span>
+                            <span class="notif-skel" style="width:35%;height:10px;"></span>
+                        </div>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="notif-item-icon"></div>
+                        <div class="notif-item-body">
+                            <span class="notif-skel" style="width:60%;height:12px;margin-bottom:6px;"></span>
+                            <span class="notif-skel" style="width:75%;height:11px;margin-bottom:4px;"></span>
+                            <span class="notif-skel" style="width:45%;height:10px;"></span>
+                        </div>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="notif-item-icon"></div>
+                        <div class="notif-item-body">
+                            <span class="notif-skel" style="width:50%;height:12px;margin-bottom:6px;"></span>
+                            <span class="notif-skel" style="width:80%;height:11px;margin-bottom:4px;"></span>
+                            <span class="notif-skel" style="width:40%;height:10px;"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notif-footer">
+                    <a href="#">Zobacz wszystkie powiadomienia</a>
+                </div>
+            </div>
+        </div>
 
 {{-- Użytkownik - link do profilu --}}
     <a href="{{ route('profil') }}"
        class="icon {{ request()->routeIs('profil*') ? 'active' : '' }}"
        title="Mój profil"
        aria-label="Przejdź do profilu użytkownika">
-       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+       <svg style="color: black" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path opacity="0.4" d="M12.1207 12.78C12.0507 12.77 11.9607 12.77 11.8807 12.78C10.1207 12.72 8.7207 11.28 8.7207 9.50998C8.7207 7.69998 10.1807 6.22998 12.0007 6.22998C13.8107 6.22998 15.2807 7.69998 15.2807 9.50998C15.2707 11.28 13.8807 12.72 12.1207 12.78Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path opacity="0.34" d="M18.7398 19.3801C16.9598 21.0101 14.5998 22.0001 11.9998 22.0001C9.39977 22.0001 7.03977 21.0101 5.25977 19.3801C5.35977 18.4401 5.95977 17.5201 7.02977 16.8001C9.76977 14.9801 14.2498 14.9801 16.9698 16.8001C18.0398 17.5201 18.6398 18.4401 18.7398 19.3801Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -44,3 +213,40 @@
 
     </div>
 </header>
+
+<script>
+(function() {
+    const btn      = document.getElementById('notif-btn');
+    const popover  = document.getElementById('notif-popover');
+    if (!btn || !popover) return;
+
+    function open() {
+        popover.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+    }
+    function close() {
+        popover.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+    }
+    function toggle() {
+        popover.classList.contains('open') ? close() : open();
+    }
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggle();
+    });
+
+    // klik poza popoverem - zamknij
+    document.addEventListener('click', (e) => {
+        if (!popover.classList.contains('open')) return;
+        if (popover.contains(e.target)) return;
+        close();
+    });
+
+    // Escape - zamknij
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && popover.classList.contains('open')) close();
+    });
+})();
+</script>

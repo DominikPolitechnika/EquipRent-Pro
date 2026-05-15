@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edycja profilu – EquipRent Pro</title>
     <link rel="stylesheet" href="{{ asset('style-profil.css') }}">
+    <style>
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+        .placeholder { background: #e2e8f0; display: inline-block; border-radius: 3px; }
+        .placeholder-circle { background: #e2e8f0; border-radius: 50%; display: block; }
+        .animate-pulse { animation: pulse 1.6s ease-in-out infinite; }
+    </style>
 </head>
 <body class="prof-page">
 @include('partials.header')
@@ -32,8 +38,7 @@
             <div class="prof-edit-avatar-card">
                 <div class="prof-edit-avatar-title">Edytuj zdjęcie</div>
                 <div class="prof-edit-avatar">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face"
-                         alt="Avatar użytkownika">
+                    <span class="placeholder-circle animate-pulse" style="width:120px;height:120px;"></span>
                 </div>
                 <div class="prof-edit-avatar-actions">
                     <label class="prof-icon-btn" title="Zmień zdjęcie">
@@ -55,11 +60,15 @@
             <div class="prof-edit-mini-stats">
                 <div class="prof-edit-mini-stat">
                     <span class="prof-edit-mini-label">Ostatnie logowanie</span>
-                    <span class="prof-edit-mini-value">Dzisiaj, 09:45</span>
+                    <span class="prof-edit-mini-value">
+                        <span class="placeholder animate-pulse" style="width:110px;height:14px;"></span>
+                    </span>
                 </div>
                 <div class="prof-edit-mini-stat">
                     <span class="prof-edit-mini-label">Aktywne wynajmy</span>
-                    <span class="prof-edit-mini-value">3</span>
+                    <span class="prof-edit-mini-value">
+                        <span class="placeholder animate-pulse" style="width:30px;height:14px;"></span>
+                    </span>
                 </div>
             </div>
         </aside>
@@ -82,18 +91,18 @@
                 <div class="prof-form-row">
                     <div class="prof-form-group">
                         <label class="prof-form-label" for="imie">Imię</label>
-                        <input type="text" id="imie" name="imie" class="prof-form-input" value="Jan" required>
+                        <input type="text" id="imie" name="imie" class="prof-form-input" placeholder="Wpisz imię..." required>
                     </div>
                     <div class="prof-form-group">
                         <label class="prof-form-label" for="nazwisko">Nazwisko</label>
-                        <input type="text" id="nazwisko" name="nazwisko" class="prof-form-input" value="Kowalski" required>
+                        <input type="text" id="nazwisko" name="nazwisko" class="prof-form-input" placeholder="Wpisz nazwisko..." required>
                     </div>
                 </div>
 
                 <div class="prof-form-row single">
                     <div class="prof-form-group">
                         <label class="prof-form-label" for="email">Adres e-mail</label>
-                        <input type="email" id="email" name="email" class="prof-form-input" value="jan.kowalski@example.pl" required>
+                        <input type="email" id="email" name="email" class="prof-form-input" placeholder="np. jan.kowalski@example.pl" required>
                     </div>
                 </div>
             </section>
@@ -172,10 +181,16 @@
 
                 <div class="prof-edit-payment-grid">
                     <div class="prof-payment-card">
-                        <div class="prof-payment-logo visa">VISA</div>
+                        <div class="prof-payment-logo visa">
+                            <span class="placeholder animate-pulse" style="width:38px;height:14px;background:#ffffff55;"></span>
+                        </div>
                         <div class="prof-payment-info">
-                            <div class="prof-payment-number">•••• 4242</div>
-                            <div class="prof-payment-expiry">Ważność 12/26</div>
+                            <div class="prof-payment-number">
+                                <span class="placeholder animate-pulse" style="width:120px;height:16px;"></span>
+                            </div>
+                            <div class="prof-payment-expiry">
+                                <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
+                            </div>
                         </div>
                         <button type="button" class="prof-payment-delete" title="Usuń kartę">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -186,10 +201,16 @@
                     </div>
 
                     <div class="prof-payment-card">
-                        <div class="prof-payment-logo mc">MC</div>
+                        <div class="prof-payment-logo mc">
+                            <span class="placeholder animate-pulse" style="width:28px;height:14px;background:#ffffff55;"></span>
+                        </div>
                         <div class="prof-payment-info">
-                            <div class="prof-payment-number">•••• 8890</div>
-                            <div class="prof-payment-expiry">Ważność 05/25</div>
+                            <div class="prof-payment-number">
+                                <span class="placeholder animate-pulse" style="width:120px;height:16px;"></span>
+                            </div>
+                            <div class="prof-payment-expiry">
+                                <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
+                            </div>
                         </div>
                         <button type="button" class="prof-payment-delete" title="Usuń kartę">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

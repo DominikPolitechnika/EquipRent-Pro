@@ -41,11 +41,7 @@ Route::put('/profil', function () {
 // Trasy dostępne tylko dla zalogowanych użytkowników
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-<<<<<<< Updated upstream
-    Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog');
-=======
     Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
->>>>>>> Stashed changes
     Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
     Route::view('/demo-layout', 'pages.demo-layout');
 });

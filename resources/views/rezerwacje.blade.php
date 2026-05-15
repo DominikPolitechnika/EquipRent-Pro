@@ -6,13 +6,15 @@
     <title>Moje rezerwacje – EquipRent Pro</title>
 
     <link rel="stylesheet" href="{{ asset('style-rezerwacje.css') }}">
-    <style>
+        {{--  placeholdery css --}}
+    <style> 
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
         .placeholder { background: #e2e8f0; display: inline-block; border-radius: 3px; }
         .placeholder-block { background: #e2e8f0; display: block; border-radius: 3px; }
         .animate-pulse { animation: pulse 1.6s ease-in-out infinite; }
         .rez-card-img.placeholder { display: block; }
     </style>
+    <link rel="icon" type="image/png" href="{{ asset('E.png') }}">
 </head>
 <body class="rez-page">
 @include('partials.header')
@@ -221,7 +223,7 @@
     <button class="rez-btn-rebook">Wypożycz ponownie</button>
 </div>
 
-{{-- Panel dodawania opinii (Deska SUP) --}}
+{{-- Panel dodawania opinii --}}
 <div class="rez-review-panel" id="review-1">
     <div class="rez-review-panel-title">Podziel się swoją opinią</div>
     <div class="rez-star-input" id="stars-1">
@@ -261,7 +263,7 @@
             <button class="rez-btn-rebook">Wypożycz ponownie</button>
         </div>
 
-        {{-- Panel dodawania opinii (namiot) --}}
+        {{-- Panel dodawania opinii (poprawic??) --}}
         <div class="rez-review-panel" id="review-2">
             <div class="rez-review-panel-title">Podziel się swoją opinią</div>
             <div class="rez-star-input" id="stars-2">
@@ -293,7 +295,7 @@
     </div>
 </div>
 
-<script>
+<script> // po kliknięciu anulowania rezerwacji
     /* ---- Modal ---- */
     function openModal(name) {
         document.getElementById('modal-text').innerHTML =
@@ -306,7 +308,7 @@
     document.getElementById('cancel-modal').addEventListener('click', function(e) {
         if (e.target === this) closeModal();
     });
-
+//=============================================
     /* ---- Panel opinii ---- */
     function toggleReview(id) {
         document.getElementById(id).classList.toggle('open');
@@ -316,7 +318,7 @@
     document.querySelectorAll('.rez-star-input').forEach(container => {
         const stars = container.querySelectorAll('span');
         let selected = 0;
-
+// ilosc gwiazdek gdszie zapisywana w bazie?
         stars.forEach(star => {
             star.addEventListener('mouseover', () => {
                 stars.forEach(s => s.classList.remove('active'));
@@ -332,6 +334,9 @@
         });
     });
 </script>
+
+
+
 @include('partials.footer')
 </body>
 </html>

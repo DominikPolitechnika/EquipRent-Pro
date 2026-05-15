@@ -8,6 +8,7 @@
    <link rel="stylesheet" href="{{ asset('style-head.css') }}">
     <link rel="stylesheet" href="{{ asset('style-foot.css') }}">
     <link rel="stylesheet" href="{{ asset('style-prod.css') }}">
+    <link rel="icon" type="image/png" href="{{ asset('E.png') }}">
     <style>
        
     </style>
@@ -15,10 +16,10 @@
 </head>
 <body>
 
-{{-- ========================= HEADER ========================= --}}
+
 @include('partials.header')
 
-{{-- ========================= MAIN ========================= --}}
+
 <main>
 <div class="product-page">
 
@@ -28,7 +29,7 @@
         <span class="product-breadcrumb-active">{{ $product->name }}</span>
     </div>
 
-    {{-- GALLERY FULL WIDTH --}}
+    {{-- galeria jest java vvvv --}}
     <div class="product-gallery-fullwidth">
         <div class="product-gallery">
             <div class="product-gallery-main">
@@ -228,7 +229,7 @@
 </div>
 </main>
 
-{{-- ========================= MODAL GALERII ========================= --}}
+{{-- galeria --}}
 <div class="gallery-backdrop" id="gallery-backdrop">
     <div class="gallery-modal">
         <div class="gallery-header">
@@ -254,10 +255,11 @@
     </div>
 </div>
 
-{{-- ========================= FOOTER ========================= --}}
+
+
 @include('partials.footer')
 
-<script>
+<script> //kalendarz z przeniesieniem do "stripe" i nizej są giwazdki 
 (function() {
    const PRICE_PER_DAY = {{ $product->oneDayPrice }};
     const SERVICE_FEE   = 120;
@@ -411,7 +413,7 @@
         window.location.href = STRIPE_URL;
     });
 
-    // Star rating input
+  
     const starInput = document.getElementById('star-input');
     if (starInput) {
         let selected = 0;
@@ -435,7 +437,7 @@
 })();
 </script>
 
-<script>
+<script> //galeria po otwoerzeniu 
 (function() {
     const backdrop  = document.getElementById('gallery-backdrop');
     const openBtn   = document.getElementById('gallery-open-btn');
@@ -456,8 +458,8 @@
         zoom.classList.remove('open');
         document.body.style.overflow = '';
     }
-    function openZoom(idx) {
-        // tu w przyszłości można podmienić tło na prawdziwe zdjęcie
+    function openZoom(idx) { //w tej drugiej
+    
         zoomImg.setAttribute('data-current', idx);
         zoom.classList.add('open');
     }
@@ -469,17 +471,17 @@
     closeBtn.addEventListener('click', closeGallery);
     zoomBack.addEventListener('click', closeZoom);
 
-    // klik w tło (poza modalem) zamyka galerię
+
     backdrop.addEventListener('click', (e) => {
         if (e.target === backdrop) closeGallery();
-    });
+    }); //zamykanie po nacisnieciu obok
 
-    // klik w miniaturę otwiera powiększenie
+    // powiekszenie po klik
     thumbs.forEach(t => {
         t.addEventListener('click', () => openZoom(t.dataset.idx));
     });
 
-    // Escape: jeśli otwarty zoom — zamyka tylko zoom, inaczej całą galerię
+    
     document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
         if (zoom.classList.contains('open')) closeZoom();

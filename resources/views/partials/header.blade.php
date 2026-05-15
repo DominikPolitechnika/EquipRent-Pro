@@ -1,127 +1,12 @@
 <link rel="stylesheet" href="{{ asset('style-head.css') }}">
-
-<style>
-    /* ===== Popover powiadomień ===== */
-    @keyframes notif-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
-
-    .notif-wrap { position: relative; }
-
-    .notif-btn {
-        background: transparent;
-        border: 0;
-        padding: 0;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: inherit;
-        position: relative;
-    }
-    .notif-dot {
-        position: absolute;
-        top: 2px;
-        right: 2px;
-        width: 8px;
-        height: 8px;
-        background: #e23b3b;
-        border-radius: 50%;
-        border: 2px solid #fff;
-    }
-
-    .notif-popover {
-        display: none;
-        position: absolute;
-        top: calc(100% + 12px);
-        right: -8px;
-        width: 340px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
-        z-index: 1000;
-        overflow: hidden;
-    }
-    .notif-popover.open { display: block; }
-    .notif-popover::before {
-        content: '';
-        position: absolute;
-        top: -7px;
-        right: 18px;
-        width: 14px;
-        height: 14px;
-        background: #fff;
-        transform: rotate(45deg);
-        box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.04);
-    }
-
-    .notif-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 16px;
-        border-bottom: 1px solid #eef0f3;
-    }
-    .notif-header-title {
-        font-weight: 600;
-        font-size: 14px;
-        color: #1f2937;
-    }
-    .notif-header-badge {
-        background: #1a6fa8;
-        color: #fff;
-        font-size: 11px;
-        padding: 2px 8px;
-        border-radius: 10px;
-    }
-
-    .notif-list { max-height: 360px; overflow-y: auto; }
-
-    .notif-item {
-        padding: 12px 16px;
-        border-bottom: 1px solid #f3f4f6;
-        display: flex;
-        gap: 10px;
-        align-items: flex-start;
-    }
-    .notif-item:last-child { border-bottom: 0; }
-    .notif-item-icon {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #1a6fa8;
-        margin-top: 6px;
-        flex-shrink: 0;
-    }
-    .notif-item.urgent .notif-item-icon { background: #e23b3b; }
-    .notif-item-body { flex: 1; min-width: 0; }
-
-    .notif-skel {
-        background: #e2e8f0;
-        display: block;
-        border-radius: 3px;
-        animation: notif-pulse 1.6s ease-in-out infinite;
-    }
-
-    .notif-footer {
-        padding: 10px 16px;
-        text-align: center;
-        border-top: 1px solid #eef0f3;
-    }
-    .notif-footer a {
-        color: #1a6fa8;
-        font-size: 13px;
-        text-decoration: none;
-        font-weight: 500;
-    }
-    .notif-footer a:hover { text-decoration: underline; }
-</style>
-
+<link rel="icon" type="image/png" href="{{ asset('E.png') }}">
+    {{-- ===== dodawane za pomocą include ===== --}}
 {{-- Cały header zrobiony --}}
 <header class="header">
     <div class="header-container">
-
         <div class="logo">
             EquipRent Pro
-        </div>
+        </div> 
  {{-- nawigajca header --}}
         <nav class="nav">
             <a href="{{ route('catalog') }}"
@@ -136,8 +21,9 @@
 
      <div class="icons">
 
-        {{-- Dzwonek z popoverem powiadomień --}}
+        {{-- Dzwonek z powiadomieniami --}}
         <div class="notif-wrap">
+             {{-- tutaj ikonka --}}
             <button type="button" class="icon notif-btn" id="notif-btn"
                     aria-label="Powiadomienia" aria-haspopup="true" aria-expanded="false">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -203,6 +89,7 @@
        class="icon {{ request()->routeIs('profil*') ? 'active' : '' }}"
        title="Mój profil"
        aria-label="Przejdź do profilu użytkownika">
+        {{-- tutaj ikonka --}}
        <svg style="color: black" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path opacity="0.4" d="M12.1207 12.78C12.0507 12.77 11.9607 12.77 11.8807 12.78C10.1207 12.72 8.7207 11.28 8.7207 9.50998C8.7207 7.69998 10.1807 6.22998 12.0007 6.22998C13.8107 6.22998 15.2807 7.69998 15.2807 9.50998C15.2707 11.28 13.8807 12.72 12.1207 12.78Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path opacity="0.34" d="M18.7398 19.3801C16.9598 21.0101 14.5998 22.0001 11.9998 22.0001C9.39977 22.0001 7.03977 21.0101 5.25977 19.3801C5.35977 18.4401 5.95977 17.5201 7.02977 16.8001C9.76977 14.9801 14.2498 14.9801 16.9698 16.8001C18.0398 17.5201 18.6398 18.4401 18.7398 19.3801Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -213,11 +100,13 @@
 
     </div>
 </header>
-
+ 
+ {{-- skrypt do powiadomień --}}
 <script>
-(function() {
+    /* invoked */
+(function() { 
     const btn      = document.getElementById('notif-btn');
-    const popover  = document.getElementById('notif-popover');
+    const popover  = document.getElementById('notif-popover'); //szukanie zmiennych
     if (!btn || !popover) return;
 
     function open() {
@@ -230,11 +119,11 @@
     }
     function toggle() {
         popover.classList.contains('open') ? close() : open();
-    }
+    } //otwieranie zamykanie 
 
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        toggle();
+        toggle(); //wywłoanie toggle
     });
 
     // klik poza popoverem - zamknij
@@ -244,9 +133,8 @@
         close();
     });
 
-    // Escape - zamknij
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && popover.classList.contains('open')) close();
-    });
+
 })();
 </script>
+
+    {{-- ===== dodawane za pomocą include ===== --}}

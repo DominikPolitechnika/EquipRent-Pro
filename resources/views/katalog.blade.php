@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Katalog sprzętu — EquipRent Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
-   
+   <link rel="icon" type="image/png" href="{{ asset('E.png') }}">
     <link rel="stylesheet" href="{{ asset('style-katalog.css') }}">
 </head>
 <body>

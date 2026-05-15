@@ -12,6 +12,7 @@
         .placeholder-circle { background: #e2e8f0; border-radius: 50%; display: block; }
         .animate-pulse { animation: pulse 1.6s ease-in-out infinite; }
     </style>
+    <link rel="icon" type="image/png" href="{{ asset('E.png') }}">
 </head>
 <body class="prof-page">
 @include('partials.header')

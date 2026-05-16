@@ -48,7 +48,7 @@
                 <select id="role" name="role" class="role-select" required>
                     <option value="" disabled selected>Wybierz rolę</option>
                     <option value="user">Zawodnik</option>
-                    <option value="admin">Trener</option>
+                    <option value="admin">Administrator</option>
                 </select>
             </div>
         

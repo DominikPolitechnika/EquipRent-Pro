@@ -4,33 +4,32 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $product['name'] }} — EquipRent Pro</title>
+    <title>{{ $product->title }} — EquipRent Pro</title>
    <link rel="stylesheet" href="{{ asset('style-head.css') }}">
     <link rel="stylesheet" href="{{ asset('style-foot.css') }}">
     <link rel="stylesheet" href="{{ asset('style-prod.css') }}">
+    <link rel="icon" type="image/png" href="{{ asset('E.png') }}">
     <style>
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
-        .placeholder { background: #e2e8f0; display: block; }
-        .animate-pulse { animation: pulse 1.6s ease-in-out infinite; }
+       
     </style>
   
 </head>
 <body>
 
-{{-- ========================= HEADER ========================= --}}
+
 @include('partials.header')
 
-{{-- ========================= MAIN ========================= --}}
+
 <main>
 <div class="product-page">
 
     <div class="product-breadcrumb">
-        <a href="{{ route('katalog') }}">Katalog</a>
+        <a href="{{ route('catalog') }}">Katalog</a>
         <span>›</span>
-        <span class="product-breadcrumb-active">{{ $product['name'] }}</span>
+        <span class="product-breadcrumb-active">{{ $product->name }}</span>
     </div>
 
-    {{-- GALLERY FULL WIDTH --}}
+    {{-- galeria jest java vvvv --}}
     <div class="product-gallery-fullwidth">
         <div class="product-gallery">
             <div class="product-gallery-main">
@@ -40,7 +39,7 @@
                 <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
                 <div class="product-gallery-side-last">
                     <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
-                    <button class="product-see-all-btn">⊞ ZOBACZ WSZYSTKIE ZDJĘCIA</button>
+                    <button type="button" class="product-see-all-btn" id="gallery-open-btn">⊞ ZOBACZ WSZYSTKIE ZDJĘCIA</button>
                 </div>
             </div>
         </div>
@@ -50,9 +49,9 @@
 
         {{-- LEFT --}}
         <div class="product-left">
-
+            {{-- tymczasowo --}}
             <div class="product-badges">
-                @if($product['status'] === 'dostepny')
+                @if('dostepny' === 'dostepny')
                     <span class="product-status-badge product-status-available">
                         <span class="product-status-dot"></span>
                         Dostępny
@@ -71,11 +70,11 @@
             </div>
 
             <h1 class="product-title">
-                <span class="placeholder animate-pulse" style="width:70%;height:38px;border-radius:4px;display:block;"></span>
+                {{ $product->title }}
             </h1>
             <p class="product-description">
-                <span class="placeholder animate-pulse" style="width:90%;height:14px;border-radius:3px;display:block;margin-bottom:6px;"></span>
-                <span class="placeholder animate-pulse" style="width:60%;height:14px;border-radius:3px;display:block;"></span>
+                <span style="width:90%;height:14px;border-radius:3px;display:block;margin-bottom:6px;">{{$product->serialNumber}}</span>
+                <span style="width:60%;height:14px;border-radius:3px;display:block;">{{$product->body}}</span>
             </p>
 
   
@@ -230,12 +229,39 @@
 </div>
 </main>
 
-{{-- ========================= FOOTER ========================= --}}
+{{-- galeria --}}
+<div class="gallery-backdrop" id="gallery-backdrop">
+    <div class="gallery-modal">
+        <div class="gallery-header">
+            <span class="gallery-title">Galeria zdjęć</span>
+            <button type="button" class="gallery-close" id="gallery-close-btn" aria-label="Zamknij">✕</button>
+        </div>
+        <div class="gallery-body">
+            <div class="gallery-grid">
+                <div class="gallery-thumb animate-pulse" data-idx="1"></div>
+                <div class="gallery-thumb animate-pulse" data-idx="2"></div>
+                <div class="gallery-thumb animate-pulse" data-idx="3"></div>
+                <div class="gallery-thumb animate-pulse" data-idx="4"></div>
+                <div class="gallery-thumb animate-pulse" data-idx="5"></div>
+                <div class="gallery-thumb animate-pulse" data-idx="6"></div>
+            </div>
+        </div>
+
+        {{-- Powiększony widok pojedynczego zdjęcia --}}
+        <div class="gallery-zoom" id="gallery-zoom">
+            <button type="button" class="gallery-zoom-back" id="gallery-zoom-back">← Powrót do galerii</button>
+            <div class="gallery-zoom-img animate-pulse" id="gallery-zoom-img"></div>
+        </div>
+    </div>
+</div>
+
+
+
 @include('partials.footer')
 
-<script>
+<script> //kalendarz z przeniesieniem do "stripe" i nizej są giwazdki 
 (function() {
-    const PRICE_PER_DAY = {{ $product['price'] }};
+   const PRICE_PER_DAY = {{ $product->oneDayPrice }};
     const SERVICE_FEE   = 120;
     const LOGISTICS_FEE = 250;
     const STRIPE_URL    = 'https://stripe.com';
@@ -387,7 +413,7 @@
         window.location.href = STRIPE_URL;
     });
 
-    // Star rating input
+  
     const starInput = document.getElementById('star-input');
     if (starInput) {
         let selected = 0;
@@ -408,6 +434,59 @@
 
     renderCalendar();
     updatePriceBreakdown();
+})();
+</script>
+
+<script> //galeria po otwoerzeniu 
+(function() {
+    const backdrop  = document.getElementById('gallery-backdrop');
+    const openBtn   = document.getElementById('gallery-open-btn');
+    const closeBtn  = document.getElementById('gallery-close-btn');
+    const zoom      = document.getElementById('gallery-zoom');
+    const zoomImg   = document.getElementById('gallery-zoom-img');
+    const zoomBack  = document.getElementById('gallery-zoom-back');
+    const thumbs    = document.querySelectorAll('.gallery-thumb');
+
+    if (!backdrop || !openBtn) return;
+
+    function openGallery() {
+        backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeGallery() {
+        backdrop.classList.remove('open');
+        zoom.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    function openZoom(idx) { //w tej drugiej
+    
+        zoomImg.setAttribute('data-current', idx);
+        zoom.classList.add('open');
+    }
+    function closeZoom() {
+        zoom.classList.remove('open');
+    }
+
+    openBtn.addEventListener('click', openGallery);
+    closeBtn.addEventListener('click', closeGallery);
+    zoomBack.addEventListener('click', closeZoom);
+
+
+    backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) closeGallery();
+    }); //zamykanie po nacisnieciu obok
+
+    // powiekszenie po klik
+    thumbs.forEach(t => {
+        t.addEventListener('click', () => openZoom(t.dataset.idx));
+    });
+
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (zoom.classList.contains('open')) closeZoom();
+        else if (backdrop.classList.contains('open')) closeGallery();
+    });
 })();
 </script>
 

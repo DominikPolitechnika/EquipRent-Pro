@@ -37,7 +37,7 @@ Route::put('/profil', function () {
     // TODO: implementacja zapisu danych użytkownika
     return redirect()->route('profil')->with('success', 'Profil został zaktualizowany.');
 })->middleware('auth')->name('profil.update'); 
-
+Route::get('/produkt/{id}/edytuj', [ProductController::class, 'edit'])->name('product.edit');
 // Trasy dostępne tylko dla zalogowanych użytkowników
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');

@@ -18,24 +18,38 @@
     <aside class="catalog-sidebar">
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" placeholder="Szukaj sprzętu..." class="catalog-search">
+            <input 
+            type="text" 
+            placeholder="Szukaj sprzętu..." 
+            class="catalog-search"
+            name="search">
         </div>
 
         <h3>Filtry</h3>
 
         <div class="filter-group">
             <p class="filter-title">RODZAJ SPRZĘTU</p>
-
-            <label class="filter-option"><input type="checkbox"> Sprzęt do ćwiczeń</label>
-            <label class="filter-option"><input type="checkbox"> Rowery i hulajnogi</label>
-            <label class="filter-option"><input type="checkbox"> Sporty wodne</label>
-            <label class="filter-option"><input type="checkbox"> Sporty zimowe</label>
+            @foreach($categories as $category)
+            <label class="filter-option">
+                <input 
+                    type="checkbox" 
+                    name="categories[]" 
+                    value="{{ $category->id }}">
+                {{ $category->name }}
+            </label>
+            @endforeach
         </div>
 
         <div class="filter-group price-group">
             <p class="filter-title">ZAKRES CENY (DZIEŃ)</p>
 
-            <input type="range" min="0" max="200" value="200" class="price-range">
+            <input 
+                type="range" 
+                min="0" 
+                max="200" 
+                value="200" 
+                class="price-range" 
+                name="price_range">
 
             <div class="price-values">
                 <span>0 zł</span>
@@ -51,7 +65,7 @@
                     <label class="date-label">Data od</label>
                     <div class="date-box">
                         <i class="fa-regular fa-calendar date-icon"></i>
-                        <input type="date" class="date-input">
+                        <input type="date" class="date-input" name="date_from">
                     </div>
                 </div>
 
@@ -59,7 +73,7 @@
                     <label class="date-label">Data do</label>
                     <div class="date-box">
                         <i class="fa-regular fa-calendar date-icon"></i>
-                        <input type="date" class="date-input">
+                        <input type="date" class="date-input" name="date_to">
                     </div>
                 </div>
             </div>

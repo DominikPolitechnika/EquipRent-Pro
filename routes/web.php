@@ -38,12 +38,15 @@ Route::put('/profil', function () {
     return redirect()->route('profil')->with('success', 'Profil został zaktualizowany.');
 })->middleware('auth')->name('profil.update'); 
 Route::get('/produkt/{id}/edytuj', [ProductController::class, 'edit'])->name('product.edit');
+Route::view('/lista-uzytkownikow', 'list-users')->name('users.list');
 // Trasy dostępne tylko dla zalogowanych użytkowników
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
     Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
     Route::view('/demo-layout', 'pages.demo-layout');
+    Route::view('/lista-uzytkownikow', 'list_users')->name('users.list');
+Route::view('/uzytkownik-szczegoly', 'user_details')->name('users.show');
 });
 
 // API - dostępne tylko dla zalogowanych

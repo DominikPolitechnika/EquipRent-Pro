@@ -1,0 +1,372 @@
+/* ================================================
+   SZCZEGÓŁY UŻYTKOWNIKA / KLIENTA (panel admina)
+   Spójny ze style-admin.css / style-list-users.css
+================================================ */
+.ud-content {
+    padding: 32px 40px 60px;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ---- KARTA PROFILU ---- */
+.ud-profile-card {
+    background: #fff;
+    border: 1px solid #e8ebee;
+    border-radius: 12px;
+    padding: 24px 28px;
+}
+
+.ud-profile-top {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 28px;
+    align-items: stretch;
+}
+
+.ud-profile-main {
+    display: flex;
+    gap: 20px;
+}
+
+.ud-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    background: #eef5fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    color: #1a6fa8;
+    flex-shrink: 0;
+}
+
+.ud-profile-info { flex: 1; min-width: 0; }
+
+.ud-profile-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #2a3439;
+    margin: 0 0 8px;
+}
+
+.ud-profile-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 5px;
+}
+.ud-profile-row svg { width: 14px; height: 14px; color: #aaa; flex-shrink: 0; }
+
+.ud-profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+}
+.ud-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    justify-content: center;
+}
+.ud-btn svg { width: 14px; height: 14px; }
+.ud-btn-edit {
+    background: #fff;
+    border: 1px solid #e8ebee;
+    color: #555;
+}
+.ud-btn-edit:hover { border-color: #aaa; color: #2a3439; }
+.ud-btn-block {
+    background: #dc2626;
+    color: #fff;
+}
+.ud-btn-block:hover { background: #b91c1c; }
+
+/* Niebieska karta finansowa */
+.ud-finance {
+    background: #006398;
+    border-radius: 12px;
+    padding: 22px 24px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+.ud-finance-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.85);
+    margin-bottom: 18px;
+    line-height: 1.3;
+}
+.ud-finance-label {
+    font-size: 11px;
+    color: rgba(255,255,255,.7);
+    margin-bottom: 4px;
+}
+.ud-finance-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+.ud-finance-value:last-child { margin-bottom: 0; }
+.ud-finance-icon {
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    width: 90px;
+    height: 90px;
+    opacity: .14;
+}
+
+/* Metryki pod profilem */
+.ud-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f4f7;
+}
+.ud-metric-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 6px;
+}
+.ud-metric-value {
+    font-size: 13px;
+    color: #2a3439;
+    font-weight: 600;
+}
+.ud-metric-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: #dcfce7;
+    color: #16a34a;
+}
+.ud-metric-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #1a6fa8;
+    font-weight: 600;
+    font-size: 13px;
+}
+.ud-metric-verified svg { width: 14px; height: 14px; }
+
+/* ---- SEKCJA ---- */
+.ud-section {
+    background: #fff;
+    border: 1px solid #e8ebee;
+    border-radius: 12px;
+    padding: 24px 28px;
+}
+.ud-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+.ud-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #2a3439;
+}
+.ud-section-actions {
+    display: flex;
+    gap: 10px;
+}
+.ud-icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: #aaa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s, color .2s;
+}
+.ud-icon-btn:hover { background: #f0f4f7; color: #1a6fa8; }
+.ud-icon-btn svg { width: 17px; height: 17px; }
+
+/* Tabela historii */
+.ud-table { width: 100%; border-collapse: collapse; }
+.ud-table thead th {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #aaa;
+    text-align: left;
+    padding: 0 12px 12px;
+    border-bottom: 1px solid #f0f4f7;
+}
+.ud-table thead th.center { text-align: center; }
+.ud-table thead th.right { text-align: right; }
+.ud-table tbody td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #f0f4f7;
+    vertical-align: middle;
+    font-size: 13px;
+    color: #2a3439;
+}
+.ud-table tbody tr:last-child td { border-bottom: none; }
+.ud-table td.center { text-align: center; }
+.ud-table td.right { text-align: right; font-weight: 700; white-space: nowrap; }
+
+.ud-product {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.ud-product-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    background: #e2e8f0;
+    flex-shrink: 0;
+}
+.ud-product-name { font-weight: 600; }
+
+.ud-badge {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+.ud-badge.active { background: #dbeafe; color: #1a6fa8; }
+.ud-badge.returned { background: #dcfce7; color: #16a34a; }
+.ud-badge.late { background: #fee2e2; color: #dc2626; }
+
+/* ---- INCYDENTY ---- */
+.ud-section-title-warn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.ud-section-title-warn svg { width: 18px; height: 18px; color: #dc2626; }
+
+.ud-incident {
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+}
+.ud-incident-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.ud-incident-icon {
+    color: #dc2626;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.ud-incident-icon svg { width: 16px; height: 16px; }
+.ud-incident-body { flex: 1; min-width: 0; }
+.ud-incident-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2a3439;
+    margin-bottom: 4px;
+}
+.ud-incident-date {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: #b91c1c;
+    flex-shrink: 0;
+}
+.ud-incident-text {
+    font-size: 12px;
+    color: #777;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+.ud-incident-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.ud-incident-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: #dc2626;
+    color: #fff;
+}
+.ud-incident-link {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1a6fa8;
+    text-decoration: none;
+}
+.ud-incident-link:hover { text-decoration: underline; }
+
+/* Pusty stan */
+.ud-empty {
+    text-align: center;
+    padding: 30px 20px;
+    color: #cbd5e1;
+}
+.ud-empty svg { width: 38px; height: 38px; margin-bottom: 10px; }
+.ud-empty-text { font-size: 13px; color: #aaa; }
+
+/* ---- SKELETON ---- */
+@keyframes ud-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+.ud-skel {
+    background: #e2e8f0;
+    display: inline-block;
+    border-radius: 3px;
+    animation: ud-pulse 1.6s ease-in-out infinite;
+}
+.ud-skel-block { display: block; }
+.ud-skel-light { background: rgba(255,255,255,.35); }
+
+/* ---- RESPONSYWNOŚĆ ---- */
+@media (max-width: 960px) {
+    .ud-content { padding: 24px 20px 40px; }
+    .ud-profile-top { grid-template-columns: 1fr; }
+    .ud-metrics { grid-template-columns: 1fr 1fr; }
+    .ud-section { overflow-x: auto; }
+}

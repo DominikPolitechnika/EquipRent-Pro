@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Zarządzanie produktem – EquipRent Pro</title>
+    <link rel="stylesheet" href="{{ asset('style-admin.css') }}">
     <link rel="stylesheet" href="{{ asset('style-product-edit.css') }}">
     <style>
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
@@ -14,7 +15,12 @@
     </style>
 </head>
 <body class="pe-page">
-@include('partials.header')
+<div class="adm-shell">
+    @include('partials.admin-sidebar')
+
+    <div class="adm-body">
+        @include('partials.admin-topbar')
+        <div class="adm-content">
 
 {{-- ===== NAGŁÓWEK STRONY ===== --}}
 <div class="pe-page-header">
@@ -292,7 +298,9 @@
     </aside>
 </div>
 
-@include('partials.footer')
+        </div>{{-- /adm-content --}}
+    </div>{{-- /adm-body --}}
+</div>{{-- /adm-shell --}}
 
 <script>
 (function() {

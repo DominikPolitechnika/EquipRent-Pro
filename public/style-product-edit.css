@@ -592,3 +592,19 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ================================================
+   KOREKTY GDY OSADZONE W PANELU ADMINA (.adm-shell)
+================================================ */
+.adm-content .pe-page-header,
+.adm-content .pe-wrapper {
+    max-width: 100%;
+    margin: 0;
+}
+.adm-content .pe-page-header { padding: 28px 40px 8px; }
+.adm-content .pe-wrapper { padding: 24px 40px 60px; }
+
+@media (max-width: 960px) {
+    .adm-content .pe-page-header { padding: 20px; }
+    .adm-content .pe-wrapper { padding: 20px; }
+}

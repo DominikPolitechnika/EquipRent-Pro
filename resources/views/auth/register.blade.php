@@ -90,8 +90,7 @@
 <script>
     const form = document.getElementById('register-form');
     const message = document.getElementById('message');
-    const csrf = document.querySelector('meta[name="csrf-token"]').content;
-
+    const csrf = document.querySelector('meta[name="csrf-token"]').conte
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
         message.textContent = '';

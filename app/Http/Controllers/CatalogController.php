@@ -8,18 +8,46 @@ use App\Models\Category;
 
 class CatalogController extends Controller
 {
-  public function index()
-{
-    $categories = Category::query()
-    ->has('products')
-    ->withCount('products')
-    ->orderBy('name')
-    ->get();
+    public function index(Request $request)
+    {
+        $categories = Category::query()
+            ->has('products')
+            ->withCount('products')
+            ->orderBy('name')
+            ->get();
 
-    $query = Product::with('category');
+        $query = Product::with('category');
 
-    $products = $query->paginate(12);
+        switch ($request->sort) {
 
-    return view('pages.catalog', compact('products','categories'));  // ← compact('products','categories') jest kluczowe
-}
+            case 'price_asc':
+                $query->orderBy('oneDayPrice', 'asc');
+                break;
+
+            case 'price_desc':
+                $query->orderBy('oneDayPrice', 'desc');
+                break;
+
+            case 'name_asc':
+                $query->orderBy('title', 'asc');
+                break;
+
+            case 'name_desc':
+                $query->orderBy('title', 'desc');
+                break;
+
+            default:
+                $query->latest();
+                break;
+        }
+
+        $products = $query
+            ->paginate(12)
+            ->withQueryString();
+
+        return view(
+            'pages.catalog',
+            compact('products', 'categories')
+        );
+    }
 }

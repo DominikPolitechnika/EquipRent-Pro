@@ -7,6 +7,81 @@
     <title>Szczegóły klienta – EquipRent Pro</title>
     <link rel="stylesheet" href="{{ asset('style-admin.css') }}">
     <link rel="stylesheet" href="{{ asset('style-user-details.css') }}">
+    <style>
+        /* ===== Modal blokady konta ===== */
+        .ud-modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .ud-modal-backdrop.open { display: flex; }
+
+        .ud-modal {
+            background: #fff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 440px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .ud-modal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #fee2e2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            color: #dc2626;
+        }
+        .ud-modal-icon svg { width: 24px; height: 24px; }
+        .ud-modal-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #2a3439;
+            text-align: center;
+            margin: 0 0 8px;
+        }
+        .ud-modal-text {
+            font-size: 13px;
+            color: #777;
+            text-align: center;
+            margin: 0 0 24px;
+            line-height: 1.5;
+        }
+        .ud-modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .ud-modal-btn {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            padding: 11px 22px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            min-width: 120px;
+        }
+        .ud-modal-btn-cancel {
+            background: #fff;
+            border: 1px solid #e8ebee;
+            color: #555;
+        }
+        .ud-modal-btn-cancel:hover { border-color: #aaa; color: #2a3439; }
+        .ud-modal-btn-confirm { background: #dc2626; color: #fff; }
+        .ud-modal-btn-confirm:hover { background: #b91c1c; }
+    </style>
 </head>
 <body>
 <div class="adm-shell">
@@ -49,7 +124,7 @@
                                     </svg>
                                     Edytuj dane
                                 </a>
-                                <button type="button" class="ud-btn ud-btn-block">
+                                <button type="button" class="ud-btn ud-btn-block" id="ud-block-btn">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="10"/>
                                         <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
@@ -221,5 +296,56 @@
         </div>{{-- /adm-content --}}
     </div>{{-- /adm-body --}}
 </div>{{-- /adm-shell --}}
+{{-- ========================= MODAL BLOKADY KONTA ========================= --}}
+<div class="ud-modal-backdrop" id="ud-block-modal">
+    <div class="ud-modal">
+        <div class="ud-modal-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+        </div>
+        <h3 class="ud-modal-title">Zablokować konto?</h3>
+        <p class="ud-modal-text">
+            Czy na pewno chcesz zablokować to konto?<br>
+            Użytkownik straci dostęp do platformy do momentu odblokowania.
+        </p>
+        <div class="ud-modal-actions">
+            <button type="button" class="ud-modal-btn ud-modal-btn-cancel" id="ud-modal-cancel">Wróć</button>
+            <button type="button" class="ud-modal-btn ud-modal-btn-confirm" id="ud-modal-confirm">Tak, zablokuj</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const modal      = document.getElementById('ud-block-modal');
+    const trigger    = document.getElementById('ud-block-btn');
+    const btnCancel  = document.getElementById('ud-modal-cancel');
+    const btnConfirm = document.getElementById('ud-modal-confirm');
+
+    if (!modal || !trigger) return;
+
+    function open()  { modal.classList.add('open'); }
+    function close() { modal.classList.remove('open'); }
+
+    trigger.addEventListener('click', open);
+    btnCancel.addEventListener('click', close);
+    btnConfirm.addEventListener('click', () => {
+        // TODO: tutaj będzie wywołanie fetch/form na backend (blokada konta)
+        close();
+    });
+
+    // Klik w tło zamyka
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) close();
+    });
+
+    // Escape zamyka
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('open')) close();
+    });
+})();
+</script>
 </body>
 </html>

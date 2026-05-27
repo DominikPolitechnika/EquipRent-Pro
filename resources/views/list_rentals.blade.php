@@ -7,6 +7,81 @@
     <title>Rejestr Wypożyczeń – EquipRent Pro</title>
     <link rel="stylesheet" href="{{ asset('style-admin.css') }}">
     <link rel="stylesheet" href="{{ asset('style-list-rentals.css') }}">
+    <style>
+        /* ===== Modal anulowania ===== */
+        .lr-modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .lr-modal-backdrop.open { display: flex; }
+
+        .lr-modal {
+            background: #fff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 440px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .lr-modal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #fee2e2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            color: #dc2626;
+        }
+        .lr-modal-icon svg { width: 24px; height: 24px; }
+        .lr-modal-title {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #2a3439;
+            text-align: center;
+            margin: 0 0 8px;
+        }
+        .lr-modal-text {
+            font-size: 13px;
+            color: #777;
+            text-align: center;
+            margin: 0 0 24px;
+            line-height: 1.5;
+        }
+        .lr-modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .lr-modal-btn {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            padding: 11px 22px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            min-width: 120px;
+        }
+        .lr-modal-btn-cancel {
+            background: #fff;
+            border: 1px solid #e8ebee;
+            color: #555;
+        }
+        .lr-modal-btn-cancel:hover { border-color: #aaa; color: #2a3439; }
+        .lr-modal-btn-confirm { background: #dc2626; color: #fff; }
+        .lr-modal-btn-confirm:hover { background: #b91c1c; }
+    </style>
 </head>
 <body>
 <div class="adm-shell">
@@ -80,7 +155,7 @@
                         <button type="button" class="lr-icon-btn" aria-label="Edytuj">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
-                        <button type="button" class="lr-icon-btn" aria-label="Anuluj">
+                        <button type="button" class="lr-icon-btn lr-cancel-btn" aria-label="Anuluj">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                         </button>
                         <button type="button" class="lr-action-btn primary">Oznacz zwrot</button>
@@ -117,7 +192,7 @@
                         <button type="button" class="lr-icon-btn" aria-label="Edytuj">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
-                        <button type="button" class="lr-icon-btn" aria-label="Anuluj">
+                        <button type="button" class="lr-icon-btn lr-cancel-btn" aria-label="Anuluj">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                         </button>
                         <button type="button" class="lr-action-btn soft">Szczegóły</button>
@@ -154,7 +229,7 @@
                         <button type="button" class="lr-icon-btn" aria-label="Edytuj">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
-                        <button type="button" class="lr-icon-btn" aria-label="Anuluj">
+                        <button type="button" class="lr-icon-btn lr-cancel-btn" aria-label="Anuluj">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                         </button>
                         <button type="button" class="lr-action-btn soft">Wydaj sprzęt</button>
@@ -179,5 +254,62 @@
         </div>{{-- /adm-content --}}
     </div>{{-- /adm-body --}}
 </div>{{-- /adm-shell --}}
+{{-- ========================= MODAL ANULOWANIA ========================= --}}
+<div class="lr-modal-backdrop" id="lr-cancel-modal">
+    <div class="lr-modal">
+        <div class="lr-modal-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+        </div>
+        <h3 class="lr-modal-title">Anulować zamówienie?</h3>
+        <p class="lr-modal-text">
+            Czy na pewno chcesz anulować to zamówienie użytkownikowi?<br>
+            Tej operacji nie można cofnąć.
+        </p>
+        <div class="lr-modal-actions">
+            <button type="button" class="lr-modal-btn lr-modal-btn-cancel" id="lr-modal-cancel">Wróć</button>
+            <button type="button" class="lr-modal-btn lr-modal-btn-confirm" id="lr-modal-confirm">Tak, anuluj</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const modal      = document.getElementById('lr-cancel-modal');
+    const btnCancel  = document.getElementById('lr-modal-cancel');
+    const btnConfirm = document.getElementById('lr-modal-confirm');
+    const triggers   = document.querySelectorAll('.lr-cancel-btn');
+
+    if (!modal) return;
+
+    function open()  { modal.classList.add('open'); }
+    function close() { modal.classList.remove('open'); }
+
+    // Każdy przycisk X otwiera ten sam modal
+    triggers.forEach(t => t.addEventListener('click', open));
+
+    // "Wróć" - zamyka bez akcji
+    btnCancel.addEventListener('click', close);
+
+    // "Tak, anuluj" - na razie tylko zamyka (czysty podgląd)
+    btnConfirm.addEventListener('click', () => {
+        // TODO: tutaj będzie wywołanie fetch/form na backend
+        close();
+    });
+
+    // Klik w tło zamyka
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) close();
+    });
+
+    // Escape zamyka
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('open')) close();
+    });
+})();
+</script>
 </body>
 </html>

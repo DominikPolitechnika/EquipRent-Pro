@@ -7,6 +7,9 @@ use App\Http\Controllers\ProductController;
 
 // Strona główna - przekierowanie do logowania
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('catalog');
+    }
     return redirect()->route('login');
 });
 
@@ -46,6 +49,7 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/lista-uzytkownikow', 'list_users')->name('users.list');
     Route::view('/uzytkownik-szczegoly', 'user_details')->name('users.show');
     Route::view('/rejestr-wypozyczen', 'list_rentals')->name('rentals.list');
+    Route::view('/panel-glowny', 'dashboard')->name('dashboard');
 });
 
 // API - dostępne tylko dla zalogowanych

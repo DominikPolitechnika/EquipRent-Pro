@@ -6,7 +6,8 @@
     <div class="adm-logo">EquipRent Pro</div>
 
     <nav class="adm-nav">
-        <a href="#" class="adm-nav-item">
+        <a href="{{ route('dashboard') }}"
+           class="adm-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="7" height="7"/>
                 <rect x="14" y="3" width="7" height="7"/>

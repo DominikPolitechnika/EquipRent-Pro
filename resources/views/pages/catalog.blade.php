@@ -18,24 +18,38 @@
     <aside class="catalog-sidebar">
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" placeholder="Szukaj sprzętu..." class="catalog-search">
+            <input 
+            type="text" 
+            placeholder="Szukaj sprzętu..." 
+            class="catalog-search"
+            name="search">
         </div>
 
         <h3>Filtry</h3>
 
         <div class="filter-group">
             <p class="filter-title">RODZAJ SPRZĘTU</p>
-
-            <label class="filter-option"><input type="checkbox"> Sprzęt do ćwiczeń</label>
-            <label class="filter-option"><input type="checkbox"> Rowery i hulajnogi</label>
-            <label class="filter-option"><input type="checkbox"> Sporty wodne</label>
-            <label class="filter-option"><input type="checkbox"> Sporty zimowe</label>
+            @foreach($categories as $category)
+            <label class="filter-option">
+                <input 
+                    type="checkbox" 
+                    name="categories[]" 
+                    value="{{ $category->id }}">
+                {{ $category->name }}
+            </label>
+            @endforeach
         </div>
 
         <div class="filter-group price-group">
             <p class="filter-title">ZAKRES CENY (DZIEŃ)</p>
 
-            <input type="range" min="0" max="200" value="200" class="price-range">
+            <input 
+                type="range" 
+                min="0" 
+                max="200" 
+                value="200" 
+                class="price-range" 
+                name="price_range">
 
             <div class="price-values">
                 <span>0 zł</span>
@@ -51,7 +65,7 @@
                     <label class="date-label">Data od</label>
                     <div class="date-box">
                         <i class="fa-regular fa-calendar date-icon"></i>
-                        <input type="date" class="date-input">
+                        <input type="date" class="date-input" name="date_from">
                     </div>
                 </div>
 
@@ -59,7 +73,7 @@
                     <label class="date-label">Data do</label>
                     <div class="date-box">
                         <i class="fa-regular fa-calendar date-icon"></i>
-                        <input type="date" class="date-input">
+                        <input type="date" class="date-input" name="date_to">
                     </div>
                 </div>
             </div>
@@ -108,23 +122,36 @@
             </div>
 
             <div class="catalog-tools">
-                <button class="sort-button">
-                    <i class="fa-solid fa-arrow-down-wide-short"></i>
-                    Sortuj według
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
+                <form method="GET">
+                    <select name="sort" class="sort-select" onchange="this.form.submit()">
 
-                <button class="view-button active">
+                        <option value="">Sortuj według</option>
+
+                        <option value="price_asc"
+                        {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Cena rosnąco</option>
+                    
+                        <option value="price_desc"
+                        {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Cena malejąco</option>
+
+                        <option value="name_asc"
+                        {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nazwa A-Z</option>
+
+                        <option value="name_desc"
+                        {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Nazwa Z-A</option>
+                    </select>
+                </form>
+
+                <button class="view-button active" id="gridViewBtn">
                     <i class="fa-solid fa-grip"></i>
                 </button>
 
-                <button class="view-button">
+                <button class="view-button" id="listViewBtn">
                     <i class="fa-solid fa-list"></i>
                 </button>
             </div>
         </div>
 
-        <div class="products-grid">
+        <div class="products-grid" id="productsGrid">
             @forelse ($products ?? [] as $product)
                 <div class="product-cards">
 
@@ -187,21 +214,33 @@
 @include('partials.footer')
 
 <script>
-    document.querySelectorAll('.date-input').forEach((input) => {
-        input.addEventListener('click', () => {
-            if (input.showPicker) {
-                input.showPicker();
-            }
-        });
+    const gridButton = document.getElementById('gridViewBtn');
+    const listButton = document.getElementById('listViewBtn');
+    const productsGrid = document.getElementById('productsGrid');
+
+    function setView(view) {
+        if (view === 'list') {
+            productsGrid.classList.add('list-view');
+            listButton.classList.add('active');
+            gridButton.classList.remove('active');
+        } else {
+            productsGrid.classList.remove('list-view');
+            gridButton.classList.add('active');
+            listButton.classList.remove('active');
+        }
+
+        localStorage.setItem('catalogView', view);
+    }
+
+    const savedView = localStorage.getItem('catalogView') || 'grid';
+    setView(savedView);
+
+    gridButton.addEventListener('click', () => {
+        setView('grid');
     });
 
-    document.querySelector('.reset-btn').addEventListener('click', () => {
-        document.querySelectorAll('input').forEach(input => {
-            if (input.type === 'checkbox') input.checked = false;
-            if (input.type === 'range') input.value = 200;
-            if (input.type === 'date') input.value = '';
-            if (input.type === 'text') input.value = '';
-        });
+    listButton.addEventListener('click', () => {
+        setView('list');
     });
 </script>
 

@@ -11,9 +11,8 @@ class Product extends Model
     protected $fillable = [ //pola ktore będą wypełniane
         'title',
         'body',
-        'categoryId',
         'serialNumber',
-        'isAvaible',
+        'isAvailble',
         'oneDayPrice',
         'totalIncome',
         'isDeleted',

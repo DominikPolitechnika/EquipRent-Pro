@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
 /* ================================================
    PROFIL UŻYTKOWNIKA + EDYCJA PROFILU
    Spójny z style-rezerwacje.css, z zaokrągleniami
@@ -5,10 +7,10 @@
 .prof-page {
     margin: 0;
     padding: 0;
-    font-family: 'Barlow', sans-serif;
-    background: #f7f9fb;
+    font-family: 'Poppins', sans-serif;
+    background: #f7f7f8;
     min-height: 100vh;
-    color: #2a3439;
+    color: #111827;
 }
 
 /* ---- WRAPPER ---- */
@@ -35,18 +37,18 @@
 }
 
 .prof-page-header-text h1 {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 36px;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: .02em;
-    color: #2a3439;
+    color: #111827;
     margin: 0 0 6px;
 }
 
 .prof-page-header-text p {
     font-size: 13px;
-    color: #777;
+    color: #6b7280;
     margin: 0;
 }
 
@@ -58,13 +60,13 @@
 
 /* ---- PRZYCISKI GŁÓWNE ---- */
 .prof-btn-primary {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
     padding: 11px 22px;
-    background: #006398;
+    background: #075071;
     border: none;
     color: #fff;
     cursor: pointer;
@@ -75,18 +77,18 @@
     align-items: center;
     gap: 8px;
 }
-.prof-btn-primary:hover { background: #1a6fa8; }
+.prof-btn-primary:hover { background: #075071; }
 
 .prof-btn-secondary {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
     padding: 11px 22px;
     background: #fff;
-    border: 1px solid #e8ebee;
-    color: #555;
+    border: 1px solid #e5e7eb;
+    color: #4b5563;
     cursor: pointer;
     border-radius: 8px;
     transition: border-color .2s, color .2s;
@@ -95,7 +97,7 @@
     align-items: center;
     gap: 8px;
 }
-.prof-btn-secondary:hover { border-color: #aaa; color: #2a3439; }
+.prof-btn-secondary:hover { border-color: #9aa5ad; color: #111827; }
 
 /* ---- LEWA KOLUMNA ---- */
 .prof-sidebar {
@@ -109,7 +111,7 @@
 /* Karta użytkownika (biała) */
 .prof-card-user {
     background: #fff;
-    border: 1px solid #e8ebee;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 28px 24px;
     text-align: center;
@@ -121,7 +123,7 @@
     margin: 0 auto 16px;
     border-radius: 50%;
     overflow: hidden;
-    border: 3px solid #f0f4f7;
+    border: 3px solid #eef3f7;
     position: relative;
 }
 
@@ -133,22 +135,22 @@
 }
 
 .prof-user-name {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 20px;
     font-weight: 700;
-    color: #2a3439;
+    color: #111827;
     margin: 0 0 4px;
 }
 
 .prof-user-role {
     font-size: 12px;
-    color: #777;
+    color: #6b7280;
     margin: 0 0 20px;
 }
 
 .prof-user-divider {
     height: 1px;
-    background: #e8ebee;
+    background: #e5e7eb;
     margin: 16px 0;
 }
 
@@ -168,7 +170,7 @@
 .prof-user-info-icon {
     width: 16px;
     height: 16px;
-    color: #1a6fa8;
+    color: #075071;
     flex-shrink: 0;
     margin-top: 2px;
 }
@@ -183,26 +185,26 @@
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #aaa;
+    color: #9aa5ad;
     margin-bottom: 2px;
 }
 
 .prof-user-info-value {
     font-size: 13px;
-    color: #2a3439;
+    color: #111827;
     word-break: break-word;
 }
 
 /* Karta podsumowania (niebieska) */
 .prof-card-summary {
-    background: #006398;
+    background: #075071;
     border-radius: 12px;
     padding: 24px;
     color: #fff;
 }
 
 .prof-summary-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 16px;
     font-weight: 700;
     text-transform: uppercase;
@@ -227,7 +229,7 @@
 }
 
 .prof-summary-value {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 22px;
     font-weight: 700;
     color: #fff;
@@ -259,7 +261,7 @@
 /* Centrum powiadomień */
 .prof-card-notif {
     background: #fff;
-    border: 1px solid #e8ebee;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 20px;
 }
@@ -272,16 +274,16 @@
 }
 
 .prof-notif-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 15px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .04em;
-    color: #2a3439;
+    color: #111827;
 }
 
 .prof-notif-badge {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .1em;
@@ -294,7 +296,7 @@
 
 .prof-notif-item {
     padding: 12px 0;
-    border-top: 1px solid #f0f4f7;
+    border-top: 1px solid #eef3f7;
 }
 .prof-notif-item:first-of-type { border-top: none; padding-top: 4px; }
 
@@ -318,19 +320,19 @@
 .prof-notif-item-label {
     font-size: 12px;
     font-weight: 700;
-    color: #2a3439;
+    color: #111827;
 }
 .prof-notif-item.urgent .prof-notif-item-label { color: #dc2626; }
 
 .prof-notif-item-time {
     font-size: 11px;
-    color: #aaa;
+    color: #9aa5ad;
     flex-shrink: 0;
 }
 
 .prof-notif-item-text {
     font-size: 11px;
-    color: #777;
+    color: #6b7280;
     line-height: 1.45;
 }
 
@@ -344,7 +346,7 @@
 /* Sekcja - karta */
 .prof-section {
     background: #fff;
-    border: 1px solid #e8ebee;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 24px 28px;
 }
@@ -360,27 +362,27 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 16px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .04em;
-    color: #2a3439;
+    color: #111827;
 }
 
 .prof-section-title-icon {
     width: 18px;
     height: 18px;
-    color: #1a6fa8;
+    color: #075071;
 }
 
 .prof-section-link {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: #1a6fa8;
+    color: #075071;
     text-decoration: none;
     cursor: pointer;
 }
@@ -389,7 +391,7 @@
 /* Karta rezerwacji (na profilu) */
 .prof-rez-card {
     background: #fff;
-    border: 1px solid #e8ebee;
+    border: 1px solid #e5e7eb;
     border-radius: 10px;
     padding: 18px 20px;
     margin-bottom: 12px;
@@ -415,7 +417,7 @@
     width: 42px;
     height: 42px;
     border-radius: 8px;
-    background: #f0f4f7;
+    background: #eef3f7;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -425,7 +427,7 @@
 .prof-rez-icon-box svg {
     width: 20px;
     height: 20px;
-    color: #1a6fa8;
+    color: #075071;
 }
 
 .prof-rez-titles {
@@ -435,13 +437,13 @@
 .prof-rez-name {
     font-size: 15px;
     font-weight: 600;
-    color: #2a3439;
+    color: #111827;
     margin-bottom: 2px;
 }
 
 .prof-rez-id {
     font-size: 11px;
-    color: #aaa;
+    color: #9aa5ad;
     letter-spacing: .04em;
 }
 
@@ -451,7 +453,7 @@
 }
 
 .prof-rez-badge {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .1em;
@@ -462,11 +464,11 @@
     margin-bottom: 6px;
 }
 .prof-rez-badge.late { background: #fee2e2; color: #dc2626; }
-.prof-rez-badge.active { background: #dbeafe; color: #1a6fa8; }
+.prof-rez-badge.active { background: #dbeafe; color: #075071; }
 
 .prof-rez-deadline {
     font-size: 11px;
-    color: #777;
+    color: #6b7280;
 }
 
 .prof-rez-details {
@@ -474,7 +476,7 @@
     grid-template-columns: 1fr 1fr 1fr;
     gap: 16px;
     padding-top: 14px;
-    border-top: 1px solid #f0f4f7;
+    border-top: 1px solid #eef3f7;
 }
 
 .prof-rez-detail-label {
@@ -482,13 +484,13 @@
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #aaa;
+    color: #9aa5ad;
     margin-bottom: 4px;
 }
 
 .prof-rez-detail-value {
     font-size: 13px;
-    color: #2a3439;
+    color: #111827;
 }
 
 .prof-rez-detail.penalty {
@@ -510,7 +512,7 @@
 
 .prof-payment-card {
     background: #fff;
-    border: 1px solid #e8ebee;
+    border: 1px solid #e5e7eb;
     border-radius: 10px;
     padding: 14px 16px;
     display: flex;
@@ -526,7 +528,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-weight: 900;
     font-size: 12px;
     color: #fff;
@@ -541,30 +543,30 @@
 .prof-payment-number {
     font-size: 13px;
     font-weight: 600;
-    color: #2a3439;
+    color: #111827;
     margin-bottom: 2px;
 }
 
 .prof-payment-expiry {
     font-size: 11px;
-    color: #777;
+    color: #6b7280;
 }
 
 .prof-payment-default {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 9px;
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
     padding: 3px 8px;
     background: #dbeafe;
-    color: #1a6fa8;
+    color: #075071;
     border-radius: 4px;
     flex-shrink: 0;
 }
 
 .prof-payment-delete {
-    background: #f0f4f7;
+    background: #eef3f7;
     border: none;
     border-radius: 6px;
     width: 30px;
@@ -573,7 +575,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #777;
+    color: #6b7280;
     transition: background .2s, color .2s;
     flex-shrink: 0;
 }
@@ -581,22 +583,22 @@
 
 .prof-payment-info-box {
     margin-top: 14px;
-    background: #f7f9fb;
-    border: 1px solid #e8ebee;
+    background: #f7f7f8;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 12px 14px;
     display: flex;
     align-items: flex-start;
     gap: 10px;
     font-size: 11px;
-    color: #777;
+    color: #6b7280;
     line-height: 1.5;
 }
 
 .prof-payment-info-box svg {
     width: 14px;
     height: 14px;
-    color: #1a6fa8;
+    color: #075071;
     flex-shrink: 0;
     margin-top: 1px;
 }
@@ -618,7 +620,7 @@
 /* Karta upload zdjęcia */
 .prof-edit-avatar-card {
     background: #fff;
-    border: 1px solid #e8ebee;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 24px;
     text-align: center;
@@ -626,12 +628,12 @@
 }
 
 .prof-edit-avatar-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .1em;
-    color: #2a3439;
+    color: #111827;
     margin-bottom: 16px;
 }
 
@@ -641,7 +643,7 @@
     border-radius: 50%;
     margin: 0 auto 16px;
     overflow: hidden;
-    border: 3px solid #f0f4f7;
+    border: 3px solid #eef3f7;
 }
 
 .prof-edit-avatar img {
@@ -661,16 +663,16 @@
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    background: #f0f4f7;
-    border: 1px solid #e8ebee;
+    background: #eef3f7;
+    border: 1px solid #e5e7eb;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: background .2s;
 }
-.prof-icon-btn:hover { background: #e8ebee; }
-.prof-icon-btn svg { width: 14px; height: 14px; color: #555; }
+.prof-icon-btn:hover { background: #e5e7eb; }
+.prof-icon-btn svg { width: 14px; height: 14px; color: #4b5563; }
 .prof-icon-btn.danger:hover svg { color: #dc2626; }
 
 /* Mini info pod kartą avatara */
@@ -688,9 +690,9 @@
     font-size: 12px;
 }
 
-.prof-edit-mini-label { color: #777; }
+.prof-edit-mini-label { color: #6b7280; }
 .prof-edit-mini-value {
-    color: #2a3439;
+    color: #111827;
     font-weight: 700;
 }
 
@@ -703,7 +705,7 @@
 
 .prof-form-section {
     background: #fff;
-    border: 1px solid #e8ebee;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 24px 28px;
 }
@@ -712,12 +714,12 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 16px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .04em;
-    color: #2a3439;
+    color: #111827;
     margin-bottom: 20px;
 }
 
@@ -725,7 +727,7 @@
     width: 30px;
     height: 30px;
     border-radius: 8px;
-    background: #f0f4f7;
+    background: #eef3f7;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -733,7 +735,7 @@
 .prof-form-title-icon-box svg {
     width: 14px;
     height: 14px;
-    color: #1a6fa8;
+    color: #075071;
 }
 
 .prof-form-row {
@@ -753,35 +755,35 @@
 .prof-form-label {
     font-size: 12px;
     font-weight: 600;
-    color: #2a3439;
+    color: #111827;
     margin-bottom: 6px;
 }
 
 .prof-form-input,
 .prof-form-textarea {
     background: #fff;
-    border: 1px solid #e8ebee;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 10px 14px;
-    font-family: 'Barlow', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 13px;
-    color: #2a3439;
+    color: #111827;
     transition: border-color .2s, box-shadow .2s;
     width: 100%;
     box-sizing: border-box;
 }
 .prof-form-input::placeholder,
-.prof-form-textarea::placeholder { color: #aaa; }
+.prof-form-textarea::placeholder { color: #9aa5ad; }
 .prof-form-input:focus,
 .prof-form-textarea:focus {
     outline: none;
-    border-color: #1a6fa8;
+    border-color: #075071;
     box-shadow: 0 0 0 3px rgba(26,111,168,.1);
 }
 
 .prof-form-help {
     font-size: 11px;
-    color: #aaa;
+    color: #9aa5ad;
     margin-top: 6px;
 }
 

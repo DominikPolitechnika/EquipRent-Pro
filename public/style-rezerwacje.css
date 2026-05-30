@@ -1,13 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
        /* ================================================
            REZERWACJE PAGE
         ================================================ */
        .rez-page {
     margin: 0;
     padding: 0;
-    font-family: 'Barlow', sans-serif;
-    background: #f7f9fb;
+    font-family: 'Poppins', sans-serif;
+    background: #f7f7f8;
     min-height: 100vh;
-    color: #2a3439;
+    color: #111827;
 }
 
         .rez-wrapper {
@@ -27,25 +29,25 @@
         }
 
         .rez-sidebar-card {
-            background: #f0f4f7;
-            border: 1px solid #e8ebee;
+            background: #eef3f7;
+            border: 1px solid #e5e7eb;
             padding: 20px;
             margin-bottom: 16px;
         }
          .rez-sidebar-card-a{
             background: #fff;
-            border: 1px solid #e8ebee;
+            border: 1px solid #e5e7eb;
             padding: 20px;
             margin-bottom: 16px;
         }
 
         .rez-sidebar-title {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 11px;
             font-weight: 700;
             letter-spacing: .14em;
             text-transform: uppercase;
-            color: #aaa;
+            color: #9aa5ad;
             margin-bottom: 14px;
         }
 
@@ -66,7 +68,7 @@
         }
         .rez-alert.upcoming {
             background: #eff6ff;
-            border-color: #1a6fa8;
+            border-color: #075071;
         }
 
         .rez-alert-icon {
@@ -75,19 +77,19 @@
             flex-shrink: 0;
         }
         .rez-alert.urgent  .rez-alert-icon { color: #dc2626; }
-        .rez-alert.upcoming .rez-alert-icon { color: #1a6fa8; }
+        .rez-alert.upcoming .rez-alert-icon { color: #075071; }
 
         .rez-alert-label {
             font-size: 12px;
             font-weight: 700;
-            color: #2a3439;
+            color: #111827;
             margin-bottom: 2px;
         }
         .rez-alert.urgent .rez-alert-label { color: #dc2626; }
 
         .rez-alert-sub {
             font-size: 11px;
-            color: #777;
+            color: #6b7280;
             line-height: 1.4;
         }
 
@@ -96,8 +98,8 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1px;
-            background: #e8ebee;
-            border: 1px solid #e8ebee;
+            background: #e5e7eb;
+            border: 1px solid #e5e7eb;
         }
         .rez-stat-item {
             background: #fff;
@@ -108,14 +110,14 @@
             font-weight: 700;
             letter-spacing: .12em;
             text-transform: uppercase;
-            color: #aaa;
+            color: #9aa5ad;
             margin-bottom: 6px;
         }
         .rez-stat-value {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 18x;
             font-weight: 600;
-            color: #2a3439;
+            color: #111827;
             line-height: 1;
         }
 
@@ -129,17 +131,17 @@
     box-sizing: border-box;
 }
         .rez-page-header h1 {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 36px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: .02em;
-            color: #2a3439;
+            color: #111827;
             margin: 0 0 6px;
         }
         .rez-page-header p {
             font-size: 13px;
-            color: #777;
+            color: #6b7280;
             margin: 0;
         }
 
@@ -148,12 +150,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 13px;
             font-weight: 700;
             letter-spacing: .1em;
             text-transform: uppercase;
-            color: #2a3439;
+            color: #111827;
             margin-bottom: 12px;
         }
         .rez-section-title::before {
@@ -161,15 +163,15 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #1a6fa8;
+            background: #075071;
             flex-shrink: 0;
         }
-        .rez-section-title.done::before { background: #aaa; }
+        .rez-section-title.done::before { background: #9aa5ad; }
 
         /* Karta rezerwacji (aktywna) */
         .rez-card {
             background: #fff;
-            border: 1px solid #e8ebee;
+            border: 1px solid #e5e7eb;
             display: flex;
             align-items: center;
             gap: 0;
@@ -203,14 +205,14 @@
         .rez-card-name {
             font-size: 15px;
             font-weight: 600;
-            color: #2a3439;
+            color: #111827;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .rez-badge {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 10px;
             font-weight: 700;
             letter-spacing: .1em;
@@ -218,12 +220,12 @@
             padding: 3px 8px;
             flex-shrink: 0;
         }
-        .rez-badge.wypozyczone { background: #1a6fa8; color: #fff; }
-        .rez-badge.oczekuje    { background: #e8ebee; color: #555; }
+        .rez-badge.wypozyczone { background: #075071; color: #fff; }
+        .rez-badge.oczekuje    { background: #e5e7eb; color: #4b5563; }
 
 .rez-card-meta {
     font-size: 12px;
-    color: #777;
+    color: #6b7280;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -250,7 +252,7 @@
         }
 
         .rez-btn-cancel {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 11px;
             font-weight: 700;
             letter-spacing: .1em;
@@ -268,7 +270,7 @@
         /* Karta zakończona */
         .rez-card-done {
             background: #fff;
-            border: 1px solid #e8ebee;
+            border: 1px solid #e5e7eb;
             display: flex;
             align-items: center;
             gap: 0;
@@ -287,19 +289,19 @@
 
         .rez-done-meta {
             font-size: 12px;
-            color: #777;
+            color: #6b7280;
             margin-bottom: 4px;
         }
 
         .rez-done-cost {
             font-size: 13px;
            
-            color: #2a3439;
+            color: #111827;
             margin-bottom: 6px;
         }
 
         .rez-stars {
-            color: #1a6fa8;
+            color: #075071;
             font-size: 13px;
             letter-spacing: 2px;
             margin-right: 6px;
@@ -307,18 +309,18 @@
 
         .rez-review-quote {
             font-size: 12px;
-            color: #555;
+            color: #4b5563;
             font-style: italic;
         }
 
         .rez-btn-rebook {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 11px;
             font-weight: 700;
             letter-spacing: .1em;
             text-transform: uppercase;
             padding: 9px 16px;
-            background: #006398;
+            background: #075071;
             border: none;
             color: #fff;
             cursor: pointer;
@@ -336,7 +338,7 @@
             font-weight: 700;
             letter-spacing: .08em;
             text-transform: uppercase;
-            color: #1a6fa8;
+            color: #075071;
             cursor: pointer;
             background: none;
             border: none;
@@ -350,8 +352,8 @@
 
         /* Panel opinii */
         .rez-review-panel {
-            background: #f0f4f7;
-            border: 1px solid #e8ebee;
+            background: #eef3f7;
+            border: 1px solid #e5e7eb;
             border-top: none;
             padding: 18px 20px;
             display: none;
@@ -364,7 +366,7 @@
             font-weight: 700;
             letter-spacing: .12em;
             text-transform: uppercase;
-            color: #aaa;
+            color: #9aa5ad;
             margin-bottom: 10px;
         }
 
@@ -379,22 +381,22 @@
         }
         .rez-star-input span { transition: color .1s; }
         .rez-star-input span:hover,
-        .rez-star-input span.active { color: #1a6fa8; }
+        .rez-star-input span.active { color: #075071; }
 
         .rez-review-textarea {
             width: 100%;
             background: #fff;
-            border: 1px solid #e8ebee;
-            color: #2a3439;
+            border: 1px solid #e5e7eb;
+            color: #111827;
             padding: 10px 12px;
-            font-family: 'Barlow', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 13px;
             resize: vertical;
             min-height: 80px;
             box-sizing: border-box;
         }
-        .rez-review-textarea::placeholder { color: #aaa; }
-        .rez-review-textarea:focus { outline: none; border-color: #1a6fa8; }
+        .rez-review-textarea::placeholder { color: #9aa5ad; }
+        .rez-review-textarea:focus { outline: none; border-color: #075071; }
 
         .rez-review-actions {
             display: flex;
@@ -404,27 +406,27 @@
         }
 
         .rez-btn-cancel-review {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 11px;
             font-weight: 700;
             letter-spacing: .1em;
             text-transform: uppercase;
             padding: 9px 16px;
             background: transparent;
-            border: 1px solid #e8ebee;
-            color: #777;
+            border: 1px solid #e5e7eb;
+            color: #6b7280;
             cursor: pointer;
         }
-        .rez-btn-cancel-review:hover { border-color: #aaa; color: #444; }
+        .rez-btn-cancel-review:hover { border-color: #9aa5ad; color: #444; }
 
         .rez-btn-submit-review {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 11px;
             font-weight: 700;
             letter-spacing: .1em;
             text-transform: uppercase;
             padding: 9px 20px;
-            background: #006398;
+            background: #075071;
             border: none;
             color: #fff;
             cursor: pointer;
@@ -446,22 +448,22 @@
 
         .rez-modal {
             background: #fff;
-            border: 1px solid #e8ebee;
+            border: 1px solid #e5e7eb;
             padding: 32px;
             max-width: 420px;
             width: 90%;
         }
         .rez-modal h3 {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 20px;
             font-weight: 700;
             text-transform: uppercase;
             margin: 0 0 10px;
-            color: #2a3439;
+            color: #111827;
         }
         .rez-modal p {
             font-size: 13px;
-            color: #555;
+            color: #4b5563;
             line-height: 1.6;
             margin: 0 0 24px;
         }

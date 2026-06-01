@@ -135,7 +135,7 @@
                         >
 
                         <span class="product-badge">
-                            {{ $product->isAvailable ? 'DOSTĘPNY' : 'WYPOŻYCZONY' }}
+                            {{ $product->is_available ? 'DOSTĘPNY' : 'WYPOŻYCZONY' }}
                         </span>
                     </div>
 
@@ -143,7 +143,7 @@
 
                         <div class="product-meta">
                             <p class="product-category">
-                                {{ $product->category->name ?? 'SPRZĘT' }}
+                                {{ $product->equipment_category->name ?? 'SPRZĘT' }}
                             </p>
                         </div>
 
@@ -157,7 +157,7 @@
 
                         <div class="product-footer">
                             <div class="price">
-                                <strong>{{ $product->oneDayPrice ?? 0 }} zł</strong>
+                                <strong>{{ $product->one_day_price ?? 0 }} zł</strong>
                                 <span>/ dzień</span>
                             </div>
 

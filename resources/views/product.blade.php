@@ -26,7 +26,7 @@
     <div class="product-breadcrumb">
         <a href="{{ route('catalog') }}">Katalog</a>
         <span>›</span>
-        <span class="product-breadcrumb-active">{{ $product->name }}</span>
+        <span class="product-breadcrumb-active">{{ $product->title }}</span>
     </div>
 
     {{-- galeria jest java vvvv --}}
@@ -73,7 +73,7 @@
                 {{ $product->title }}
             </h1>
             <p class="product-description">
-                <span style="width:90%;height:14px;border-radius:3px;display:block;margin-bottom:6px;">{{$product->serialNumber}}</span>
+                <span style="width:90%;height:14px;border-radius:3px;display:block;margin-bottom:6px;">{{$product->serial_number}}</span>
                 <span style="width:60%;height:14px;border-radius:3px;display:block;">{{$product->body}}</span>
             </p>
 
@@ -175,7 +175,7 @@
         <div class="product-booking-panel">
 
             <div class="product-booking-price">
-                <span class="placeholder animate-pulse" style="width:80px;height:44px;border-radius:4px;display:inline-block;vertical-align:middle;"></span> ZŁ <span>/ 24h doba</span>
+                {{ $product->one_day_price }} ZŁ <span>/ 24h doba</span>
             </div>
             <div class="product-booking-rating">
                 <span class="product-stars">★</span>

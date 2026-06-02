@@ -132,9 +132,9 @@
 
                 {{-- NAGŁÓWEK --}}
                 <div class="le-breadcrumb">
-                    <a href="#">Panel główny</a>
+                    <span>Zarządzanie</span>
                     <span>›</span>
-                    <span>Inwentarz</span>
+                    <span class="active">Inwentarz</span>
                 </div>
                 <h1 class="le-title">Lista Sprzętu</h1>
 

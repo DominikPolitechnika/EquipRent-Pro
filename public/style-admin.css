@@ -200,3 +200,61 @@ body {
     .adm-panel-label { display: none; }
     .adm-topbar { padding: 0 16px; }
 }
+/* ================================================
+   WSPÓLNY BREADCRUMB - dla wszystkich stron admina
+================================================ */
+.adm-breadcrumb,
+.db-breadcrumb,
+.le-breadcrumb,
+.lr-breadcrumb,
+.lu-breadcrumb,
+.ud-breadcrumb,
+.pe-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #9aa5ad;
+    margin-bottom: 14px;
+}
+
+.adm-breadcrumb a,
+.db-breadcrumb a,
+.le-breadcrumb a,
+.lr-breadcrumb a,
+.lu-breadcrumb a,
+.ud-breadcrumb a,
+.pe-breadcrumb a {
+    color: #9aa5ad;
+    text-decoration: none;
+    transition: color .15s;
+}
+
+.adm-breadcrumb a:hover,
+.db-breadcrumb a:hover,
+.le-breadcrumb a:hover,
+.lr-breadcrumb a:hover,
+.lu-breadcrumb a:hover,
+.ud-breadcrumb a:hover,
+.pe-breadcrumb a:hover {
+    color: #075071;
+}
+
+.adm-breadcrumb .active,
+.db-breadcrumb .active,
+.le-breadcrumb .active,
+.lr-breadcrumb .active,
+.lu-breadcrumb .active,
+.ud-breadcrumb .active,
+.pe-breadcrumb .active {
+    color: #075071;
+}
+
+.adm-breadcrumb .sep,
+.pe-breadcrumb .sep {
+    color: #cbd5e1;
+    font-weight: 400;
+}

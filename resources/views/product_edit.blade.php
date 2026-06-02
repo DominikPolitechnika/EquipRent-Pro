@@ -26,9 +26,11 @@
 <div class="pe-page-header">
     <div class="pe-page-header-text">
         <div class="pe-breadcrumb">
-            <a href="{{ route('catalog') }}">Inwentarz</a>
+            <span>Zarządzanie</span>
             <span class="sep">›</span>
-            <span>Zarządzanie Produktem</span>
+            <a href="{{ route('equipment.list') }}">Inwentarz</a>
+            <span class="sep">›</span>
+            <span class="active">Zarządzanie Produktem</span>
         </div>
         <h1>
             <span class="placeholder animate-pulse" style="width:320px;height:32px;"></span>

@@ -18,6 +18,13 @@
         <div class="adm-content">
             <div class="lu-content">
 
+                {{-- BREADCRUMB --}}
+                <div class="adm-breadcrumb">
+                    <span>Zarządzanie</span>
+                    <span class="sep">›</span>
+                    <span class="active">Użytkownicy</span>
+                </div>
+
                 {{-- NAGŁÓWEK --}}
                 <div class="lu-header">
                     <div class="lu-header-text">

@@ -97,7 +97,7 @@
                 <div class="lr-breadcrumb">
                     <span>Zarządzanie</span>
                     <span>›</span>
-                    <a href="#">Rezerwacje</a>
+                    <span class="active">Rezerwacje</span>
                 </div>
                 <h1 class="lr-title">Rejestr Wypożyczeń</h1>
                 <p class="lr-subtitle">Monitoruj wypożyczenia sprzętu sportowego w czasie rzeczywistym, zarządzaj umowami i kontroluj zwroty aktywów premium.</p>

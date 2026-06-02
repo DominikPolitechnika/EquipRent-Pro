@@ -11,12 +11,12 @@ class Product extends Model
     protected $fillable = [ //pola ktore będą wypełniane
         'title',
         'body',
-        'equipment_category_id',
-        'serial_number',
-        'is_available',
-        'one_day_price',
-        'total_income',
-        'is_deleted',
+        'categoryId',
+        'serialNumber',
+        'isAvaible',
+        'oneDayPrice',
+        'totalIncome',
+        'isDeleted',
     ];
 
     public function equipment_category(){ //relacja products equipment_category

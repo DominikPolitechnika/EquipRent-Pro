@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;900&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
 
 /* ================================================
    EDYCJA / ZARZĄDZANIE PRODUKTEM
@@ -7,10 +7,10 @@
 .pe-page {
     margin: 0;
     padding: 0;
-    font-family: 'Poppins', sans-serif;
-    background: #f7f7f8;
+    font-family: 'Barlow', sans-serif;
+    background: #f7f9fb;
     min-height: 100vh;
-    color: #111827;
+    color: #2a3439;
 }
 
 /* ---- HEADER STRONY ---- */
@@ -30,23 +30,23 @@
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: #9aa5ad;
+    color: #aaa;
     margin: 0 0 8px;
     display: flex;
     align-items: center;
     gap: 8px;
 }
-.pe-breadcrumb a { color: #9aa5ad; text-decoration: none; }
-.pe-breadcrumb a:hover { color: #075071; }
+.pe-breadcrumb a { color: #aaa; text-decoration: none; }
+.pe-breadcrumb a:hover { color: #1a6fa8; }
 .pe-breadcrumb .sep { color: #ccc; }
 
 .pe-page-header-text h1 {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 36px;
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: .02em;
-    color: #111827;
+    color: #2a3439;
     margin: 0 0 6px;
     display: flex;
     align-items: center;
@@ -54,7 +54,7 @@
 }
 
 .pe-title-badge {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .08em;
@@ -79,7 +79,7 @@
 
 .pe-serial {
     font-size: 13px;
-    color: #6b7280;
+    color: #777;
     margin: 0;
 }
 
@@ -91,13 +91,13 @@
 
 /* ---- PRZYCISKI ---- */
 .pe-btn-primary {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
     padding: 11px 22px;
-    background: #075071;
+    background: #006398;
     border: none;
     color: #fff;
     cursor: pointer;
@@ -108,18 +108,18 @@
     align-items: center;
     gap: 8px;
 }
-.pe-btn-primary:hover { background: #075071; }
+.pe-btn-primary:hover { background: #1a6fa8; }
 
 .pe-btn-secondary {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
     padding: 11px 22px;
     background: #fff;
-    border: 1px solid #e5e7eb;
-    color: #4b5563;
+    border: 1px solid #e8ebee;
+    color: #555;
     cursor: pointer;
     border-radius: 8px;
     transition: border-color .2s, color .2s;
@@ -128,7 +128,7 @@
     align-items: center;
     gap: 8px;
 }
-.pe-btn-secondary:hover { border-color: #9aa5ad; color: #111827; }
+.pe-btn-secondary:hover { border-color: #aaa; color: #2a3439; }
 
 /* ---- WRAPPER ---- */
 .pe-wrapper {
@@ -159,7 +159,7 @@
 /* ---- SEKCJA / KARTA ---- */
 .pe-section {
     background: #fff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e8ebee;
     border-radius: 12px;
     padding: 24px 28px;
 }
@@ -175,25 +175,25 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 16px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .04em;
-    color: #111827;
+    color: #2a3439;
 }
 
 .pe-section-title-icon-box {
     width: 30px;
     height: 30px;
     border-radius: 8px;
-    background: #eef3f7;
+    background: #f0f4f7;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
-.pe-section-title-icon-box svg { width: 15px; height: 15px; color: #075071; }
+.pe-section-title-icon-box svg { width: 15px; height: 15px; color: #1a6fa8; }
 
 /* Toggle statusu w nagłówku Informacje ogólne */
 .pe-status-toggle {
@@ -206,7 +206,7 @@
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #9aa5ad;
+    color: #aaa;
 }
 .pe-status-state {
     font-size: 12px;
@@ -242,7 +242,7 @@
     border-radius: 50%;
     transition: transform .2s;
 }
-.pe-switch input:checked + .pe-switch-slider { background: #075071; }
+.pe-switch input:checked + .pe-switch-slider { background: #006398; }
 .pe-switch input:checked + .pe-switch-slider::before { transform: translateX(18px); }
 
 /* ---- FORMULARZ ---- */
@@ -265,7 +265,7 @@
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #9aa5ad;
+    color: #aaa;
     margin-bottom: 8px;
 }
 
@@ -273,30 +273,30 @@
 .pe-form-textarea,
 .pe-form-select {
     background: #fff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e8ebee;
     border-radius: 8px;
     padding: 11px 14px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow', sans-serif;
     font-size: 13px;
-    color: #111827;
+    color: #2a3439;
     transition: border-color .2s, box-shadow .2s;
     width: 100%;
     box-sizing: border-box;
 }
 .pe-form-input::placeholder,
-.pe-form-textarea::placeholder { color: #9aa5ad; }
+.pe-form-textarea::placeholder { color: #aaa; }
 .pe-form-input:focus,
 .pe-form-textarea:focus,
 .pe-form-select:focus {
     outline: none;
-    border-color: #075071;
+    border-color: #1a6fa8;
     box-shadow: 0 0 0 3px rgba(26,111,168,.1);
 }
 
 .pe-form-textarea {
     resize: vertical;
     min-height: 90px;
-    background: #f7f7f8;
+    background: #f7f9fb;
 }
 
 .pe-form-select {
@@ -310,12 +310,12 @@
 
 /* Pole tylko-do-odczytu (numer seryjny) */
 .pe-form-readonly {
-    background: #f7f7f8;
-    border: 1px solid #e5e7eb;
+    background: #f7f9fb;
+    border: 1px solid #e8ebee;
     border-radius: 8px;
     padding: 11px 14px;
     font-size: 13px;
-    color: #4b5563;
+    color: #555;
     letter-spacing: .04em;
 }
 
@@ -333,14 +333,14 @@
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #9aa5ad;
+    color: #aaa;
 }
 .pe-gallery-count {
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: #075071;
+    color: #1a6fa8;
 }
 
 .pe-gallery-grid {
@@ -363,18 +363,18 @@
     height: 84px;
     border-radius: 8px;
     border: 2px dashed #cbd5e1;
-    background: #f7f7f8;
+    background: #f7f9fb;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
     cursor: pointer;
-    color: #075071;
+    color: #1a6fa8;
     transition: border-color .2s, background .2s;
     flex-shrink: 0;
 }
-.pe-gallery-upload:hover { border-color: #075071; background: #eef3f7; }
+.pe-gallery-upload:hover { border-color: #1a6fa8; background: #f0f4f7; }
 .pe-gallery-upload svg { width: 18px; height: 18px; }
 .pe-gallery-upload span {
     font-size: 9px;
@@ -393,13 +393,13 @@
 }
 .pe-maint-form .pe-form-label { margin-bottom: 6px; }
 .pe-maint-add-btn {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
     padding: 11px 22px;
-    background: #075071;
+    background: #006398;
     border: none;
     color: #fff;
     cursor: pointer;
@@ -407,14 +407,14 @@
     transition: background .2s;
     height: fit-content;
 }
-.pe-maint-add-btn:hover { background: #075071; }
+.pe-maint-add-btn:hover { background: #1a6fa8; }
 
 .pe-maint-section-label {
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #9aa5ad;
+    color: #aaa;
     margin-bottom: 10px;
 }
 
@@ -428,28 +428,28 @@
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #9aa5ad;
+    color: #aaa;
     text-align: left;
     padding: 0 12px 10px;
-    border-bottom: 1px solid #eef3f7;
+    border-bottom: 1px solid #f0f4f7;
 }
 .pe-table thead th.right { text-align: right; }
 .pe-table tbody td {
     font-size: 13px;
-    color: #111827;
+    color: #2a3439;
     padding: 14px 12px;
-    border-bottom: 1px solid #eef3f7;
+    border-bottom: 1px solid #f0f4f7;
     vertical-align: top;
 }
 .pe-table tbody tr:last-child td { border-bottom: none; }
 .pe-table td.right { text-align: right; }
 .pe-table .pe-cell-strong { font-weight: 600; }
-.pe-table .pe-cell-muted { color: #9aa5ad; font-size: 11px; }
+.pe-table .pe-cell-muted { color: #aaa; font-size: 11px; }
 .pe-table .pe-cell-price { font-weight: 700; white-space: nowrap; }
 
 /* Badge w historii rezerwacji */
 .pe-rez-badge {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .1em;
@@ -459,24 +459,24 @@
     display: inline-block;
 }
 .pe-rez-badge.done { background: #dcfce7; color: #16a34a; }
-.pe-rez-badge.reserved { background: #dbeafe; color: #075071; }
+.pe-rez-badge.reserved { background: #dbeafe; color: #1a6fa8; }
 .pe-rez-badge.late { background: #fee2e2; color: #dc2626; }
 
-.pe-rez-user-id { font-size: 11px; color: #9aa5ad; margin-top: 2px; }
+.pe-rez-user-id { font-size: 11px; color: #aaa; margin-top: 2px; }
 
 .pe-section-footer {
     text-align: center;
     margin-top: 8px;
     padding-top: 14px;
-    border-top: 1px solid #eef3f7;
+    border-top: 1px solid #f0f4f7;
 }
 .pe-section-footer a {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: #075071;
+    color: #1a6fa8;
     text-decoration: none;
 }
 .pe-section-footer a:hover { text-decoration: underline; }
@@ -488,7 +488,7 @@
 /* Karta Model Cennikowy */
 .pe-price-card {
     background: #fff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e8ebee;
     border-radius: 12px;
     padding: 24px;
 }
@@ -496,41 +496,41 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 16px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .04em;
-    color: #111827;
+    color: #2a3439;
     margin-bottom: 20px;
 }
-.pe-price-title svg { width: 18px; height: 18px; color: #075071; }
+.pe-price-title svg { width: 18px; height: 18px; color: #1a6fa8; }
 
 .pe-price-label {
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #9aa5ad;
+    color: #aaa;
     margin-bottom: 8px;
 }
 
 .pe-price-daily {
-    background: #eef3f7;
+    background: #f0f4f7;
     border-radius: 8px;
     padding: 12px 16px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 22px;
     font-weight: 700;
-    color: #075071;
+    color: #1a6fa8;
     margin-bottom: 20px;
 }
 
 .pe-price-income {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 28px;
     font-weight: 700;
-    color: #111827;
+    color: #2a3439;
     line-height: 1;
 }
 
@@ -542,7 +542,7 @@
     padding: 22px;
 }
 .pe-danger-title {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 14px;
     font-weight: 700;
     text-transform: uppercase;
@@ -557,7 +557,7 @@
     margin-bottom: 16px;
 }
 .pe-danger-btn {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .1em;

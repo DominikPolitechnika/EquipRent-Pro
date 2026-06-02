@@ -7,6 +7,9 @@ use App\Http\Controllers\ProductController;
 
 // Strona główna - przekierowanie do logowania
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('catalog');
+    }
     return redirect()->route('login');
 });
 
@@ -37,13 +40,16 @@ Route::put('/profil', function () {
     // TODO: implementacja zapisu danych użytkownika
     return redirect()->route('profil')->with('success', 'Profil został zaktualizowany.');
 })->middleware('auth')->name('profil.update'); 
-
-// Trasy dostępne tylko dla zalogowanych użytkowników
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
     Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
-    Route::view('/demo-layout', 'pages.demo-layout');
+    Route::get('/produkt/{id}/edytuj', [ProductController::class, 'edit'])->name('product.edit');
+    Route::view('/inwentarz', 'list_equipment')->name('equipment.list');
+    Route::view('/lista-uzytkownikow', 'list_users')->name('users.list');
+    Route::view('/uzytkownik-szczegoly', 'user_details')->name('users.show');
+    Route::view('/rejestr-wypozyczen', 'list_rentals')->name('rentals.list');
+    Route::view('/panel-glowny', 'dashboard')->name('dashboard');
 });
 
 // API - dostępne tylko dla zalogowanych

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;900&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
 
 /* ================================================
    LISTA SPRZĘTU / INWENTARZ (panel admina)
@@ -9,26 +9,26 @@
 /* ---- NAGŁÓWEK ---- */
 .le-breadcrumb {
     font-size: 12px;
-    color: #9aa5ad;
+    color: #aaa;
     margin-bottom: 8px;
     display: flex;
     align-items: center;
     gap: 8px;
 }
-.le-breadcrumb a { color: #9aa5ad; text-decoration: none; }
-.le-breadcrumb a:hover { color: #075071; }
+.le-breadcrumb a { color: #aaa; text-decoration: none; }
+.le-breadcrumb a:hover { color: #1a6fa8; }
 .le-title {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 34px;
     font-weight: 900;
-    color: #111827;
+    color: #2a3439;
     margin: 0 0 22px;
 }
 
 /* ---- PANEL FILTRÓW ---- */
 .le-filters {
     background: #fff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e8ebee;
     border-radius: 12px;
     padding: 20px 22px;
     margin-bottom: 20px;
@@ -45,17 +45,17 @@
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #9aa5ad;
+    color: #aaa;
     margin-bottom: 8px;
 }
 .le-select, .le-input-date {
     background: #fff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e8ebee;
     border-radius: 8px;
     padding: 10px 12px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow', sans-serif;
     font-size: 13px;
-    color: #111827;
+    color: #2a3439;
     width: 100%;
     box-sizing: border-box;
     cursor: pointer;
@@ -67,18 +67,18 @@
     background-position: right 12px center;
     padding-right: 32px;
 }
-.le-input-date { color: #9aa5ad; }
+.le-input-date { color: #aaa; }
 
 /* Konserwacja - toggle dwóch przycisków */
 .le-toggle-group {
     display: flex;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e8ebee;
     border-radius: 8px;
     overflow: hidden;
 }
 .le-toggle-btn {
     flex: 1;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .06em;
@@ -86,38 +86,38 @@
     padding: 10px 8px;
     border: none;
     background: #fff;
-    color: #6b7280;
+    color: #777;
     cursor: pointer;
     transition: background .2s, color .2s;
 }
-.le-toggle-btn.active { background: #075071; color: #fff; }
+.le-toggle-btn.active { background: #006398; color: #fff; }
 
 /* Szukajka */
 .le-search {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #f7f7f8;
-    border: 1px solid #e5e7eb;
+    background: #f7f9fb;
+    border: 1px solid #e8ebee;
     border-radius: 8px;
     padding: 10px 14px;
 }
-.le-search svg { width: 16px; height: 16px; color: #9aa5ad; flex-shrink: 0; }
+.le-search svg { width: 16px; height: 16px; color: #aaa; flex-shrink: 0; }
 .le-search input {
     border: none;
     background: transparent;
     outline: none;
     width: 100%;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Barlow', sans-serif;
     font-size: 13px;
-    color: #111827;
+    color: #2a3439;
 }
-.le-search input::placeholder { color: #9aa5ad; }
+.le-search input::placeholder { color: #aaa; }
 
 /* ---- TABELA ---- */
 .le-card {
     background: #fff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e8ebee;
     border-radius: 12px;
     padding: 8px 24px;
 }
@@ -127,18 +127,18 @@
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #9aa5ad;
+    color: #aaa;
     text-align: left;
     padding: 18px 14px 14px;
-    border-bottom: 1px solid #eef3f7;
+    border-bottom: 1px solid #f0f4f7;
 }
 .le-table thead th.right { text-align: right; }
 .le-table tbody td {
     padding: 16px 14px;
-    border-bottom: 1px solid #eef3f7;
+    border-bottom: 1px solid #f0f4f7;
     vertical-align: middle;
     font-size: 13px;
-    color: #111827;
+    color: #2a3439;
 }
 .le-table tbody tr:last-child td { border-bottom: none; }
 .le-table td.right { text-align: right; }
@@ -159,13 +159,13 @@
 .le-product-name {
     font-size: 14px;
     font-weight: 600;
-    color: #111827;
+    color: #2a3439;
     margin-bottom: 3px;
     line-height: 1.3;
 }
 .le-product-sn {
     font-size: 11px;
-    color: #9aa5ad;
+    color: #aaa;
     margin-bottom: 4px;
 }
 .le-product-rating {
@@ -175,7 +175,7 @@
 }
 
 .le-price { font-weight: 700; white-space: nowrap; }
-.le-price span { font-weight: 400; color: #9aa5ad; font-size: 11px; }
+.le-price span { font-weight: 400; color: #aaa; font-size: 11px; }
 
 /* Status badge */
 .le-badge {
@@ -188,8 +188,8 @@
     border-radius: 20px;
 }
 .le-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; }
-.le-badge.rented { background: #dbeafe; color: #075071; }
-.le-badge.rented::before { background: #075071; }
+.le-badge.rented { background: #dbeafe; color: #1a6fa8; }
+.le-badge.rented::before { background: #1a6fa8; }
 .le-badge.available { background: #dcfce7; color: #16a34a; }
 .le-badge.available::before { background: #16a34a; }
 .le-badge.service { background: #e0e7ff; color: #6366f1; }
@@ -209,8 +209,8 @@
     height: 34px;
     border-radius: 7px;
     border: none;
-    background: #eef3f7;
-    color: #075071;
+    background: #f0f4f7;
+    color: #1a6fa8;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -231,15 +231,15 @@
     margin-top: 22px;
     padding: 0 4px;
 }
-.le-footer-count { font-size: 12px; color: #6b7280; }
+.le-footer-count { font-size: 12px; color: #777; }
 .le-pagination { display: flex; gap: 6px; }
 .le-page {
     min-width: 32px;
     height: 32px;
     border-radius: 6px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e8ebee;
     background: #fff;
-    color: #4b5563;
+    color: #555;
     font-size: 13px;
     cursor: pointer;
     display: inline-flex;
@@ -248,9 +248,9 @@
     transition: background .2s, border-color .2s;
     text-decoration: none;
 }
-.le-page:hover { border-color: #9aa5ad; }
-.le-page.active { background: #075071; border-color: #075071; color: #fff; }
-.le-page.nav { color: #6b7280; }
+.le-page:hover { border-color: #aaa; }
+.le-page.active { background: #006398; border-color: #006398; color: #fff; }
+.le-page.nav { color: #777; }
 
 /* ---- SKELETON ---- */
 @keyframes le-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }

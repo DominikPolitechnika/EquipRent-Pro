@@ -85,8 +85,8 @@ Route::get('/forgot-password', function() {
     return view('auth.forgot-password');
 });
 
-Route::get('/reset-password', function () {
-    return redirect('/forgot-password');
+Route::get("/reset-password", function() {
+    return view("/auth.reset-password");
 });
 
 require __DIR__.'/auth.php';

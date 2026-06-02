@@ -1,62 +1,38 @@
 <?php
 
-use App\Http\Controllers\Auth\PasswordResetController;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\Notification;
 
-test('unknown email cannot start password reset', function () {
-    $response = $this->postJson('/forgot-password', [
-        'email' => 'brak@example.com',
-    ]);
+test('reset password link can be requested', function () {
+    Notification::fake();
 
-    $response->assertUnprocessable();
-    $response->assertJsonValidationErrors(['email']);
-});
-
-test('existing email starts password reset session', function () {
     $user = User::factory()->create();
 
-    $response = $this->postJson('/forgot-password', [
-        'email' => $user->email,
-    ]);
+    $this->post('/forgot-password', ['email' => $user->email]);
 
-    $response->assertOk();
-    expect(session(PasswordResetController::SESSION_EMAIL))->toBe($user->email);
+    Notification::assertSentTo($user, ResetPassword::class);
 });
 
-test('invalid code is rejected', function () {
+test('password can be reset with valid token', function () {
+    Notification::fake();
+
     $user = User::factory()->create();
 
-    $this->postJson('/forgot-password', ['email' => $user->email]);
+    $this->post('/forgot-password', ['email' => $user->email]);
 
-    $response = $this->postJson('/forgot-password/verify-code', [
-        'email' => $user->email,
-        'code' => '0000',
-    ]);
+    Notification::assertSentTo($user, ResetPassword::class, function (object $notification) use ($user) {
+        $response = $this->post('/reset-password', [
+            'token' => $notification->token,
+            'email' => $user->email,
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
 
-    $response->assertUnprocessable();
-    $response->assertJsonValidationErrors(['code']);
-});
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertStatus(200);
 
-test('password can be reset with valid code', function () {
-    $user = User::factory()->create([
-        'password' => Hash::make('old-password'),
-    ]);
-
-    $this->postJson('/forgot-password', ['email' => $user->email]);
-
-    $this->postJson('/forgot-password/verify-code', [
-        'email' => $user->email,
-        'code' => PasswordResetController::RESET_CODE,
-    ])->assertOk();
-
-    $this->postJson('/reset-password', [
-        'email' => $user->email,
-        'password' => 'new-secure-password',
-        'password_confirmation' => 'new-secure-password',
-    ])->assertNoContent();
-
-    $user->refresh();
-
-    expect(Hash::check('new-secure-password', $user->password))->toBeTrue();
+        return true;
+    });
 });

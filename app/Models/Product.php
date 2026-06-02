@@ -11,14 +11,15 @@ class Product extends Model
     protected $fillable = [ //pola ktore będą wypełniane
         'title',
         'body',
-        'serialNumber',
-        'isAvailble',
-        'oneDayPrice',
-        'totalIncome',
-        'isDeleted',
+        'equipment_category_id',
+        'serial_number',
+        'is_available',
+        'one_day_price',
+        'total_income',
+        'is_deleted',
     ];
 
-    public function category(){ //relacja products equipementCategory
-        return $this->belongsTo(Category::class,'categoryId','id');
+    public function equipment_category(){ //relacja products equipment_category
+        return $this->belongsTo(Category::class);
     }
 }

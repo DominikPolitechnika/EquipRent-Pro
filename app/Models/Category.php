@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $table = 'equipementCategory';
+    protected $table = 'equipment_category';
 
     protected $fillable = [
         'name',
     ];
 
     public function products(){
-        return $this->hasMany(Product::class,'categoryId','id');
+        return $this->hasMany(Product::class,'equipment_category_id','id');
     }
 }

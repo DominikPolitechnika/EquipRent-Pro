@@ -16,16 +16,16 @@ class CatalogController extends Controller
             ->orderBy('name')
             ->get();
 
-        $query = Product::with('category');
+        $query = Product::with('equipment_category');
 
         switch ($request->sort) {
 
             case 'price_asc':
-                $query->orderBy('oneDayPrice', 'asc');
+                $query->orderBy('one_day_price', 'asc');
                 break;
 
             case 'price_desc':
-                $query->orderBy('oneDayPrice', 'desc');
+                $query->orderBy('one_day_price', 'desc');
                 break;
 
             case 'name_asc':

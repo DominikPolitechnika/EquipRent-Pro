@@ -472,6 +472,60 @@
             gap: 10px;
             justify-content: flex-end;
         }
+        .rez-sidebar-card,
+.rez-sidebar-card-a {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Alerty terminów wewnątrz karty "Termin zwrotów" */
+.rez-alert {
+    border-radius: 6px;
+}
+
+/* Siatka statystyk - cały kontener "Przegląd konta" */
+.rez-stats-grid {
+    border-radius: 8px;
+    overflow: hidden;
+}
+/* Cztery narożne komórki w siatce 2x2 - zaokrąglone na zewnątrz */
+.rez-stats-grid .rez-stat-item:nth-child(1) { border-radius: 8px 0 0 0; }
+.rez-stats-grid .rez-stat-item:nth-child(2) { border-radius: 0 8px 0 0; }
+.rez-stats-grid .rez-stat-item:nth-child(3) { border-radius: 0 0 0 8px; }
+.rez-stats-grid .rez-stat-item:nth-child(4) { border-radius: 0 0 8px 0; }
+
+/* === AKTYWNE WYPOŻYCZENIA - karty rezerwacji === */
+.rez-card,
+.rez-card-done {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Badge statusu na karcie (WYPOŻYCZONE / OCZEKUJE) */
+.rez-badge {
+    border-radius: 999px;
+}
+
+/* === PRZYCISKI === */
+.rez-btn-cancel,
+.rez-btn-rebook,
+.rez-btn-cancel-review,
+.rez-btn-submit-review {
+    border-radius: 8px;
+}
+
+/* === PANEL OPINII (rozwija się pod kartą zakończoną) === */
+.rez-review-panel {
+    border-radius: 0 0 10px 10px;
+}
+.rez-review-textarea {
+    border-radius: 8px;
+}
+
+/* === MODAL ANULOWANIA === */
+.rez-modal {
+    border-radius: 12px;
+}
 
         /* Responsywność */
         @media (max-width: 900px) {
@@ -485,3 +539,9 @@
             .rez-card-actions { padding: 0 18px 14px; }
             .rez-btn-rebook { margin: 0 18px 14px; }
             .rez-page-header {padding: 20px;}
+
+/* ================================================
+   ZAOKRĄGLENIA - dopasowane do konkretnych klas w HTML
+================================================ */
+
+/* === SIDEBAR - karty "Termin zwrotów" i "Przegląd konta" === */

@@ -50,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/uzytkownik-szczegoly', 'user_details')->name('users.show');
     Route::view('/rejestr-wypozyczen', 'list_rentals')->name('rentals.list');
     Route::view('/panel-glowny', 'dashboard')->name('dashboard');
+    Route::view('/platnosc', 'platnosc')->name('platnosc');
 });
 
 // API - dostępne tylko dla zalogowanych

@@ -264,7 +264,7 @@
    const PRICE_PER_DAY = {{ $product->oneDayPrice }};
     const SERVICE_FEE   = 120;
     const LOGISTICS_FEE = 250;
-    const PAYMENT_URL = "{{ route('platnosc') }}";
+    const STRIPE_URL    = 'https://stripe.com';
 
     let startDate = null;
     let endDate   = null;
@@ -410,7 +410,7 @@
 
     document.getElementById('product-btn-reserve')?.addEventListener('click', () => {
         if (!startDate || !endDate) return;
-        window.location.href = PAYMENT_URL;
+        window.location.href = STRIPE_URL;
     });
 
   

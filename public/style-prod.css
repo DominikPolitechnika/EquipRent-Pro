@@ -770,3 +770,175 @@ body {
         @media (max-width: 600px) {
             .gallery-grid { grid-template-columns: repeat(2, 1fr); }
         }
+/* ================================================
+   ZAOKRĄGLENIA - dopasowane do estetyki catalog
+================================================ */
+
+/* Główne karty / kontenery */
+.product-gallery-main img,
+.product-gallery-side img,
+.product-gallery-side-last img {
+    border-radius: 10px;
+}
+
+.product-status-badge { border-radius: 999px; }
+
+.product-specs-grid {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Sekcje informacji / opinii / sidebaru */
+.product-info-section,
+.product-reviews-section,
+.product-related-section,
+.product-sidebar-card,
+.product-calendar-wrapper,
+.product-history-section {
+    border-radius: 10px;
+}
+
+/* Mniejsze karty wewnątrz */
+.product-review-card,
+.product-related-card,
+.product-history-card,
+.product-spec-item {
+    border-radius: 8px;
+}
+
+.product-related-card img,
+.product-history-card img,
+.product-review-avatar {
+    border-radius: 8px;
+}
+
+/* Przyciski */
+.product-btn-reserve,
+.product-btn-cancel,
+.product-btn-submit,
+.product-action-link {
+    border-radius: 8px;
+}
+
+.product-see-all-btn {
+    border-radius: 6px;
+}
+
+/* Kalendarz - dni */
+.product-cal-day,
+.product-cal-nav {
+    border-radius: 6px;
+}
+
+/* Inputy / textarea opinii */
+.product-review-input,
+.product-review-textarea,
+.product-form-input {
+    border-radius: 8px;
+}
+
+/* Tabela historii */
+.product-history-section table,
+.product-history-section table thead,
+.product-history-section table tbody,
+.product-table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Badge-i */
+.product-badge,
+.product-rating-badge,
+.product-tag {
+    border-radius: 999px;
+}
+
+/* Awatary użytkowników w opiniach */
+.product-review-user-avatar,
+.review-avatar {
+    border-radius: 50%;
+}
+
+/* Modal galerii - miniaturki */
+.gallery-thumb,
+.gallery-thumb img {
+    border-radius: 8px;
+}
+
+/* ================================================
+   ZAOKRĄGLENIA v2 - bazujące na faktycznych klasach
+================================================ */
+
+/* Aktywna rezerwacja (z przyciskiem ANULUJ) */
+.product-reservation-card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Kalendarz - cały kontener i jego elementy */
+.product-calendar {
+    border-radius: 10px;
+    overflow: hidden;
+}
+.product-calendar-header {
+    border-radius: 10px 10px 0 0;
+}
+.product-cal-grid > div,
+.product-cal-grid > button {
+    border-radius: 6px;
+}
+.product-cal-nav { border-radius: 6px; }
+
+/* Tabela historii wynajmu */
+.product-history-table {
+    border-radius: 10px;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Sidebar - prawa kolumna z ceną */
+.product-booking-panel {
+    border-radius: 10px;
+    overflow: hidden;
+}
+.product-price-breakdown {
+    border-radius: 8px;
+    overflow: hidden;
+}
+.product-price-row {
+    border-radius: 0;
+}
+
+/* Karty opinii i sekcja oceny ogólnej */
+.product-review-card {
+    border-radius: 10px;
+}
+.product-rating-summary {
+    border-radius: 10px;
+}
+
+/* Pole tekstowe komentarza */
+.product-review-textarea {
+    border-radius: 8px;
+}
+
+/* Star input - gwiazdki do oceny */
+.product-star-input { border-radius: 6px; }
+
+/* Range display - zakres wybranych dat */
+.product-range-display {
+    border-radius: 8px;
+}
+
+/* Avatar w opinii / w rezerwacji - jak ma kwadratowy obrazek */
+.product-review-header > div:first-child,
+.product-reviewer-name + img,
+.product-review-card img {
+    border-radius: 8px;
+}
+
+/* Przycisk Anuluj */
+.product-btn-cancel { border-radius: 8px; }
+
+/* Action link "Zarezerwuj ponownie" - tu lepiej bez radius, to inline link */

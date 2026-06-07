@@ -49,14 +49,13 @@
 
         {{-- LEFT --}}
         <div class="product-left">
-            {{-- tymczasowo --}}
             <div class="product-badges">
-                @if('dostepny' === 'dostepny')
+                @if($product->getStatus() === 'Dostępny')
                     <span class="product-status-badge product-status-available">
                         <span class="product-status-dot"></span>
                         Dostępny
                     </span>
-                @elseif($product['status'] === 'wypozyczony')
+                @elseif($product->getStatus() === 'Wypożyczony')
                     <span class="product-status-badge product-status-rented">
                         <span class="product-status-dot"></span>
                         Wypożyczony

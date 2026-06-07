@@ -16,7 +16,31 @@ class CatalogController extends Controller
             ->orderBy('name')
             ->get();
 
-        $query = Product::with('equipment_category');
+        $query = Product::with('equipment_category')
+        ->where('is_deleted',false)
+        ->where('is_available',true);
+
+        if($search = $request->input('search')){
+            $query->where(function ($q) use ($search){
+                $q->where('title','like',"%{$search}%")
+                ->orWhere('body','like',"%{$search}%");
+            });
+        }
+
+        if($categoryIds = $request->input('categories')){
+            $query->whereIn('equipment_category_id',$categoryIds);
+        }
+
+        if($request->filled('price_range')){
+            $query->where('one_day_price',"<=",$request->input('price_range'));
+        }
+
+        if($request->filled('date_to') && $request->filled('date_from')){
+            $query->whereDoesntHave('reservation', function ($q) use ($request){
+                $q->where('startDate','<=',$request->input('date_to'))
+                ->where('endDate','>=',$request->input('date_from'));
+            });
+        }
 
         switch ($request->sort) {
 
@@ -42,8 +66,15 @@ class CatalogController extends Controller
         }
 
         $products = $query
-            ->paginate(12)
-            ->withQueryString();
+        ->paginate(12)
+        ->withQueryString();//zachowanie filtrów w paginacji
+
+        if($request->ajax()){
+            return view(
+                'partials.catalog-products',
+                compact('products')
+            );
+        }
 
         return view(
             'pages.catalog',

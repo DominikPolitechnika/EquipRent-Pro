@@ -249,7 +249,7 @@
     text-decoration: none;
 }
 .le-page:hover { border-color: #9aa5ad; }
-.le-page.active { background: #075071; border-color: #075071; color: #fff; }
+.lr-page.active { background: #075071; border-color: #075071; color: #fff; }
 .le-page.nav { color: #6b7280; }
 
 /* ---- SKELETON ---- */

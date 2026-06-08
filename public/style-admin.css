@@ -206,7 +206,6 @@ body {
 .adm-breadcrumb,
 .db-breadcrumb,
 .le-breadcrumb,
-.lr-breadcrumb,
 .lu-breadcrumb,
 .ud-breadcrumb,
 .pe-breadcrumb {
@@ -224,7 +223,6 @@ body {
 .adm-breadcrumb a,
 .db-breadcrumb a,
 .le-breadcrumb a,
-.lr-breadcrumb a,
 .lu-breadcrumb a,
 .ud-breadcrumb a,
 .pe-breadcrumb a {
@@ -236,7 +234,7 @@ body {
 .adm-breadcrumb a:hover,
 .db-breadcrumb a:hover,
 .le-breadcrumb a:hover,
-.lr-breadcrumb a:hover,
+
 .lu-breadcrumb a:hover,
 .ud-breadcrumb a:hover,
 .pe-breadcrumb a:hover {
@@ -246,7 +244,7 @@ body {
 .adm-breadcrumb .active,
 .db-breadcrumb .active,
 .le-breadcrumb .active,
-.lr-breadcrumb .active,
+
 .lu-breadcrumb .active,
 .ud-breadcrumb .active,
 .pe-breadcrumb .active {
@@ -258,3 +256,22 @@ body {
     color: #cbd5e1;
     font-weight: 400;
 }
+
+.le-breadcrumb {
+    font-size: 12px;
+    color: #9aa5ad;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.le-breadcrumb a { color: #9aa5ad; text-decoration: none; }
+.le-breadcrumb a:hover { color: #075071; }
+.le-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 34px;
+    font-weight: 900;
+    color: #111827;
+    margin: 0 0 22px;
+}
+.lr-page.active { background: #075071; border-color: #075071; color: #fff; }

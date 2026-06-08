@@ -19,18 +19,16 @@
             <div class="lu-content">
 
                 {{-- BREADCRUMB --}}
-                <div class="adm-breadcrumb">
+           <div class="le-breadcrumb">
                     <span>Zarządzanie</span>
-                    <span class="sep">›</span>
-                    <span class="active">Użytkownicy</span>
+                    <span>›</span>
+                    <span class="active">użytkownicy</span>
                 </div>
+                <h1 class="le-title">Użytkownicy</h1>
 
                 {{-- NAGŁÓWEK --}}
                 <div class="lu-header">
-                    <div class="lu-header-text">
-                        <h1>Zarejestrowani Klienci</h1>
-                        <p>Zarządzaj siecią profesjonalnych sportowców i klubów partnerskich.</p>
-                    </div>
+        
                     <button type="button" class="lu-filter-btn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>

@@ -19,13 +19,12 @@
             <div class="db-content">
 
                 {{-- NAGŁÓWEK --}}
-                <div class="db-breadcrumb">
+                <div class="le-breadcrumb">
                     <span>Zarządzanie</span>
                     <span>›</span>
                     <span class="active">Panel Główny</span>
                 </div>
-                <h1 class="db-title">Przegląd Systemu</h1>
-                <p class="db-subtitle">Monitorowanie wydajności sprzętu i metryk operacyjnych w czasie rzeczywistym.</p>
+                <h1 class="le-title">Panel Główny</h1>
 
                 {{-- ===== GÓRNE KAFLE ===== --}}
                 <div class="db-stats">

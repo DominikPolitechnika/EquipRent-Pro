@@ -12,7 +12,6 @@ class CatalogController extends Controller
     {
         $categories = Category::query()
             ->has('products')
-            ->withCount('products')
             ->orderBy('name')
             ->get();
 
@@ -21,9 +20,10 @@ class CatalogController extends Controller
         ->where('is_available',true);
 
         if($search = $request->input('search')){
-            $query->where(function ($q) use ($search){
-                $q->where('title','like',"%{$search}%")
-                ->orWhere('body','like',"%{$search}%");
+            $escapedSearch = addcslashes($search,'%_\\'); //sanityzacja
+            $query->where(function ($q) use ($escapedSearch){
+                $q->where('title','like',"%{$escapedSearch}%")
+                ->orWhere('body','like',"%{$escapedSearch}%");
             });
         }
 

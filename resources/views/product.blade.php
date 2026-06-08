@@ -260,7 +260,7 @@
 
 <script> //kalendarz z przeniesieniem do "stripe" i nizej są giwazdki 
 (function() {
-   const PRICE_PER_DAY = {{ $product->oneDayPrice }};
+   const PRICE_PER_DAY = {{ $product->one_day_price }};
     const SERVICE_FEE   = 120;
     const LOGISTICS_FEE = 250;
     const STRIPE_URL    = 'https://stripe.com';

@@ -49,14 +49,14 @@
                 type="range" 
                 min="0" 
                 max="200" 
-                value="{{ request('price_range') ?? 200 }}" 
+                value="200" 
                 class="price-range" 
                 name="price_range"
                 id="price_range">
 
             <div class="price-values">
                 <span>0 zł</span>
-                <span id="price-display">{{ request('price_range') ?? 200 }} zł</span>
+                <span id="price-display">200 zł</span>
             </div>
         </div>
 
@@ -68,7 +68,7 @@
                     <label class="date-label">Data od</label>
                     <div class="date-box">
                         <i class="fa-regular fa-calendar date-icon"></i>
-                        <input type="date" class="date-input" name="date_from">
+                        <input type="date" class="date-input" name="date_from" onfocus="this.showPicker()">
                     </div>
                 </div>
 
@@ -76,7 +76,7 @@
                     <label class="date-label">Data do</label>
                     <div class="date-box">
                         <i class="fa-regular fa-calendar date-icon"></i>
-                        <input type="date" class="date-input" name="date_to">
+                        <input type="date" class="date-input" name="date_to" onfocus="this.showPicker()">
                     </div>
                 </div>
             </div>
@@ -165,9 +165,12 @@
 <script>
     const gridButton = document.getElementById('gridViewBtn');
     const listButton = document.getElementById('listViewBtn');
-    const productsGrid = document.getElementById('productsGrid');
+    
 
     function setView(view) {
+        const productsGrid = document.getElementById('productsGrid');
+        if(!productsGrid) return;
+
         if (view === 'list') {
             productsGrid.classList.add('list-view');
             listButton.classList.add('active');
@@ -192,6 +195,21 @@
         setView('list');
     });
 
+    function saveFiltersToSession({ search, priceRange, dateFrom, dateTo, sort, categories }) {
+        sessionStorage.setItem('catalogFilters', JSON.stringify({
+            search, priceRange, dateFrom, dateTo, sort, categories
+        }));
+    }
+
+    function loadFiltersFromSession() {
+        const saved = sessionStorage.getItem('catalogFilters');
+        if (!saved) return;
+
+        const filters = JSON.parse(saved);
+        restoreFilters(filters);       
+        fetchProducts();            
+    }
+
     const sidebar = document.querySelector('.catalog-sidebar');
 
     sidebar.querySelectorAll('input[type="checkbox"], input[type="date"]')
@@ -212,20 +230,26 @@
 
     document.querySelector('[name="sort"]').addEventListener('change',fetchProducts);
 
-    function fetchProducts(){
+    function fetchProducts(page = 1){
         const params = new URLSearchParams();
 
-        params.append('search',sidebar.querySelector('[name="search"]').value);
-        params.append('price_range',sidebar.querySelector('[name="price_range"]').value);
-
-        sidebar.querySelectorAll('[name="categories[]"]:checked')
-        .forEach(cb => params.append('categories[]',cb.value));
-
+        const search = sidebar.querySelector('[name="search"]').value;
+        const priceRange = sidebar.querySelector('[name="price_range"]').value;
         const dateFrom = sidebar.querySelector('[name="date_from"]').value;
         const dateTo = sidebar.querySelector('[name="date_to"]').value;
+        const sort = document.querySelector('[name="sort"]').value
+        const categories = [...sidebar.querySelectorAll('[name="categories[]"]:checked')]
+        .map(cb => cb.value);
+
+        params.append('search',search);
+        params.append('price_range',priceRange);
+        categories.forEach(v => params.append('categories[]',v));
         if(dateFrom) params.append('date_from',dateFrom);
         if(dateTo) params.append('date_to',dateTo);
-        params.append('sort',document.querySelector('[name="sort"]').value);
+        params.append('sort',sort);
+        params.append('page',page);
+
+        saveFiltersToSession({ search, priceRange, dateFrom, dateTo, sort, categories });
 
         const container = document.getElementById('products-container');
         container.style.opacity = '0.5';
@@ -243,6 +267,9 @@
         .then(html => {
             container.innerHTML = html;
             container.style.opacity = '1';
+            restoreFilters({search,priceRange,dateFrom,dateTo,sort,categories});
+            bindPaginationLinks();
+            setView(localStorage.getItem('catalogView') || 'grid');
         })
         .catch(err => {
             console.error(err);
@@ -251,13 +278,44 @@
         });
     }
 
+    function restoreFilters({ search, priceRange, dateFrom, dateTo, sort, categories }) {
+        sidebar.querySelector('[name="search"]').value     = search;
+        sidebar.querySelector('[name="price_range"]').value = priceRange;
+        sidebar.querySelector('[name="date_from"]').value  = dateFrom;
+        sidebar.querySelector('[name="date_to"]').value    = dateTo;
+        document.querySelector('[name="sort"]').value      = sort;
+        document.getElementById('price-display').textContent = priceRange + ' zł';
+
+        sidebar.querySelectorAll('[name="categories[]"]').forEach(cb => {
+            cb.checked = categories.includes(cb.value);
+        });
+    }
+
+    function bindPaginationLinks(){
+        document.querySelectorAll('.pagination-wrapper a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const url = new URL(link.href);
+                const page = url.searchParams.get('page') || 1;
+                fetchProducts(page);
+            });
+        });
+    }
+
+    loadFiltersFromSession() || bindPaginationLinks();
+
     document.querySelector('.reset-btn').addEventListener('click', () => {
+        sessionStorage.removeItem('catalogFilters');
+        const url = new URL(window.location);
+        url.search = '';
+        window.history.pushState({},'',url);
         sidebar.querySelectorAll('input').forEach(input => {
             if (input.type === 'checkbox') input.checked = false;
             if (input.type === 'range')    input.value = 200;
             if (input.type === 'date')     input.value = '';
             if (input.type === 'text')     input.value = '';
         });
+        document.querySelector('[name="sort"]').value = "";
         document.getElementById('price-display').textContent = '200 zł';
         fetchProducts();
     });

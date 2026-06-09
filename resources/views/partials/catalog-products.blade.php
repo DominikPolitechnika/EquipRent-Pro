@@ -4,15 +4,18 @@
 
             <div class="product-image">
                 <img
-                    src="{{ $product->getMainImageUrl() }}"
+                    src="{{ $product->getNImageUrl() }}"
                     alt="{{ $product->title ?? 'PRODUKT' }}"
                 >
 
-                @if($product->getStatus() === 'Dostępny')
+                @php
+                    $productStatus = $product->getStatus();
+                @endphp
+                @if($productStatus === 'Dostępny')
                     <span class="product-badge">
                         Dostępny
                     </span>
-                @elseif($product->getStatus() === 'Wypożyczony')
+                @elseif($productStatus === 'Wypożyczony')
                     <span class="product-badge" style="color: #f16012cc; background: #ffd7c2;">
                         Wypożyczony
                     </span>

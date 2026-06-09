@@ -33,12 +33,24 @@
     <div class="product-gallery-fullwidth">
         <div class="product-gallery">
             <div class="product-gallery-main">
-                <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
+                @if($product->getNImageUrl(1,TRUE) === "")
+                    <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
+                @else
+                    <img src={{ $product->getNImageUrl(1) }} style="border-radius:0;">
+                @endif
             </div>
             <div class="product-gallery-side">
-                <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
+                @if($product->getNImageUrl(2,TRUE) === "")
+                    <div class="placeholder animate-pulse"></div>
+                @else
+                    <img src={{ $product->getNImageUrl(2) }} style="height:207px;border-radius:0;">
+                @endif
                 <div class="product-gallery-side-last">
-                    <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
+                    @if($product->getNImageUrl(3,TRUE) === "")
+                        <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
+                    @else
+                        <img src={{ $product->getNImageUrl(3) }} style="height:207px;border-radius:0;">
+                    @endif
                     <button type="button" class="product-see-all-btn" id="gallery-open-btn">⊞ ZOBACZ WSZYSTKIE ZDJĘCIA</button>
                 </div>
             </div>
@@ -50,12 +62,15 @@
         {{-- LEFT --}}
         <div class="product-left">
             <div class="product-badges">
-                @if($product->getStatus() === 'Dostępny')
+                @php
+                    $productStatus = $product->getStatus();
+                @endphp
+                @if($productStatus === 'Dostępny')
                     <span class="product-status-badge product-status-available">
                         <span class="product-status-dot"></span>
                         Dostępny
                     </span>
-                @elseif($product->getStatus() === 'Wypożyczony')
+                @elseif($productStatus === 'Wypożyczony')
                     <span class="product-status-badge product-status-rented">
                         <span class="product-status-dot"></span>
                         Wypożyczony
@@ -227,7 +242,6 @@
 
 </div>
 </main>
-
 {{-- galeria --}}
 <div class="gallery-backdrop" id="gallery-backdrop">
     <div class="gallery-modal">
@@ -237,19 +251,24 @@
         </div>
         <div class="gallery-body">
             <div class="gallery-grid">
-                <div class="gallery-thumb animate-pulse" data-idx="1"></div>
-                <div class="gallery-thumb animate-pulse" data-idx="2"></div>
-                <div class="gallery-thumb animate-pulse" data-idx="3"></div>
-                <div class="gallery-thumb animate-pulse" data-idx="4"></div>
-                <div class="gallery-thumb animate-pulse" data-idx="5"></div>
-                <div class="gallery-thumb animate-pulse" data-idx="6"></div>
+                @php
+                    $imgUrls = $product->getImagesUrls();
+                @endphp
+                @if(count($imgUrls) > 0)
+                    @foreach ($imgUrls as $index => $imgUrl ) //wymiary obrazka ustawione na tymczasowo na sztywno
+                        <img class="gallery-thumb" style="width:200px;heigth:100px;" 
+                         src="{{ $imgUrl }}" data-idx="{{ $index }}">
+                    @endforeach
+                @else
+                    <p style="font-family:Poppins;font-size:14px;color:rgb(75,85,99);">Brak obrazków do wyświetlenia</p>
+                @endif
             </div>
         </div>
 
         {{-- Powiększony widok pojedynczego zdjęcia --}}
         <div class="gallery-zoom" id="gallery-zoom">
             <button type="button" class="gallery-zoom-back" id="gallery-zoom-back">← Powrót do galerii</button>
-            <div class="gallery-zoom-img animate-pulse" id="gallery-zoom-img"></div>
+            <img class="gallery-zoom-img" id="gallery-zoom-img"/>
         </div>
     </div>
 </div>
@@ -457,9 +476,10 @@
         zoom.classList.remove('open');
         document.body.style.overflow = '';
     }
-    function openZoom(idx) { //w tej drugiej
+    function openZoom(idx,src) { //w tej drugiej
     
         zoomImg.setAttribute('data-current', idx);
+        zoomImg.src = src;
         zoom.classList.add('open');
     }
     function closeZoom() {
@@ -477,7 +497,7 @@
 
     // powiekszenie po klik
     thumbs.forEach(t => {
-        t.addEventListener('click', () => openZoom(t.dataset.idx));
+        t.addEventListener('click', () => openZoom(t.dataset.idx,t.src));
     });
 
     

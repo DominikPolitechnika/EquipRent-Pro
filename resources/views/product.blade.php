@@ -255,8 +255,8 @@
                     $imgUrls = $product->getImagesUrls();
                 @endphp
                 @if(count($imgUrls) > 0)
-                    @foreach ($imgUrls as $index => $imgUrl ) //wymiary obrazka ustawione na tymczasowo na sztywno
-                        <img class="gallery-thumb" style="width:200px;heigth:100px;" 
+                    @foreach ($imgUrls as $index => $imgUrl )
+                        <img class="gallery-thumb" 
                          src="{{ $imgUrl }}" data-idx="{{ $index }}">
                     @endforeach
                 @else

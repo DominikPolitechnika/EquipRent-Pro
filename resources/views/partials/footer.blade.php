@@ -1,6 +1,6 @@
 
 <link rel="stylesheet" href="{{ asset('style-foot.css') }}">
-
+    {{-- ===== dodawane za pomocą include ===== --}}
 <footer class="footer">
   <div class="footer-container">
     

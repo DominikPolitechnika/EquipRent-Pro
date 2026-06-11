@@ -20,6 +20,7 @@
         .yellow { background: #fef3c7; color: #92400e; }
         .red { background: #fee2e2; color: #991b1b; }
     </style>
+    <link rel="icon" type="image/png" href="{{ asset('E.png') }}">
 </head>
 <body>
     @include('partials.header')

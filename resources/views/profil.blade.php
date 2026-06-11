@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil użytkownika – EquipRent Pro</title>
     <link rel="stylesheet" href="{{ asset('style-profil.css') }}">
+    <style>
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+        .placeholder { background: #e2e8f0; display: inline-block; border-radius: 3px; }
+        .placeholder-block { background: #e2e8f0; display: block; border-radius: 3px; }
+        .placeholder-circle { background: #e2e8f0; border-radius: 50%; display: block; }
+        .animate-pulse { animation: pulse 1.6s ease-in-out infinite; }
+    </style>
+    <link rel="icon" type="image/png" href="{{ asset('E.png') }}">
 </head>
 <body class="prof-page">
 @include('partials.header')
@@ -34,11 +42,14 @@
         {{-- Karta użytkownika --}}
         <div class="prof-card-user">
             <div class="prof-avatar-wrapper">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face"
-                     alt="Marek Kowalski">
+                <span class="placeholder-circle animate-pulse" style="width:120px;height:120px;"></span>
             </div>
-            <h2 class="prof-user-name">Marek Kowalski</h2>
-            <p class="prof-user-role">Instruktor Tenisa i Narciarstwa</p>
+            <h2 class="prof-user-name">
+                <span class="placeholder animate-pulse" style="width:180px;height:22px;"></span>
+            </h2>
+            <p class="prof-user-role">
+                <span class="placeholder animate-pulse" style="width:220px;height:14px;"></span>
+            </p>
 
             <div class="prof-user-divider"></div>
 
@@ -49,7 +60,9 @@
                     </svg>
                     <div class="prof-user-info-content">
                         <div class="prof-user-info-label">Klub sportowy</div>
-                        <div class="prof-user-info-value">BuildCorp Sports &amp; Wellness Sp. z o.o.</div>
+                        <div class="prof-user-info-value">
+                            <span class="placeholder animate-pulse" style="width:200px;height:14px;"></span>
+                        </div>
                     </div>
                 </div>
 
@@ -60,7 +73,9 @@
                     </svg>
                     <div class="prof-user-info-content">
                         <div class="prof-user-info-label">E-mail</div>
-                        <div class="prof-user-info-value">m.kowalski@buildcorp.pl</div>
+                        <div class="prof-user-info-value">
+                            <span class="placeholder animate-pulse" style="width:170px;height:14px;"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -72,16 +87,22 @@
             <div class="prof-summary-grid">
                 <div>
                     <div class="prof-summary-label">Suma wydatków</div>
-                    <div class="prof-summary-value">12 450 PLN</div>
+                    <div class="prof-summary-value">
+                        <span class="placeholder animate-pulse" style="width:110px;height:22px;background:#ffffff55;"></span>
+                    </div>
                 </div>
                 <div>
                     <div class="prof-summary-label">Wynajęte przedmioty</div>
-                    <div class="prof-summary-value">28</div>
+                    <div class="prof-summary-value">
+                        <span class="placeholder animate-pulse" style="width:40px;height:22px;background:#ffffff55;"></span>
+                    </div>
                 </div>
             </div>
             <div class="prof-summary-footer">
                 <span class="prof-summary-footer-label">Status lojalnościowy</span>
-                <span class="prof-loyalty-badge">Złoty Członek</span>
+                <span class="prof-loyalty-badge">
+                    <span class="placeholder animate-pulse" style="width:90px;height:14px;background:#ffffff55;"></span>
+                </span>
             </div>
         </div>
 
@@ -89,39 +110,69 @@
         <div class="prof-card-notif">
             <div class="prof-notif-header">
                 <span class="prof-notif-title">Centrum Powiadomień</span>
-                <span class="prof-notif-badge">3 nowe</span>
+                <span class="prof-notif-badge">
+                    <span class="placeholder animate-pulse" style="width:50px;height:12px;background:#ffffff55;"></span>
+                </span>
             </div>
 
             <div class="prof-notif-item urgent">
                 <div class="prof-notif-item-top">
-                    <span class="prof-notif-item-label">Alert kary</span>
-                    <span class="prof-notif-item-time">2h temu</span>
+                    <span class="prof-notif-item-label">
+                        <span class="placeholder animate-pulse" style="width:80px;height:13px;"></span>
+                    </span>
+                    <span class="prof-notif-item-time">
+                        <span class="placeholder animate-pulse" style="width:50px;height:11px;"></span>
+                    </span>
                 </div>
-                <div class="prof-notif-item-text">Naliczono 150 PLN opłaty za spóźniony zwrot „Rakiety Pro X1".</div>
+                <div class="prof-notif-item-text">
+                    <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:4px;"></span>
+                    <span class="placeholder-block animate-pulse" style="width:80%;height:12px;"></span>
+                </div>
             </div>
 
             <div class="prof-notif-item">
                 <div class="prof-notif-item-top">
-                    <span class="prof-notif-item-label" style="color:#1a6fa8;">Zbliżający się termin</span>
-                    <span class="prof-notif-item-time">4h temu</span>
+                    <span class="prof-notif-item-label">
+                        <span class="placeholder animate-pulse" style="width:100px;height:13px;"></span>
+                    </span>
+                    <span class="prof-notif-item-time">
+                        <span class="placeholder animate-pulse" style="width:50px;height:11px;"></span>
+                    </span>
                 </div>
-                <div class="prof-notif-item-text">Przypomnienie: Wynajem „Zestawu Narciarskiego" kończy się jutro o 10:00.</div>
+                <div class="prof-notif-item-text">
+                    <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:4px;"></span>
+                    <span class="placeholder-block animate-pulse" style="width:70%;height:12px;"></span>
+                </div>
             </div>
 
             <div class="prof-notif-item">
                 <div class="prof-notif-item-top">
-                    <span class="prof-notif-item-label">Potwierdzenie rezerwacji</span>
-                    <span class="prof-notif-item-time">1d temu</span>
+                    <span class="prof-notif-item-label">
+                        <span class="placeholder animate-pulse" style="width:110px;height:13px;"></span>
+                    </span>
+                    <span class="prof-notif-item-time">
+                        <span class="placeholder animate-pulse" style="width:50px;height:11px;"></span>
+                    </span>
                 </div>
-                <div class="prof-notif-item-text">Rezerwacja #4492 dla „Zestawu do Paddle" została potwierdzona.</div>
+                <div class="prof-notif-item-text">
+                    <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:4px;"></span>
+                    <span class="placeholder-block animate-pulse" style="width:60%;height:12px;"></span>
+                </div>
             </div>
 
             <div class="prof-notif-item">
                 <div class="prof-notif-item-top">
-                    <span class="prof-notif-item-label">Anulowanie</span>
-                    <span class="prof-notif-item-time">2d temu</span>
+                    <span class="prof-notif-item-label">
+                        <span class="placeholder animate-pulse" style="width:90px;height:13px;"></span>
+                    </span>
+                    <span class="prof-notif-item-time">
+                        <span class="placeholder animate-pulse" style="width:50px;height:11px;"></span>
+                    </span>
                 </div>
-                <div class="prof-notif-item-text">Twoja prośba o anulowanie rezerwacji #4480.</div>
+                <div class="prof-notif-item-text">
+                    <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:4px;"></span>
+                    <span class="placeholder-block animate-pulse" style="width:75%;height:12px;"></span>
+                </div>
             </div>
         </div>
 
@@ -145,7 +196,7 @@
                 <a href="{{ route('rezerwacje') }}" class="prof-section-link">Zobacz historię</a>
             </div>
 
-            {{-- Rezerwacja 1 - spóźniony zwrot --}}
+            {{-- Rezerwacja 1 --}}
             <div class="prof-rez-card">
                 <div class="prof-rez-top">
                     <div class="prof-rez-info">
@@ -156,32 +207,46 @@
                             </svg>
                         </div>
                         <div class="prof-rez-titles">
-                            <div class="prof-rez-name">Profesjonalna Rakieta Tenisowa X1</div>
-                            <div class="prof-rez-id">ID: #RE-8829</div>
+                            <div class="prof-rez-name">
+                                <span class="placeholder animate-pulse" style="width:220px;height:16px;"></span>
+                            </div>
+                            <div class="prof-rez-id">
+                                <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
+                            </div>
                         </div>
                     </div>
                     <div class="prof-rez-status">
-                        <span class="prof-rez-badge late">Spóźniony zwrot</span>
-                        <div class="prof-rez-deadline">Termin: 24 paź 2023</div>
+                        <span class="prof-rez-badge late">
+                            <span class="placeholder animate-pulse" style="width:100px;height:12px;background:#ffffff55;"></span>
+                        </span>
+                        <div class="prof-rez-deadline">
+                            <span class="placeholder animate-pulse" style="width:110px;height:12px;"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="prof-rez-details">
                     <div>
                         <div class="prof-rez-detail-label">Okres wynajmu</div>
-                        <div class="prof-rez-detail-value">17 paź – 24 paź</div>
+                        <div class="prof-rez-detail-value">
+                            <span class="placeholder animate-pulse" style="width:130px;height:14px;"></span>
+                        </div>
                     </div>
                     <div>
                         <div class="prof-rez-detail-label">Lokalizacja</div>
-                        <div class="prof-rez-detail-value">Punkt A – Centrum</div>
+                        <div class="prof-rez-detail-value">
+                            <span class="placeholder animate-pulse" style="width:140px;height:14px;"></span>
+                        </div>
                     </div>
                     <div class="prof-rez-detail penalty">
                         <div class="prof-rez-detail-label">Naliczone kary</div>
-                        <div class="prof-rez-detail-value">150,00 PLN</div>
+                        <div class="prof-rez-detail-value">
+                            <span class="placeholder animate-pulse" style="width:90px;height:14px;"></span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Rezerwacja 2 - aktywna --}}
+            {{-- Rezerwacja 2 --}}
             <div class="prof-rez-card">
                 <div class="prof-rez-top">
                     <div class="prof-rez-info">
@@ -192,27 +257,41 @@
                             </svg>
                         </div>
                         <div class="prof-rez-titles">
-                            <div class="prof-rez-name">Zestaw Narciarski Premium</div>
-                            <div class="prof-rez-id">ID: #RE-9012</div>
+                            <div class="prof-rez-name">
+                                <span class="placeholder animate-pulse" style="width:200px;height:16px;"></span>
+                            </div>
+                            <div class="prof-rez-id">
+                                <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
+                            </div>
                         </div>
                     </div>
                     <div class="prof-rez-status">
-                        <span class="prof-rez-badge active">W użyciu</span>
-                        <div class="prof-rez-deadline">Termin: 02 lis 2023</div>
+                        <span class="prof-rez-badge active">
+                            <span class="placeholder animate-pulse" style="width:70px;height:12px;background:#ffffff55;"></span>
+                        </span>
+                        <div class="prof-rez-deadline">
+                            <span class="placeholder animate-pulse" style="width:110px;height:12px;"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="prof-rez-details">
                     <div>
                         <div class="prof-rez-detail-label">Okres wynajmu</div>
-                        <div class="prof-rez-detail-value">20 paź – 02 lis</div>
+                        <div class="prof-rez-detail-value">
+                            <span class="placeholder animate-pulse" style="width:130px;height:14px;"></span>
+                        </div>
                     </div>
                     <div>
                         <div class="prof-rez-detail-label">Lokalizacja</div>
-                        <div class="prof-rez-detail-value">Magazyn Zachód</div>
+                        <div class="prof-rez-detail-value">
+                            <span class="placeholder animate-pulse" style="width:130px;height:14px;"></span>
+                        </div>
                     </div>
                     <div>
                         <div class="prof-rez-detail-label">Naliczone kary</div>
-                        <div class="prof-rez-detail-value">Brak</div>
+                        <div class="prof-rez-detail-value">
+                            <span class="placeholder animate-pulse" style="width:60px;height:14px;"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -232,19 +311,33 @@
 
             <div class="prof-payment-grid">
                 <div class="prof-payment-card">
-                    <div class="prof-payment-logo visa">VISA</div>
-                    <div class="prof-payment-info">
-                        <div class="prof-payment-number">•••• 4242</div>
-                        <div class="prof-payment-expiry">Ważność 12/26</div>
+                    <div class="prof-payment-logo visa">
+                        <span class="placeholder animate-pulse" style="width:38px;height:14px;background:#ffffff55;"></span>
                     </div>
-                    <span class="prof-payment-default">Domyślna</span>
+                    <div class="prof-payment-info">
+                        <div class="prof-payment-number">
+                            <span class="placeholder animate-pulse" style="width:120px;height:16px;"></span>
+                        </div>
+                        <div class="prof-payment-expiry">
+                            <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
+                        </div>
+                    </div>
+                    <span class="prof-payment-default">
+                        <span class="placeholder animate-pulse" style="width:60px;height:12px;"></span>
+                    </span>
                 </div>
 
                 <div class="prof-payment-card">
-                    <div class="prof-payment-logo mc">MC</div>
+                    <div class="prof-payment-logo mc">
+                        <span class="placeholder animate-pulse" style="width:28px;height:14px;background:#ffffff55;"></span>
+                    </div>
                     <div class="prof-payment-info">
-                        <div class="prof-payment-number">•••• 8890</div>
-                        <div class="prof-payment-expiry">Ważność 05/25</div>
+                        <div class="prof-payment-number">
+                            <span class="placeholder animate-pulse" style="width:120px;height:16px;"></span>
+                        </div>
+                        <div class="prof-payment-expiry">
+                            <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
+                        </div>
                     </div>
                 </div>
             </div>

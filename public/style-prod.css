@@ -1,4 +1,3 @@
-
 /* =========================
 srodek
 ========================= */
@@ -7,6 +6,7 @@ srodek
 
 html, body {
   height: 100%;
+  
 }
  
 body {
@@ -24,15 +24,15 @@ main {
    Kolorystyka: jasne tło, czarny tekst, niebieski CTA
    ================================================ */
  
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
  
 :root {
-    --c-bg:        #f7f9fb;
-    --c-surface:   #f0f4f7;
-    --c-border:    #e8ebee;
-    --c-text:      #2a3439;
-    --c-muted:     #777777;
-    --c-muted2:    #aaaaaa;
+    --c-bg:        #f7f7f8;
+    --c-surface:   #eef3f7;
+    --c-border:    #e5e7eb;
+    --c-text:      #111827;
+    --c-muted:     #6b7280777;
+    --c-muted2:    #9aa5adaaa;
     --c-accent:    #2563eb;   /* niebieski CTA */
     --c-accent-h:  #1d4ed8;   /* hover CTA */
     --c-green:     #16a34a;
@@ -58,7 +58,7 @@ footer {
    PAGE WRAPPER
    ================================================ */
 .product-page {
-    font-family: 'Barlow', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: var(--c-bg);
     color: var(--c-text);
     min-height: 100vh;
@@ -73,7 +73,7 @@ footer {
     font-size: 12px;
     color: var(--c-muted);
     text-transform: uppercase;
-    background: #f7f9fb;
+    background: #f7f7f8;
    
 }
 .product-breadcrumb a {
@@ -153,7 +153,7 @@ footer {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
     background: transparent; border: none; cursor: pointer;
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 12px; font-weight: 700;
     letter-spacing: .1em; color: #fff;
     text-transform: uppercase; gap: 6px;
@@ -200,7 +200,7 @@ margin-bottom: 15px;
 }
 .product-description {
     font-size: 14px; line-height: 1.7;
-    color: #555;
+    color: #4b5563;
     max-width: 100%;
     margin-bottom: 28px;
 }
@@ -211,7 +211,7 @@ margin-bottom: 15px;
 .product-specs-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    background: #f0f4f7;
+    background: #eef3f7;
     overflow: hidden;
     margin-bottom: 36px;
 }
@@ -241,7 +241,7 @@ margin-bottom: 15px;
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #aaa;
+    color: #9aa5ad;
     margin-bottom: 6px;
 }
  
@@ -263,7 +263,7 @@ margin-bottom: 15px;
    SECTION TITLES
    ================================================ */
 .product-section-title {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 20px; font-weight: 600;
     letter-spacing: .05em; text-transform: uppercase;
     color: var(--c-text);
@@ -299,14 +299,14 @@ margin-bottom: 15px;
 }
 .product-res-status {
     display: inline-block;
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
     padding: 6px 12px;
  
-    background: #1a6fa8;  /* dokładny odcień ze screena */
+    background: #075071;  /* dokładny odcień ze screena */
     color: #fff;
     width: fit-content;
 }
@@ -314,7 +314,7 @@ margin-bottom: 15px;
 .product-btn-cancel {
     margin-left: auto;
     flex-shrink: 0;
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .1em;
@@ -345,13 +345,13 @@ margin-bottom: 15px;
     font-size: 10px; font-weight: 700;
     letter-spacing: .12em; text-transform: uppercase;
     color: var(--c-muted2);
-    background: #f0f4f7;
+    background: #eef3f7;
     border-bottom: 1px solid var(--c-border);
 }
 .product-history-table td {
     padding: 11px 16px;
     border-bottom: 1px solid var(--c-border);
-    background: #f7f9fb;
+    background: #f7f7f8;
     color: #444;
 }
 .product-history-table tr:last-child td { border-bottom: none; }
@@ -387,8 +387,8 @@ margin-bottom: 15px;
 .product-reviewer-name  { font-size: 13px; font-weight: 600; color: var(--c-text); }
 .product-reviewer-tag   { font-size: 11px; color: var(--c-muted2); font-weight: 400; }
 .product-review-date    { font-size: 11px; color: var(--c-muted2); }
-.product-stars          { color: #006398; font-size: 14px; margin-bottom: 6px; letter-spacing: 2px; }
-.product-review-text    { font-size: 13px; line-height: 1.6; color: #555; }
+.product-stars          { color: #075071; font-size: 14px; margin-bottom: 6px; letter-spacing: 2px; }
+.product-review-text    { font-size: 13px; line-height: 1.6; color: #4b5563; }
  
 .product-rating-summary {
     padding: 20px;
@@ -397,11 +397,11 @@ margin-bottom: 15px;
     
 }
 .product-rating-big {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 56px; font-weight: 900;
     line-height: 1; color: var(--c-text);
 }
-.product-rating-stars { font-size: 18px; color: #006398; margin: 6px 0; letter-spacing: 2px; }
+.product-rating-stars { font-size: 18px; color: #075071; margin: 6px 0; letter-spacing: 2px; }
 .product-rating-count { font-size: 12px; color: var(--c-muted2); margin-bottom: 20px; }
  
 .product-add-review-title {
@@ -419,7 +419,7 @@ margin-bottom: 15px;
     border: 1px solid var(--c-border);
     color: var(--c-text);
     padding: 10px 12px;
-    font-family: 'Barlow', sans-serif; font-size: 13px;
+    font-family: 'Poppins', sans-serif; font-size: 13px;
     resize: vertical; min-height: 80px;
 }
 .product-review-textarea::placeholder { color: var(--c-muted2); }
@@ -428,7 +428,7 @@ margin-bottom: 15px;
 .product-btn-submit {
     margin-top: 10px; width: 100%; padding: 11px;
     background: var(--c-text); color: #fff;
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 13px; font-weight: 700; letter-spacing: .1em;
     text-transform: uppercase; border: none;
  cursor: pointer;
@@ -446,7 +446,7 @@ margin-bottom: 15px;
     align-self: start;
 }
 .product-booking-price {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 44px; font-weight: 900; line-height: 1;
     color: var(--c-text); margin-bottom: 4px;
 }
@@ -473,7 +473,7 @@ margin-bottom: 15px;
     justify-content: space-between; margin-bottom: 10px;
 }
 .product-calendar-month {
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 14px; font-weight: 700;
     letter-spacing: .08em; text-transform: uppercase;
     color: var(--c-text);
@@ -515,7 +515,7 @@ margin-bottom: 15px;
 .product-price-row {
     display: flex; justify-content: space-between;
     font-size: 13px; padding: 6px 0;
-    color: #555; border-bottom: 1px solid var(--c-border);
+    color: #4b5563; border-bottom: 1px solid var(--c-border);
 }
 .product-price-row:last-child  { border-bottom: none; }
 .product-price-row.product-total {
@@ -528,7 +528,7 @@ margin-bottom: 15px;
 .product-btn-reserve {
     width: 100%; padding: 15px;
     background: var(--c-accent); color: #fff;
-    font-family: 'Barlow Condensed', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 15px; font-weight: 800;
     letter-spacing: .12em; text-transform: uppercase;
     border: none;  cursor: pointer;
@@ -660,7 +660,289 @@ margin-bottom: 15px;
     color: #2563eb;
 }
 body {
-    background: #f7f9fb;
+    background: #f7f7f8;
     margin: 0;
     padding: 0;
 }
+
+
+ @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+        .placeholder { background: #e2e8f0; display: block; }
+        .animate-pulse { animation: pulse 1.6s ease-in-out infinite; }
+
+        /* ===== Galeria modal ===== */
+        .gallery-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            z-index: 9998;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .gallery-backdrop.open { display: flex; }
+
+        .gallery-modal {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            max-height: 92vh;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .gallery-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .gallery-title {  font-family: 'Poppins', sans-serif;font-weight: 600; font-size: 15px; color: #1f2937; }
+        .gallery-close {
+            background: transparent;
+            border: 0;
+            font-size: 22px;
+            cursor: pointer;
+            color: #6b7280;
+            line-height: 1;
+            padding: 4px 8px;
+        }
+        .gallery-close:hover { color: #111827; }
+
+        .gallery-body {
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .gallery-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            aspect-ratio: 4 / 3;
+            background: #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.15s, transform 0.15s;
+        }
+        .gallery-thumb:hover {
+            border-color: #075071;
+            transform: scale(1.02);
+        }
+
+        /* powiększony widok jednego zdjęcia */
+        .gallery-zoom {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 2;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        .gallery-zoom.open { display: flex; }
+        .gallery-zoom-img {
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 4 / 3;
+            background: #e2e8f0;
+            border-radius: 6px;
+        }
+        .gallery-zoom-back {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 0;
+            padding: 8px 14px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .gallery-zoom-back:hover { background: #fff; }
+
+        @media (max-width: 600px) {
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+/* ================================================
+   ZAOKRĄGLENIA - dopasowane do estetyki catalog
+================================================ */
+
+/* Główne karty / kontenery */
+.product-gallery-main img,
+.product-gallery-side img,
+.product-gallery-side-last img {
+    border-radius: 10px;
+}
+
+.product-status-badge { border-radius: 999px; }
+
+.product-specs-grid {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Sekcje informacji / opinii / sidebaru */
+.product-info-section,
+.product-reviews-section,
+.product-related-section,
+.product-sidebar-card,
+.product-calendar-wrapper,
+.product-history-section {
+    border-radius: 10px;
+}
+
+/* Mniejsze karty wewnątrz */
+.product-review-card,
+.product-related-card,
+.product-history-card,
+.product-spec-item {
+    border-radius: 8px;
+}
+
+.product-related-card img,
+.product-history-card img,
+.product-review-avatar {
+    border-radius: 8px;
+}
+
+/* Przyciski */
+.product-btn-reserve,
+.product-btn-cancel,
+.product-btn-submit,
+.product-action-link {
+    border-radius: 8px;
+}
+
+.product-see-all-btn {
+    border-radius: 6px;
+}
+
+/* Kalendarz - dni */
+.product-cal-day,
+.product-cal-nav {
+    border-radius: 6px;
+}
+
+/* Inputy / textarea opinii */
+.product-review-input,
+.product-review-textarea,
+.product-form-input {
+    border-radius: 8px;
+}
+
+/* Tabela historii */
+.product-history-section table,
+.product-history-section table thead,
+.product-history-section table tbody,
+.product-table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Badge-i */
+.product-badge,
+.product-rating-badge,
+.product-tag {
+    border-radius: 999px;
+}
+
+/* Awatary użytkowników w opiniach */
+.product-review-user-avatar,
+.review-avatar {
+    border-radius: 50%;
+}
+
+/* Modal galerii - miniaturki */
+.gallery-thumb,
+.gallery-thumb img {
+    border-radius: 8px;
+}
+
+/* ================================================
+   ZAOKRĄGLENIA v2 - bazujące na faktycznych klasach
+================================================ */
+
+/* Aktywna rezerwacja (z przyciskiem ANULUJ) */
+.product-reservation-card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Kalendarz - cały kontener i jego elementy */
+.product-calendar {
+    border-radius: 10px;
+    overflow: hidden;
+}
+.product-calendar-header {
+    border-radius: 10px 10px 0 0;
+}
+.product-cal-grid > div,
+.product-cal-grid > button {
+    border-radius: 6px;
+}
+.product-cal-nav { border-radius: 6px; }
+
+/* Tabela historii wynajmu */
+.product-history-table {
+    border-radius: 10px;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Sidebar - prawa kolumna z ceną */
+.product-booking-panel {
+    border-radius: 10px;
+    overflow: hidden;
+}
+.product-price-breakdown {
+    border-radius: 8px;
+    overflow: hidden;
+}
+.product-price-row {
+    border-radius: 0;
+}
+
+/* Karty opinii i sekcja oceny ogólnej */
+.product-review-card {
+    border-radius: 10px;
+}
+.product-rating-summary {
+    border-radius: 10px;
+}
+
+/* Pole tekstowe komentarza */
+.product-review-textarea {
+    border-radius: 8px;
+}
+
+/* Star input - gwiazdki do oceny */
+.product-star-input { border-radius: 6px; }
+
+/* Range display - zakres wybranych dat */
+.product-range-display {
+    border-radius: 8px;
+}
+
+/* Avatar w opinii / w rezerwacji - jak ma kwadratowy obrazek */
+.product-review-header > div:first-child,
+.product-reviewer-name + img,
+.product-review-card img {
+    border-radius: 8px;
+}
+
+/* Przycisk Anuluj */
+.product-btn-cancel { border-radius: 8px; }
+
+/* Action link "Zarezerwuj ponownie" - tu lepiej bez radius, to inline link */

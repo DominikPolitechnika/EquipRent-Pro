@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moje rezerwacje – EquipRent Pro</title>
-   
-      <link rel="stylesheet" href="{{ asset('style-rezerwacje.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('style-rezerwacje.css') }}">
+        {{--  placeholdery css --}}
+    <style> 
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+        .placeholder { background: #e2e8f0; display: inline-block; border-radius: 3px; }
+        .placeholder-block { background: #e2e8f0; display: block; border-radius: 3px; }
+        .animate-pulse { animation: pulse 1.6s ease-in-out infinite; }
+        .rez-card-img.placeholder { display: block; }
+    </style>
+    <link rel="icon" type="image/png" href="{{ asset('E.png') }}">
 </head>
 <body class="rez-page">
 @include('partials.header')
@@ -27,17 +36,25 @@
 
             <div class="rez-alert urgent">
                 <i class="fa-solid fa-circle-exclamation rez-alert-icon"></i>
-                <div>
-                    <div class="rez-alert-label">Termin zwrotu: pozostało 4h</div>
-                    <div class="rez-alert-sub">Rower górski Specialized Stumpjumper</div>
+                <div style="flex:1; min-width:0;">
+                    <div class="rez-alert-label">
+                        <span class="placeholder-block animate-pulse" style="width:70%;height:14px;"></span>
+                    </div>
+                    <div class="rez-alert-sub">
+                        <span class="placeholder-block animate-pulse" style="width:90%;height:12px;margin-top:6px;"></span>
+                    </div>
                 </div>
             </div>
 
             <div class="rez-alert upcoming">
                 <i class="fa-regular fa-calendar rez-alert-icon"></i>
-                <div>
-                    <div class="rez-alert-label">Odbiór: jutro</div>
-                    <div class="rez-alert-sub">Zestaw do tenisa stołowego Pro</div>
+                <div style="flex:1; min-width:0;">
+                    <div class="rez-alert-label">
+                        <span class="placeholder-block animate-pulse" style="width:55%;height:14px;"></span>
+                    </div>
+                    <div class="rez-alert-sub">
+                        <span class="placeholder-block animate-pulse" style="width:80%;height:12px;margin-top:6px;"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,11 +65,15 @@
             <div class="rez-stats-grid">
                 <div class="rez-stat-item">
                     <div class="rez-stat-label">Łącznie wydano</div>
-                    <div class="rez-stat-value">12 450 zł</div>
+                    <div class="rez-stat-value">
+                        <span class="placeholder-block animate-pulse" style="width:80%;height:22px;"></span>
+                    </div>
                 </div>
                 <div class="rez-stat-item">
                     <div class="rez-stat-label">Wypożyczony sprzęt</div>
-                    <div class="rez-stat-value">18</div>
+                    <div class="rez-stat-value">
+                        <span class="placeholder-block animate-pulse" style="width:40%;height:22px;"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -62,32 +83,34 @@
     {{-- ===== PRAWA KOLUMNA ===== --}}
     <main class="rez-content">
 
-        
+
 
         {{-- AKTYWNE --}}
         <div class="rez-section-title">Aktywne wypożyczenia</div>
 
         {{-- Karta 1 --}}
         <div class="rez-card">
-            <img class="rez-card-img"
-                 src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=160&fit=crop"
-                 alt="Rower Specialized Stumpjumper">
+            <div class="rez-card-img placeholder animate-pulse"></div>
             <div class="rez-card-body">
                 <div class="rez-card-top">
-                    <span class="rez-card-name">Rower Specialized Stumpjumper</span>
-                    <span class="rez-badge wypozyczone">Wypożyczone</span>
+                    <span class="rez-card-name" style="flex:1; min-width:0;">
+                        <span class="placeholder-block animate-pulse" style="width:75%;height:18px;"></span>
+                    </span>
+                    <span class="rez-badge wypozyczone">
+                        <span class="placeholder animate-pulse" style="width:80px;height:12px;background:#ffffff55;"></span>
+                    </span>
                 </div>
           <div class="rez-card-meta">
     <div class="rez-card-meta-row">
-        <span>ID: #SP-48291</span>
-        <span>12 paź – 22 paź</span>
+        <span><span class="placeholder animate-pulse" style="width:90px;height:13px;"></span></span>
+        <span><span class="placeholder animate-pulse" style="width:120px;height:13px;"></span></span>
     </div>
     <div class="rez-card-meta-row">
         <span>
             <svg class="rez-meta-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12,3A6,6,0,0,0,6,9c0,5,6,12,6,12s6-7,6-12A6,6,0,0,0,12,3Zm0,8a2,2,0,1,1,2-2A2,2,0,0,1,12,11Z" fill="#1a6fa8"/>
             </svg>
-            Punkt Centrum A
+            <span class="placeholder animate-pulse" style="width:130px;height:13px;"></span>
         </span>
         <span>
             <svg class="rez-meta-icon" viewBox="0 -196 1416 1416" xmlns="http://www.w3.org/2000/svg">
@@ -104,13 +127,13 @@
         <circle cx="865.695135" cy="653.145946" r="40.96" fill="#fff"/>
     </g>
 </svg>
-            450 zł/tydz.
+            <span class="placeholder animate-pulse" style="width:100px;height:13px;"></span>
         </span>
     </div>
 </div>
             </div>
             <div class="rez-card-actions">
-                <button class="rez-btn-cancel" onclick="openModal('Rower Specialized Stumpjumper')">
+                <button class="rez-btn-cancel" onclick="openModal('this item')">
                     Anuluj rezerwację
                 </button>
             </div>
@@ -118,25 +141,27 @@
 
         {{-- Karta 2 --}}
         <div class="rez-card">
-            <img class="rez-card-img"
-                 src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=200&h=160&fit=crop"
-                 alt="Zestaw do trekkingu Pro">
+            <div class="rez-card-img placeholder animate-pulse"></div>
             <div class="rez-card-body">
                 <div class="rez-card-top">
-                    <span class="rez-card-name">Zestaw do trekkingu Pro</span>
-                    <span class="rez-badge oczekuje">Oczekuje</span>
+                    <span class="rez-card-name" style="flex:1; min-width:0;">
+                        <span class="placeholder-block animate-pulse" style="width:70%;height:18px;"></span>
+                    </span>
+                    <span class="rez-badge oczekuje">
+                        <span class="placeholder animate-pulse" style="width:70px;height:12px;background:#ffffff55;"></span>
+                    </span>
                 </div>
 <div class="rez-card-meta">
     <div class="rez-card-meta-row">
-        <span>ID: #SP-48291</span>
-        <span>12 paź – 22 paź</span>
+        <span><span class="placeholder animate-pulse" style="width:90px;height:13px;"></span></span>
+        <span><span class="placeholder animate-pulse" style="width:120px;height:13px;"></span></span>
     </div>
               <div class="rez-card-meta-row">
         <span>
             <svg class="rez-meta-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12,3A6,6,0,0,0,6,9c0,5,6,12,6,12s6-7,6-12A6,6,0,0,0,12,3Zm0,8a2,2,0,1,1,2-2A2,2,0,0,1,12,11Z" fill="#1a6fa8"/>
             </svg>
-            Magazyn Północ
+            <span class="placeholder animate-pulse" style="width:140px;height:13px;"></span>
         </span>
         <span>
             <svg class="rez-meta-icon" viewBox="0 -196 1416 1416" xmlns="http://www.w3.org/2000/svg">
@@ -153,13 +178,13 @@
         <circle cx="865.695135" cy="653.145946" r="40.96" fill="#fff"/>
     </g>
 </svg>
-            220 zł/tydz.
+            <span class="placeholder animate-pulse" style="width:100px;height:13px;"></span>
         </span>
     </div>
     </div>
             </div>
             <div class="rez-card-actions">
-                <button class="rez-btn-cancel" onclick="openModal('Zestaw do trekkingu Pro')">
+                <button class="rez-btn-cancel" onclick="openModal('this item')">
                     Anuluj rezerwację
                 </button>
             </div>
@@ -169,16 +194,24 @@
         <div class="rez-section-title done" style="margin-top: 32px;">Zakończone wypożyczenia</div>
 {{-- Zakończona 1 --}}
 <div class="rez-card-done" id="done-1">
-    <img class="rez-card-img"
-         src="https://images.unsplash.com/photo-1531722569936-825d4eee19b7?w=200&h=160&fit=crop"
-         alt="Deska SUP Red Paddle Co">
+    <div class="rez-card-img placeholder animate-pulse"></div>
     <div class="rez-card-body">
-        <div class="rez-card-name" style="margin-bottom:4px;">Deska SUP Red Paddle Co</div>
-        <div class="rez-done-meta">Zwrócono 05 paź 2023 • 14 dni wypożyczenia</div>
-        <div class="rez-done-cost">Łączny koszt: 980,00 zł</div>
+        <div class="rez-card-name" style="margin-bottom:4px;">
+            <span class="placeholder-block animate-pulse" style="width:65%;max-width:240px;height:16px;"></span>
+        </div>
+        <div class="rez-done-meta">
+            <span class="placeholder-block animate-pulse" style="width:80%;max-width:260px;height:12px;"></span>
+        </div>
+        <div class="rez-done-cost">
+            <span class="placeholder-block animate-pulse" style="width:50%;max-width:180px;height:14px;"></span>
+        </div>
         <div>
-            <span class="rez-stars">★★★★★</span>
-            <span class="rez-review-quote">"Świetna stabilność na wodzie"</span>
+            <span class="rez-stars">
+                <span class="placeholder animate-pulse" style="width:80px;height:13px;"></span>
+            </span>
+            <span class="rez-review-quote">
+                <span class="placeholder animate-pulse" style="width:180px;height:12px;margin-left:6px;"></span>
+            </span>
         </div>
         <button class="rez-add-review-toggle" onclick="toggleReview('review-1')">
              <svg width="12" height="12" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="#1a6fa8">
@@ -190,7 +223,7 @@
     <button class="rez-btn-rebook">Wypożycz ponownie</button>
 </div>
 
-{{-- Panel dodawania opinii (Deska SUP) --}}
+{{-- Panel dodawania opinii --}}
 <div class="rez-review-panel" id="review-1">
     <div class="rez-review-panel-title">Podziel się swoją opinią</div>
     <div class="rez-star-input" id="stars-1">
@@ -209,13 +242,17 @@
 
         {{-- Zakończona 2 --}}
         <div class="rez-card-done" id="done-2">
-            <img class="rez-card-img"
-                 src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=200&h=160&fit=crop"
-                 alt="Namiot wyprawowy Thule">
+            <div class="rez-card-img placeholder animate-pulse"></div>
             <div class="rez-card-body">
-                <div class="rez-card-name" style="margin-bottom:4px;">Namiot wyprawowy Thule</div>
-                <div class="rez-done-meta">Zwrócono 28 wrz 2023 • 3 dni wypożyczenia</div>
-                <div class="rez-done-cost">Łączny koszt: 240,00 zł</div>
+                <div class="rez-card-name" style="margin-bottom:4px;">
+                    <span class="placeholder-block animate-pulse" style="width:65%;max-width:240px;height:16px;"></span>
+                </div>
+                <div class="rez-done-meta">
+                    <span class="placeholder-block animate-pulse" style="width:80%;max-width:260px;height:12px;"></span>
+                </div>
+                <div class="rez-done-cost">
+                    <span class="placeholder-block animate-pulse" style="width:50%;max-width:180px;height:14px;"></span>
+                </div>
                 <button class="rez-add-review-toggle" onclick="toggleReview('review-2')">
              <svg width="12" height="12" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="#1a6fa8">
         <path d="M480,1117 C472.268,1117 466,1110.73 466,1103 C466,1095.27 472.268,1089 480,1089 C487.732,1089 494,1095.27 494,1103 C494,1110.73 487.732,1117 480,1117 L480,1117 Z M480,1087 C471.163,1087 464,1094.16 464,1103 C464,1111.84 471.163,1119 480,1119 C488.837,1119 496,1111.84 496,1103 C496,1094.16 488.837,1087 480,1087 L480,1087 Z M486,1102 L481,1102 L481,1097 C481,1096.45 480.553,1096 480,1096 C479.447,1096 479,1096.45 479,1097 L479,1102 L474,1102 C473.447,1102 473,1102.45 473,1103 C473,1103.55 473.447,1104 474,1104 L479,1104 L479,1109 C479,1109.55 479.447,1110 480,1110 C480.553,1110 481,1109.55 481,1109 L481,1104 L486,1104 C486.553,1104 487,1103.55 487,1103 C487,1102.45 486.553,1102 486,1102 L486,1102 Z" transform="translate(-464, -1087)"/>
@@ -226,7 +263,7 @@
             <button class="rez-btn-rebook">Wypożycz ponownie</button>
         </div>
 
-        {{-- Panel dodawania opinii (namiot) --}}
+        {{-- Panel dodawania opinii (poprawic??) --}}
         <div class="rez-review-panel" id="review-2">
             <div class="rez-review-panel-title">Podziel się swoją opinią</div>
             <div class="rez-star-input" id="stars-2">
@@ -258,11 +295,11 @@
     </div>
 </div>
 
-<script>
+<script> // po kliknięciu anulowania rezerwacji
     /* ---- Modal ---- */
     function openModal(name) {
         document.getElementById('modal-text').innerHTML =
-            `Czy na pewno chcesz anulować rezerwację <strong>${name}</strong>?<br>Ta operacja jest nieodwracalna.`;
+            `Czy na pewno chcesz anulować tę rezerwację?<br>Ta operacja jest nieodwracalna.`;
         document.getElementById('cancel-modal').classList.add('open');
     }
     function closeModal() {
@@ -271,7 +308,7 @@
     document.getElementById('cancel-modal').addEventListener('click', function(e) {
         if (e.target === this) closeModal();
     });
-
+//=============================================
     /* ---- Panel opinii ---- */
     function toggleReview(id) {
         document.getElementById(id).classList.toggle('open');
@@ -281,7 +318,7 @@
     document.querySelectorAll('.rez-star-input').forEach(container => {
         const stars = container.querySelectorAll('span');
         let selected = 0;
-
+// ilosc gwiazdek gdszie zapisywana w bazie?
         stars.forEach(star => {
             star.addEventListener('mouseover', () => {
                 stars.forEach(s => s.classList.remove('active'));
@@ -297,6 +334,9 @@
         });
     });
 </script>
+
+
+
 @include('partials.footer')
 </body>
 </html>

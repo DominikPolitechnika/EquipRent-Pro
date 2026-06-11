@@ -9,6 +9,9 @@ use App\Http\Controllers\Api\OpinionController;
 
 // Strona główna - przekierowanie do logowania
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('catalog');
+    }
     return redirect()->route('login');
 });
 
@@ -51,6 +54,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
 
     Route::view('/demo-layout', 'pages.demo-layout');
+})->middleware('auth')->name('profil.update'); 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+    Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
+    Route::get('/produkt/{id}/edytuj', [ProductController::class, 'edit'])->name('product.edit');
+    Route::view('/inwentarz', 'list_equipment')->name('equipment.list');
+    Route::view('/lista-uzytkownikow', 'list_users')->name('users.list');
+    Route::view('/uzytkownik-szczegoly', 'user_details')->name('users.show');
+    Route::view('/rejestr-wypozyczen', 'list_rentals')->name('rentals.list');
+    Route::view('/panel-glowny', 'dashboard')->name('dashboard');
+    Route::view('/platnosc', 'platnosc')->name('platnosc');
 });
 
 // API - dostępne tylko dla zalogowanych

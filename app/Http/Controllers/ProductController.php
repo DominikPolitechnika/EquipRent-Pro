@@ -14,51 +14,28 @@ class ProductController extends Controller
         return view('product',['product' => $product]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function edit(int $id)
     {
-        //
+        $product = Product::findOrFail($id);
+    
+        return view('product_edit', ['product' => $product]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    public function store(Request $request){
+        $validated_data = $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required|text',
+            'categoryId' => 'required|bigint|exists:equipementCategory,id',
+            'serialNumber' => 'required|string|max:255',
+            'isAvaible' => 'required|boolean',
+            'oneDayPrice' => 'required|integer',
+            'totalIncome' =>  'required|integer',
+            'isDeleted'  => 'required|boolean',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
-    {
-        //
-    }
+        Product::create($validated_data);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Product $product)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
-    {
-        //
+        return redirect()->route('product.edit')
+        ->with('success', 'Produkt dodany'); 
     }
 }

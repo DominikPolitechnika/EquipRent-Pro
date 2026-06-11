@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
 
 /* =========================
    FOOTER
@@ -5,7 +7,7 @@
 .footer {
   background: #eef1f4;
   padding: 60px 80px 30px;
-  font-family: Arial, sans-serif;
+  font-family: 'Poppins', sans-serif;
   color: #6b7280;
 }
 

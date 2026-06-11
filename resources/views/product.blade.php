@@ -8,39 +8,50 @@
    <link rel="stylesheet" href="{{ asset('style-head.css') }}">
     <link rel="stylesheet" href="{{ asset('style-foot.css') }}">
     <link rel="stylesheet" href="{{ asset('style-prod.css') }}">
+    <link rel="icon" type="image/png" href="{{ asset('E.png') }}">
     <style>
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
-        .placeholder { background: #e2e8f0; display: block; }
-        .animate-pulse { animation: pulse 1.6s ease-in-out infinite; }
+       
     </style>
   
 </head>
 <body>
 
-{{-- ========================= HEADER ========================= --}}
+
 @include('partials.header')
 
-{{-- ========================= MAIN ========================= --}}
+
 <main>
 <div class="product-page">
 
     <div class="product-breadcrumb">
         <a href="{{ route('catalog') }}">Katalog</a>
         <span>›</span>
-        <span class="product-breadcrumb-active">{{ $product->name }}</span>
+        <span class="product-breadcrumb-active">{{ $product->title }}</span>
     </div>
 
-    {{-- GALLERY FULL WIDTH --}}
+    {{-- galeria jest java vvvv --}}
     <div class="product-gallery-fullwidth">
         <div class="product-gallery">
             <div class="product-gallery-main">
-                <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
+                @if($product->getNImageUrl(1,TRUE) === "")
+                    <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
+                @else
+                    <img src={{ $product->getNImageUrl(1) }} style="border-radius:0;">
+                @endif
             </div>
             <div class="product-gallery-side">
-                <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
+                @if($product->getNImageUrl(2,TRUE) === "")
+                    <div class="placeholder animate-pulse"></div>
+                @else
+                    <img src={{ $product->getNImageUrl(2) }} style="height:207px;border-radius:0;">
+                @endif
                 <div class="product-gallery-side-last">
-                    <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
-                    <button class="product-see-all-btn">⊞ ZOBACZ WSZYSTKIE ZDJĘCIA</button>
+                    @if($product->getNImageUrl(3,TRUE) === "")
+                        <div class="placeholder animate-pulse" style="width:100%;height:100%;"></div>
+                    @else
+                        <img src={{ $product->getNImageUrl(3) }} style="height:207px;border-radius:0;">
+                    @endif
+                    <button type="button" class="product-see-all-btn" id="gallery-open-btn">⊞ ZOBACZ WSZYSTKIE ZDJĘCIA</button>
                 </div>
             </div>
         </div>
@@ -50,14 +61,16 @@
 
         {{-- LEFT --}}
         <div class="product-left">
-            {{-- tymczasowo --}}
             <div class="product-badges">
-                @if('dostepny' === 'dostepny')
+                @php
+                    $productStatus = $product->getStatus();
+                @endphp
+                @if($productStatus === 'Dostępny')
                     <span class="product-status-badge product-status-available">
                         <span class="product-status-dot"></span>
                         Dostępny
                     </span>
-                @elseif($product['status'] === 'wypozyczony')
+                @elseif($productStatus === 'Wypożyczony')
                     <span class="product-status-badge product-status-rented">
                         <span class="product-status-dot"></span>
                         Wypożyczony
@@ -74,7 +87,7 @@
                 {{ $product->title }}
             </h1>
             <p class="product-description">
-                <span style="width:90%;height:14px;border-radius:3px;display:block;margin-bottom:6px;">{{$product->serialNumber}}</span>
+                <span style="width:90%;height:14px;border-radius:3px;display:block;margin-bottom:6px;">{{$product->serial_number}}</span>
                 <span style="width:60%;height:14px;border-radius:3px;display:block;">{{$product->body}}</span>
             </p>
 
@@ -176,7 +189,7 @@
         <div class="product-booking-panel">
 
             <div class="product-booking-price">
-                <span class="placeholder animate-pulse" style="width:80px;height:44px;border-radius:4px;display:inline-block;vertical-align:middle;"></span> ZŁ <span>/ 24h doba</span>
+                {{ $product->one_day_price }} ZŁ <span>/ 24h doba</span>
             </div>
             <div class="product-booking-rating">
                 <span class="product-stars">★</span>
@@ -229,13 +242,44 @@
 
 </div>
 </main>
+{{-- galeria --}}
+<div class="gallery-backdrop" id="gallery-backdrop">
+    <div class="gallery-modal">
+        <div class="gallery-header">
+            <span class="gallery-title">Galeria zdjęć</span>
+            <button type="button" class="gallery-close" id="gallery-close-btn" aria-label="Zamknij">✕</button>
+        </div>
+        <div class="gallery-body">
+            <div class="gallery-grid">
+                @php
+                    $imgUrls = $product->getImagesUrls();
+                @endphp
+                @if(count($imgUrls) > 0)
+                    @foreach ($imgUrls as $index => $imgUrl )
+                        <img class="gallery-thumb" 
+                         src="{{ $imgUrl }}" data-idx="{{ $index }}">
+                    @endforeach
+                @else
+                    <p style="font-family:Poppins;font-size:14px;color:rgb(75,85,99);">Brak obrazków do wyświetlenia</p>
+                @endif
+            </div>
+        </div>
 
-{{-- ========================= FOOTER ========================= --}}
+        {{-- Powiększony widok pojedynczego zdjęcia --}}
+        <div class="gallery-zoom" id="gallery-zoom">
+            <button type="button" class="gallery-zoom-back" id="gallery-zoom-back">← Powrót do galerii</button>
+            <img class="gallery-zoom-img" id="gallery-zoom-img"/>
+        </div>
+    </div>
+</div>
+
+
+
 @include('partials.footer')
 
-<script>
+<script> //kalendarz z przeniesieniem do "stripe" i nizej są giwazdki 
 (function() {
-    const PRICE_PER_DAY = {{ $product['price'] }};
+   const PRICE_PER_DAY = {{ $product->one_day_price }};
     const SERVICE_FEE   = 120;
     const LOGISTICS_FEE = 250;
     const STRIPE_URL    = 'https://stripe.com';
@@ -387,7 +431,7 @@
         window.location.href = STRIPE_URL;
     });
 
-    // Star rating input
+  
     const starInput = document.getElementById('star-input');
     if (starInput) {
         let selected = 0;
@@ -408,6 +452,60 @@
 
     renderCalendar();
     updatePriceBreakdown();
+})();
+</script>
+
+<script> //galeria po otwoerzeniu 
+(function() {
+    const backdrop  = document.getElementById('gallery-backdrop');
+    const openBtn   = document.getElementById('gallery-open-btn');
+    const closeBtn  = document.getElementById('gallery-close-btn');
+    const zoom      = document.getElementById('gallery-zoom');
+    const zoomImg   = document.getElementById('gallery-zoom-img');
+    const zoomBack  = document.getElementById('gallery-zoom-back');
+    const thumbs    = document.querySelectorAll('.gallery-thumb');
+
+    if (!backdrop || !openBtn) return;
+
+    function openGallery() {
+        backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeGallery() {
+        backdrop.classList.remove('open');
+        zoom.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    function openZoom(idx,src) { //w tej drugiej
+    
+        zoomImg.setAttribute('data-current', idx);
+        zoomImg.src = src;
+        zoom.classList.add('open');
+    }
+    function closeZoom() {
+        zoom.classList.remove('open');
+    }
+
+    openBtn.addEventListener('click', openGallery);
+    closeBtn.addEventListener('click', closeGallery);
+    zoomBack.addEventListener('click', closeZoom);
+
+
+    backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) closeGallery();
+    }); //zamykanie po nacisnieciu obok
+
+    // powiekszenie po klik
+    thumbs.forEach(t => {
+        t.addEventListener('click', () => openZoom(t.dataset.idx,t.src));
+    });
+
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (zoom.classList.contains('open')) closeZoom();
+        else if (backdrop.classList.contains('open')) closeGallery();
+    });
 })();
 </script>
 

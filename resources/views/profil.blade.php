@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Profil użytkownika – EquipRent Pro</title>
     <link rel="stylesheet" href="{{ asset('style-profil.css') }}">
     <style>
@@ -41,15 +42,14 @@
 
         {{-- Karta użytkownika --}}
         <div class="prof-card-user">
-            <div class="prof-avatar-wrapper">
-                <span class="placeholder-circle animate-pulse" style="width:120px;height:120px;"></span>
+            <div class="prof-avatar-wrapper prof-avatar-icon" id="user-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
             </div>
-            <h2 class="prof-user-name">
-                <span class="placeholder animate-pulse" style="width:180px;height:22px;"></span>
-            </h2>
-            <p class="prof-user-role">
-                <span class="placeholder animate-pulse" style="width:220px;height:14px;"></span>
-            </p>
+            <h2 class="prof-user-name" id="user-full-name">—</h2>
+            <p class="prof-user-role" id="user-role">—</p>
 
             <div class="prof-user-divider"></div>
 
@@ -60,9 +60,7 @@
                     </svg>
                     <div class="prof-user-info-content">
                         <div class="prof-user-info-label">Klub sportowy</div>
-                        <div class="prof-user-info-value">
-                            <span class="placeholder animate-pulse" style="width:200px;height:14px;"></span>
-                        </div>
+                        <div class="prof-user-info-value" id="user-klub">—</div>
                     </div>
                 </div>
 
@@ -73,9 +71,7 @@
                     </svg>
                     <div class="prof-user-info-content">
                         <div class="prof-user-info-label">E-mail</div>
-                        <div class="prof-user-info-value">
-                            <span class="placeholder animate-pulse" style="width:170px;height:14px;"></span>
-                        </div>
+                        <div class="prof-user-info-value" id="user-email">—</div>
                     </div>
                 </div>
             </div>
@@ -87,22 +83,16 @@
             <div class="prof-summary-grid">
                 <div>
                     <div class="prof-summary-label">Suma wydatków</div>
-                    <div class="prof-summary-value">
-                        <span class="placeholder animate-pulse" style="width:110px;height:22px;background:#ffffff55;"></span>
-                    </div>
+                    <div class="prof-summary-value" id="user-total-spent">—</div>
                 </div>
                 <div>
                     <div class="prof-summary-label">Wynajęte przedmioty</div>
-                    <div class="prof-summary-value">
-                        <span class="placeholder animate-pulse" style="width:40px;height:22px;background:#ffffff55;"></span>
-                    </div>
+                    <div class="prof-summary-value" id="user-rented-items">—</div>
                 </div>
             </div>
             <div class="prof-summary-footer">
                 <span class="prof-summary-footer-label">Status lojalnościowy</span>
-                <span class="prof-loyalty-badge">
-                    <span class="placeholder animate-pulse" style="width:90px;height:14px;background:#ffffff55;"></span>
-                </span>
+                <span class="prof-loyalty-badge" id="user-loyalty-status">—</span>
             </div>
         </div>
 
@@ -354,5 +344,106 @@
 </div>
 
 @include('partials.footer')
+
+<script>
+(function () {
+    const avatarIconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+
+    function renderAvatar(container, avatarUrl) {
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = '';
+
+        if (avatarUrl) {
+            container.classList.remove('prof-avatar-icon');
+            const img = document.createElement('img');
+            img.src = avatarUrl;
+            img.alt = 'Zdjęcie profilowe';
+            container.appendChild(img);
+            return;
+        }
+
+        container.classList.add('prof-avatar-icon');
+        container.innerHTML = avatarIconSvg;
+    }
+
+    function setText(id, value) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = value;
+        }
+    }
+
+    function getFullName(user) {
+        return [user.name, user.surname].filter(Boolean).join(' ') || 'Użytkownik';
+    }
+
+    function getRoleLabel(user) {
+        if (user.profilDescription) {
+            return user.profilDescription;
+        }
+
+        if (Number(user.role) === 1) {
+            return 'Administrator';
+        }
+
+        return 'Klient EquipRent Pro';
+    }
+
+    function getLoyaltyStatus(rentedItemsCount) {
+        if (rentedItemsCount >= 10) {
+            return 'Złoty';
+        }
+
+        if (rentedItemsCount >= 5) {
+            return 'Srebrny';
+        }
+
+        if (rentedItemsCount >= 1) {
+            return 'Brązowy';
+        }
+
+        return 'Nowy';
+    }
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('pl-PL', {
+            style: 'currency',
+            currency: 'PLN',
+        }).format(amount ?? 0);
+    }
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        try {
+            const response = await fetch('/api/user/profile', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                credentials: 'same-origin',
+            });
+
+            if (!response.ok) {
+                throw new Error('Nie udało się pobrać danych profilu.');
+            }
+
+            const user = (await response.json()).data;
+
+            renderAvatar(document.getElementById('user-avatar'), user.avatarUrl);
+            setText('user-full-name', getFullName(user));
+            setText('user-role', getRoleLabel(user));
+            setText('user-klub', user.klub || '—');
+            setText('user-email', user.email || '—');
+            setText('user-total-spent', formatCurrency(user.totalSpent));
+            setText('user-rented-items', String(user.rentedItemsCount ?? 0));
+            setText('user-loyalty-status', getLoyaltyStatus(user.rentedItemsCount ?? 0));
+        } catch (error) {
+            console.error(error);
+        }
+    });
+})();
+</script>
 </body>
 </html>

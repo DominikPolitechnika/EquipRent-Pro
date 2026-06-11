@@ -50,6 +50,8 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        Auth::user()->update(['lastLogin' => now()]);
+
         RateLimiter::clear($this->throttleKey());
     }
 

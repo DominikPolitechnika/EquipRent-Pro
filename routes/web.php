@@ -6,6 +6,8 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\OpinionController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\ProfileController;
 
 // Strona główna - przekierowanie do logowania
 Route::get('/', function () {
@@ -38,9 +40,9 @@ Route::view('/profil_edytuj', 'profil_edytuj')
     ->name('profil_edytuj');
 
 // Zapis edycji profilu
-Route::put('/profil', function () {
-    return redirect()->route('profil')->with('success', 'Profil został zaktualizowany.');
-})->middleware('auth')->name('profil.update');
+Route::put('/profil', [ProfileController::class, 'update'])
+    ->middleware('auth')
+    ->name('profil.update');
 
 // Trasy dostępne tylko dla zalogowanych użytkowników
 Route::middleware(['auth'])->group(function () {
@@ -70,6 +72,9 @@ Route::middleware(['auth'])->group(function () {
 
 // API - dostępne tylko dla zalogowanych
 Route::middleware(['auth'])->prefix('api')->group(function () {
+    Route::get('/user/profile', [UserController::class, 'me']);
+    Route::get('/users/{userID}', [UserController::class, 'getUsersDetails']);
+
     Route::get('/reservations/my', [ReservationController::class, 'my']);
     Route::get('/reservations/active', [ReservationController::class, 'active']);
     Route::get('/reservations/completed', [ReservationController::class, 'completed']);

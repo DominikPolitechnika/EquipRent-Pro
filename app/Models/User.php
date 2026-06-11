@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Http\UploadedFile;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'surname', 'email', 'password', 'klub', 'profilDescription', 'lastLogin'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -26,17 +27,63 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'lastLogin' => 'datetime',
             'password' => 'hashed',
         ];
     }
 
-    //i tutaj mozna dodac wlasne funkcje do komunikacji z baza np:
+    public function getAvatarDirectory(): string
+    {
+        return public_path('users/'.$this->id);
+    }
 
-    /* 
-    public static function findByCustomId(int $id)
-{
-    // Tutaj możesz dodać własną logikę, np. sprawdzanie statusu
-    return self::where('id', $id)->where('active', true)->first();
-}
-    */
+    public function getAvatarUrl(): ?string
+    {
+        $directory = $this->getAvatarDirectory();
+
+        if (!is_dir($directory)) {
+            return null;
+        }
+
+        foreach (['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif'] as $extension) {
+            if (file_exists($directory.'/avatar.'.$extension)) {
+                return asset('users/'.$this->id.'/avatar.'.$extension);
+            }
+        }
+
+        return null;
+    }
+
+    public function saveAvatar(UploadedFile $file): string
+    {
+        $directory = $this->getAvatarDirectory();
+
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+
+        $this->deleteAvatar();
+
+        $extension = strtolower($file->getClientOriginalExtension() ?: $file->extension() ?: 'jpg');
+        $filename = 'avatar.'.$extension;
+
+        $file->move($directory, $filename);
+
+        return asset('users/'.$this->id.'/'.$filename);
+    }
+
+    public function deleteAvatar(): void
+    {
+        $directory = $this->getAvatarDirectory();
+
+        if (!is_dir($directory)) {
+            return;
+        }
+
+        foreach (glob($directory.'/avatar.*') ?: [] as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+    }
 }

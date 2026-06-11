@@ -52,7 +52,11 @@
             <button type="submit">Zaloguj</button>
         </form>
 
-        <p id="message" class="message"></p>
+        @if (session('success'))
+            <p id="message" class="message ok">{{ session('success') }}</p>
+        @else
+            <p id="message" class="message"></p>
+        @endif
 
         <div class="divider">
             <span>Nie masz jeszcze konta?</span>

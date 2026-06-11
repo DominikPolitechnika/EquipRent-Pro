@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Api\ReservationController;
+use App\Http\Controllers\Api\OpinionController;
 
 // Strona główna - przekierowanie do logowania
 Route::get('/', function () {
@@ -13,7 +15,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Trasy autoryzacji (logowanie, rejestracja)
+// Trasy autoryzacji
 Route::view('/login', 'auth.login')
     ->middleware('guest')
     ->name('login');
@@ -35,10 +37,23 @@ Route::view('/profil_edytuj', 'profil_edytuj')
     ->middleware('auth')
     ->name('profil_edytuj');
 
-// Zapis edycji profilu (zaślepka - na razie przekierowuje z powrotem na profil)
+// Zapis edycji profilu
 Route::put('/profil', function () {
-    // TODO: implementacja zapisu danych użytkownika
     return redirect()->route('profil')->with('success', 'Profil został zaktualizowany.');
+})->middleware('auth')->name('profil.update');
+
+// Trasy dostępne tylko dla zalogowanych użytkowników
+Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+
+    // alias po polsku, gdyby frontend gdzieś linkował do /katalog
+    Route::get('/katalog', [CatalogController::class, 'index'])->name('katalog');
+
+    Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
+
+    Route::view('/demo-layout', 'pages.demo-layout');
 })->middleware('auth')->name('profil.update'); 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -55,6 +70,15 @@ Route::middleware(['auth'])->group(function () {
 
 // API - dostępne tylko dla zalogowanych
 Route::middleware(['auth'])->prefix('api')->group(function () {
+    Route::get('/reservations/my', [ReservationController::class, 'my']);
+    Route::get('/reservations/active', [ReservationController::class, 'active']);
+    Route::get('/reservations/completed', [ReservationController::class, 'completed']);
+    Route::get('/products/{productId}/reservations/my', [ReservationController::class, 'myForProduct']);
+    Route::patch('/reservations/{reservationId}/cancel', [ReservationController::class, 'cancel']);
+    Route::post('/products/{productId}/reservations', [ReservationController::class, 'store']);
+    Route::get('/products/{productId}/opinions', [OpinionController::class, 'index']);
+    Route::post('/products/{productId}/opinions', [OpinionController::class, 'store']);
+
     Route::get('/sample-equipment', function () {
         return response()->json([
             'data' => [
@@ -88,12 +112,12 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
     });
 });
 
-Route::get('/forgot-password', function() {
+Route::get('/forgot-password', function () {
     return view('auth.forgot-password');
 });
 
-Route::get("/reset-password", function() {
-    return view("/auth.reset-password");
+Route::get('/reset-password', function () {
+    return view('auth.reset-password');
 });
 
 require __DIR__.'/auth.php';

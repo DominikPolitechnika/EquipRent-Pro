@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\OpinionController;
@@ -48,10 +47,10 @@ Route::put('/profil', [ProfileController::class, 'update'])
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+    Route::get('/catalog', [ProductController::class, 'show'])->name('catalog');
 
     // alias po polsku, gdyby frontend gdzieś linkował do /katalog
-    Route::get('/katalog', [CatalogController::class, 'index'])->name('katalog');
+    Route::get('/katalog', [ProductController::class, 'show'])->name('katalog');
 
     Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
 
@@ -59,7 +58,7 @@ Route::middleware(['auth'])->group(function () {
 })->middleware('auth')->name('profil.update'); 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+    Route::get('/catalog', [ProductController::class, 'show'])->name('catalog');
     Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
     Route::get('/produkt/{id}/edytuj', [ProductController::class, 'edit'])->name('product.edit');
     Route::view('/inwentarz', 'list_equipment')->name('equipment.list');

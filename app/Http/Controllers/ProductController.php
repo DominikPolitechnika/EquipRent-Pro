@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Http\Requests\Filter\ProductFilterRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -10,13 +11,17 @@ class ProductController extends Controller
 {
     public function index(int $id)
     {
-        $product = Product::findorFail($id);
+        $product = Product::withCount('opinions')
+        ->withAvg('opinions','scaleValue')
+        ->findOrfail($id);
         
         return view('product',['product' => $product]);
     }
 
-    public function show(Request $request)
+    public function show(ProductFilterRequest $request)
     {
+        $validated = $request->validated();
+
         $categories = Category::query()
             ->has('products')
             ->orderBy('name')
@@ -26,30 +31,32 @@ class ProductController extends Controller
         ->where('is_deleted',false)
         ->where('is_available',true);
 
-        if($search = $request->input('search')){
-            $escapedSearch = addcslashes($search,'%_\\'); //sanityzacja
-            $query->where(function ($q) use ($escapedSearch){
-                $q->where('title','like',"%{$escapedSearch}%")
-                ->orWhere('body','like',"%{$escapedSearch}%");
+        if($search = $validated['search'] ?? null){
+            $query->where(function ($q) use ($search){
+                $q->where('title','like',"%{$search}%")
+                ->orWhere('body','like',"%{$search}%");
             });
         }
 
-        if($categoryIds = $request->input('categories')){
+        if($categoryIds = $validated['categories'] ?? []){
             $query->whereIn('equipment_category_id',$categoryIds);
         }
 
-        if($request->filled('price_range')){
-            $query->where('one_day_price',"<=",$request->input('price_range'));
+        if($priceRange = $validated['price_range'] ?? []){
+            $query->where('one_day_price',"<=",$priceRange);
         }
 
-        if($request->filled('date_to') && $request->filled('date_from')){
-            $query->whereDoesntHave('reservation', function ($q) use ($request){
-                $q->where('startDate','<=',$request->input('date_to'))
-                ->where('endDate','>=',$request->input('date_from'));
+        $dateFrom = $validated['date_from'] ?? null;
+        $dateTo = $validated['date_to'] ?? null;
+
+        if($dateFrom && $dateTo){
+            $query->whereDoesntHave('reservation', function ($q) use ($dateFrom, $dateTo){
+                $q->where('startDate','<=', $dateTo)
+                ->where('endDate','>=',$dateFrom);
             });
         }
 
-        switch ($request->sort) {
+        switch ($validated['sort'] ?? null) {
 
             case 'price_asc':
                 $query->orderBy('one_day_price', 'asc');
@@ -89,18 +96,18 @@ class ProductController extends Controller
         );
     }
 
-    public function edit(int $id)
+    public function edit(int $id) //placeholder, zostanie dokończony później
     {
         $product = Product::findOrFail($id);
     
         return view('product_edit', ['product' => $product]);
     }
 
-    public function store(Request $request){
+    public function store(Request $request){//placeholder, zostanie dokończony później
         $validated_data = $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|text',
-            'categoryId' => 'required|bigint|exists:equipementCategory,id',
+            'categoryId' => 'required|bigint|exists:equipment_category,id',
             'serialNumber' => 'required|string|max:255',
             'isAvaible' => 'required|boolean',
             'oneDayPrice' => 'required|integer',

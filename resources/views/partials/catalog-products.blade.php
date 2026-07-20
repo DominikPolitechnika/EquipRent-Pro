@@ -4,7 +4,7 @@
 
             <div class="product-image">
                 <img
-                    src="{{ $product->getNImageUrl() }}"
+                    src="{{ $product->getThumbnailUrl() }}"
                     alt="{{ $product->title ?? 'PRODUKT' }}"
                 >
 

@@ -65,7 +65,7 @@ class Product extends Model
 
     public function getThumbnailUrl(): string
     {
-        $image = "images/products/{$this->id}/{$N}_thumb.avif";
+        $image = "images/products/{$this->id}/1_thumb.avif";
 
         if (Storage::disk('public')->exists($image)) {
             return Storage::url($image);

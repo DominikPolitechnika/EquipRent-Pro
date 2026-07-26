@@ -91,13 +91,15 @@ class Product extends Model
 
     public function getImagesUrls(): array{
         $directory = "images/products/".$this->id;
+        $thumbnail = $directory . '/1_thumb.avif';
 
         if(!Storage::disk('public')->exists($directory)){ //zabezpieczenie przed nieistniejącym folderem
             return [];
         }
 
         $files = Storage::disk('public')->files($directory); // pobranie listy wszystkich zdjęć produktu
-
+        $files = array_diff($files, [$thumbnail]);
+        $files = array_values($files);
 
         return array_map(function ($filePath){ //przekształcenie ścieżki na link URL
             return Storage::disk('public')->url($filePath);

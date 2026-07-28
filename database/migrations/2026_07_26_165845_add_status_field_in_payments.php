@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->string('gatewayId')->change();
             $table->string('status')->after('totalPrice');
+            $table->string('stripe_payment_intent_id')->nullable()->unique();
+            DB::statement('ALTER TABLE payments ALTER COLUMN "gatewayId" TYPE integer USING "gatewayId"::integer');
         });
     }
 
@@ -23,8 +24,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('payments', function (Blueprint $table) {
+            DB::statement('ALTER TABLE payments ALTER COLUMN "gatewayId" TYPE integer USING "gatewayId"::integer');
+            $table->dropColumn('stripe_payment_intent_id');
             $table->dropColumn('status');
-            $table->int('gatewayId')->change();
         });
+
     }
 };

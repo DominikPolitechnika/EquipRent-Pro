@@ -37,7 +37,7 @@ class ReservationController extends Controller
                 'reservation.id',
                 'reservation.productId',
                 'products.title as productTitle',
-                'products.oneDayPrice',
+                'products.one_day_price as oneDayPrice',
                 'reservation.startDate',
                 'reservation.endDate',
                 'reservation.totalPrice',
@@ -70,7 +70,7 @@ class ReservationController extends Controller
                 'reservation.id',
                 'reservation.productId',
                 'products.title as productTitle',
-                'products.oneDayPrice',
+                'products.one_day_price as oneDayPrice',
                 'reservation.startDate',
                 'reservation.endDate',
                 'reservation.totalPrice',
@@ -102,7 +102,7 @@ class ReservationController extends Controller
                 'reservation.id',
                 'reservation.productId',
                 'products.title as productTitle',
-                'products.oneDayPrice',
+                'products.one_day_price as oneDayPrice',
                 'reservation.startDate',
                 'reservation.endDate',
                 'reservation.totalPrice',
@@ -207,7 +207,7 @@ class ReservationController extends Controller
             $reservationId = DB::transaction(function () use ($userId, $productId, $startDate, $endDate) {
                 $product = DB::table('products')
                     ->where('id', $productId)
-                    ->where('isDeleted', false)
+                    ->where('is_deleted', false)
                     ->lockForUpdate()
                     ->first();
 
@@ -217,7 +217,7 @@ class ReservationController extends Controller
                     ], 404));
                 }
 
-                if (!$product->isAvaible) {
+                if (!$product->is_available) {
                     abort(response()->json([
                         'message' => 'Produkt jest niedostępny.',
                     ], 409));
@@ -241,7 +241,7 @@ class ReservationController extends Controller
                 }
 
                 $days = $startDate->copy()->startOfDay()->diffInDays($endDate->copy()->startOfDay()) + 1;
-                $totalPrice = $days * (int) $product->oneDayPrice;
+                $totalPrice = $days * (int) $product->one_day_price;
 
                 return DB::table('reservation')->insertGetId([
                     'userId' => $userId,

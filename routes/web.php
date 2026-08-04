@@ -86,6 +86,10 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/products/{productId}/opinions/can-review', [OpinionController::class, 'canReview']);
     Route::patch('/opinions/{opinionId}', [OpinionController::class, 'update']);
     Route::delete('/opinions/{opinionId}', [OpinionController::class, 'destroy']);
+    Route::get('/reservations/summary/income', [ReservationController::class, 'incomeSummary']);
+    Route::get('/reservations/summary/count', [ReservationController::class, 'countSummary']);
+    Route::get('/reservations/upcoming', [ReservationController::class, 'upcoming']);
+    Route::get('/products/{productId}/reservations/booked-dates', [ReservationController::class, 'bookedDates']);
 
     Route::get('/sample-equipment', function () {
         return response()->json([

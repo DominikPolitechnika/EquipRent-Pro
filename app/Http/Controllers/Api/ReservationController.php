@@ -37,7 +37,7 @@ class ReservationController extends Controller
                 'reservation.id',
                 'reservation.productId',
                 'products.title as productTitle',
-                'products.oneDayPrice',
+                'products.one_day_price as oneDayPrice',
                 'reservation.startDate',
                 'reservation.endDate',
                 'reservation.totalPrice',
@@ -70,7 +70,7 @@ class ReservationController extends Controller
                 'reservation.id',
                 'reservation.productId',
                 'products.title as productTitle',
-                'products.oneDayPrice',
+                'products.one_day_price as oneDayPrice',
                 'reservation.startDate',
                 'reservation.endDate',
                 'reservation.totalPrice',
@@ -102,7 +102,7 @@ class ReservationController extends Controller
                 'reservation.id',
                 'reservation.productId',
                 'products.title as productTitle',
-                'products.oneDayPrice',
+                'products.one_day_price as oneDayPrice',
                 'reservation.startDate',
                 'reservation.endDate',
                 'reservation.totalPrice',
@@ -207,7 +207,7 @@ class ReservationController extends Controller
             $reservationId = DB::transaction(function () use ($userId, $productId, $startDate, $endDate) {
                 $product = DB::table('products')
                     ->where('id', $productId)
-                    ->where('isDeleted', false)
+                    ->where('is_deleted', false)
                     ->lockForUpdate()
                     ->first();
 
@@ -217,7 +217,7 @@ class ReservationController extends Controller
                     ], 404));
                 }
 
-                if (!$product->isAvaible) {
+                if (!$product->is_available) {
                     abort(response()->json([
                         'message' => 'Produkt jest niedostępny.',
                     ], 409));
@@ -241,7 +241,7 @@ class ReservationController extends Controller
                 }
 
                 $days = $startDate->copy()->startOfDay()->diffInDays($endDate->copy()->startOfDay()) + 1;
-                $totalPrice = $days * (int) $product->oneDayPrice;
+                $totalPrice = $days * (int) $product->one_day_price;
 
                 return DB::table('reservation')->insertGetId([
                     'userId' => $userId,
@@ -269,4 +269,128 @@ class ReservationController extends Controller
             ], 500);
         }
     }
+    public function incomeSummary(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $totalIncome = DB::table('reservation')
+            ->where('userId', $userId)
+            ->where('isDeleted', false)
+            ->where(function ($query) {
+                $query->whereIn('statusOfReservation', $this->completedStatuses)
+                    ->orWhere('endDate', '<', now());
+            })
+            ->sum('totalPrice');
+
+        return response()->json([
+            'data' => [
+                'userId' => $userId,
+                'totalIncome' => (int) $totalIncome,
+                'currency' => 'PLN',
+            ],
+        ]);
+    }
+
+    public function countSummary(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $totalRentedItems = DB::table('reservation')
+            ->where('userId', $userId)
+            ->where('isDeleted', false)
+            ->whereNotIn('statusOfReservation', $this->cancelledStatuses)
+            ->count();
+
+        return response()->json([
+            'data' => [
+                'userId' => $userId,
+                'totalRentedItems' => $totalRentedItems,
+            ],
+        ]);
+    }
+
+    public function upcoming(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'from' => ['required', 'date'],
+            'to' => ['required', 'date', 'after_or_equal:from'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Niepoprawny zakres dat.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $userId = $request->user()->id;
+
+        $from = Carbon::parse($request->query('from'))->startOfDay();
+        $to = Carbon::parse($request->query('to'))->endOfDay();
+
+        $reservations = DB::table('reservation')
+            ->join('products', 'reservation.productId', '=', 'products.id')
+            ->where('reservation.userId', $userId)
+            ->where('reservation.isDeleted', false)
+            ->whereNotIn('reservation.statusOfReservation', array_merge(
+                $this->cancelledStatuses,
+                $this->completedStatuses
+            ))
+            ->where('reservation.endDate', '>=', now())
+            ->where('reservation.startDate', '<=', $to)
+            ->where('reservation.endDate', '>=', $from)
+            ->select(
+                'reservation.id',
+                'reservation.productId',
+                'products.title as productTitle',
+                'reservation.startDate',
+                'reservation.endDate',
+                'reservation.statusOfReservation'
+            )
+            ->orderBy('reservation.startDate')
+            ->get();
+
+        return response()->json([
+            'data' => $reservations,
+            'filters' => [
+                'from' => $request->query('from'),
+                'to' => $request->query('to'),
+            ],
+        ]);
+    }
+
+    public function bookedDates(int $productId)
+    {
+        $productExists = DB::table('products')
+            ->where('id', $productId)
+            ->where('is_deleted', false)
+            ->exists();
+
+        if (!$productExists) {
+            return response()->json([
+                'message' => 'Produkt nie istnieje.',
+            ], 404);
+        }
+
+        $bookedDates = DB::table('reservation')
+            ->where('productId', $productId)
+            ->where('isDeleted', false)
+            ->whereNotIn('statusOfReservation', array_merge(
+                $this->cancelledStatuses,
+                $this->completedStatuses
+            ))
+            ->where('endDate', '>=', now())
+            ->select(
+                'id as reservationId',
+                'startDate',
+                'endDate'
+            )
+            ->orderBy('startDate')
+            ->get();
+
+        return response()->json([
+            'data' => $bookedDates,
+        ]);
+    }
+
 }

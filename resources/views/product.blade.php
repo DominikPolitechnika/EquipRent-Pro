@@ -95,20 +95,23 @@
 
             <div class="product-section-title">Twoje Rezerwacje</div>
             <div class="product-sub-label">Aktywne rezerwacje</div>
-            <div class="product-reservation-card">
-                <div class="product-res-col">
-                    <div class="product-spec-label">Okres</div>
-                    <div class="product-res-id"><span class="placeholder animate-pulse" style="width:120px;height:16px;border-radius:3px;display:inline-block;"></span></div>
+            <div id="my-active-reservations">
+                {{-- Wypełniane przez JS z GET /api/products/{id}/reservations/my --}}
+                <div class="product-reservation-card">
+                    <div class="product-res-col">
+                        <div class="product-spec-label">Okres</div>
+                        <div class="product-res-id"><span class="placeholder animate-pulse" style="width:120px;height:16px;border-radius:3px;display:inline-block;"></span></div>
+                    </div>
+                    <div class="product-res-col">
+                        <div class="product-spec-label">Status</div>
+                        <span class="placeholder animate-pulse" style="width:90px;height:24px;border-radius:3px;display:inline-block;"></span>
+                    </div>
+                    <div class="product-res-col">
+                        <div class="product-spec-label">Suma opłacona</div>
+                        <div class="product-res-price"><span class="placeholder animate-pulse" style="width:80px;height:16px;border-radius:3px;display:inline-block;"></span> zł</div>
+                    </div>
+                    <button class="product-btn-cancel" disabled>Anuluj rezerwację</button>
                 </div>
-                <div class="product-res-col">
-                    <div class="product-spec-label">Status</div>
-                    <span class="placeholder animate-pulse" style="width:90px;height:24px;border-radius:3px;display:inline-block;"></span>
-                </div>
-                <div class="product-res-col">
-                    <div class="product-spec-label">Suma opłacona</div>
-                    <div class="product-res-price"><span class="placeholder animate-pulse" style="width:80px;height:16px;border-radius:3px;display:inline-block;"></span> zł</div>
-                </div>
-                <button class="product-btn-cancel">Anuluj rezerwację</button>
             </div>
 
             <div style="margin-top:28px;">
@@ -119,18 +122,13 @@
                             <th>ID Rezerwacji</th><th>Daty</th><th>Suma</th><th>Akcja</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="my-history-reservations">
+                        {{-- Wypełniane przez JS --}}
                         <tr>
                             <td><span class="placeholder animate-pulse" style="width:80px;height:14px;border-radius:3px;display:inline-block;"></span></td>
                             <td><span class="placeholder animate-pulse" style="width:140px;height:14px;border-radius:3px;display:inline-block;"></span></td>
                             <td><span class="placeholder animate-pulse" style="width:60px;height:14px;border-radius:3px;display:inline-block;"></span> zł</td>
-                            <td><a href="#" class="product-action-link">Zarezerwuj ponownie</a></td>
-                        </tr>
-                        <tr>
-                            <td><span class="placeholder animate-pulse" style="width:80px;height:14px;border-radius:3px;display:inline-block;"></span></td>
-                            <td><span class="placeholder animate-pulse" style="width:140px;height:14px;border-radius:3px;display:inline-block;"></span></td>
-                            <td><span class="placeholder animate-pulse" style="width:60px;height:14px;border-radius:3px;display:inline-block;"></span> zł</td>
-                            <td><a href="#" class="product-action-link">Zarezerwuj ponownie</a></td>
+                            <td>—</td>
                         </tr>
                     </tbody>
                 </table>
@@ -138,7 +136,8 @@
 
             <div class="product-section-title">Recenzje i Oceny</div>
             <div class="product-reviews-layout">
-                <div>
+                <div id="product-opinions-list">
+                    {{-- Wypełniane przez JS z GET /api/products/{id}/opinions --}}
                     <div class="product-review-card">
                         <div class="product-review-header">
                             <div>
@@ -153,32 +152,35 @@
                             <span class="placeholder animate-pulse" style="width:60%;height:12px;border-radius:3px;display:block;"></span>
                         </div>
                     </div>
-                    <div class="product-review-card">
-                        <div class="product-review-header">
-                            <div>
-                                <div class="product-reviewer-name"><span class="placeholder animate-pulse" style="width:130px;height:13px;border-radius:3px;display:inline-block;"></span></div>
-                                <div class="product-review-date"><span class="placeholder animate-pulse" style="width:70px;height:11px;border-radius:3px;display:inline-block;margin-top:4px;"></span></div>
-                            </div>
-                        </div>
-                        <div class="product-stars">★★★★★</div>
-                        <div class="product-review-text">
-                            <span class="placeholder animate-pulse" style="width:100%;height:12px;border-radius:3px;display:block;margin-bottom:6px;"></span>
-                            <span class="placeholder animate-pulse" style="width:90%;height:12px;border-radius:3px;display:block;margin-bottom:6px;"></span>
-                            <span class="placeholder animate-pulse" style="width:55%;height:12px;border-radius:3px;display:block;"></span>
-                        </div>
-                    </div>
                 </div>
                 <div>
                     <div class="product-rating-summary">
                         <div class="product-add-review-title">Ocena ogólna</div>
-                        <div class="product-rating-big"><span class="placeholder animate-pulse" style="width:60px;height:52px;border-radius:4px;display:inline-block;"></span></div>
-                        <div class="product-rating-stars">★★★★★</div>
-                        <div class="product-rating-count"><span class="placeholder animate-pulse" style="width:60px;height:12px;border-radius:3px;display:inline-block;"></span></div>
-                        <div class="product-add-review-title">Twoja ocena</div>
-                        <div class="product-star-input" id="star-input">☆☆☆☆☆</div>
-                        <div class="product-add-review-title">Komentarz</div>
-                        <textarea class="product-review-textarea" placeholder="Podziel się swoją opinią..."></textarea>
-                        <button class="product-btn-submit">Wyślij opinię</button>
+                        <div class="product-rating-big" id="rating-avg">
+                            <span class="placeholder animate-pulse" style="width:60px;height:52px;border-radius:4px;display:inline-block;"></span>
+                        </div>
+                        <div class="product-rating-stars" id="rating-stars">★★★★★</div>
+                        <div class="product-rating-count" id="rating-count">
+                            <span class="placeholder animate-pulse" style="width:60px;height:12px;border-radius:3px;display:inline-block;"></span>
+                        </div>
+
+                        {{-- Formularz opinii - pokazywany tylko jeśli canReview=true --}}
+                        <div id="opinion-form-wrapper" style="display:none;">
+                            <div class="product-add-review-title">Twoja ocena</div>
+                            <div class="product-star-input" id="star-input" data-selected="0">
+                                <span data-v="1" style="cursor:pointer;padding:0 3px;">☆</span>
+                                <span data-v="2" style="cursor:pointer;padding:0 3px;">☆</span>
+                                <span data-v="3" style="cursor:pointer;padding:0 3px;">☆</span>
+                                <span data-v="4" style="cursor:pointer;padding:0 3px;">☆</span>
+                                <span data-v="5" style="cursor:pointer;padding:0 3px;">☆</span>
+                            </div>
+                            <div class="product-add-review-title">Komentarz</div>
+                            <textarea id="opinion-description" class="product-review-textarea" placeholder="Podziel się swoją opinią..." maxlength="2000"></textarea>
+                            <button id="opinion-submit-btn" class="product-btn-submit" type="button">Wyślij opinię</button>
+                        </div>
+
+                        {{-- Komunikat gdy nie może dodać opinii --}}
+                        <div id="opinion-blocked-message" style="display:none;font-size:12px;color:#6b7280;margin-top:12px;padding:10px 12px;background:#f7f7f8;border-radius:6px;"></div>
                     </div>
                 </div>
             </div>
@@ -277,21 +279,83 @@
 
 @include('partials.footer')
 
-<script> //kalendarz z przeniesieniem do "stripe" i nizej są giwazdki 
-(function() {
-   const PRICE_PER_DAY = {{ $product->one_day_price }};
+<script>
+(function () {
+    'use strict';
+
+    // ==============================================================
+    // Konfiguracja
+    // ==============================================================
+    const PRODUCT_ID    = {{ $product->id }};
+    const PRICE_PER_DAY = {{ $product->one_day_price }};
     const SERVICE_FEE   = 120;
     const LOGISTICS_FEE = 250;
-    const STRIPE_URL    = 'https://stripe.com';
+    const CSRF          = document.querySelector('meta[name="csrf-token"]').content;
 
+    // ==============================================================
+    // Helper: fetch z CSRF i cookie
+    // ==============================================================
+    function apiGet(url) {
+        return fetch(url, {
+            headers: { 'Accept': 'application/json' },
+            credentials: 'same-origin',
+        });
+    }
+    function apiJson(method, url, body) {
+        return fetch(url, {
+            method,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': CSRF,
+            },
+            credentials: 'same-origin',
+            body: body ? JSON.stringify(body) : undefined,
+        });
+    }
+
+    function extractList(payload) {
+        if (!payload) return [];
+        if (Array.isArray(payload)) return payload;
+        if (Array.isArray(payload.data)) return payload.data;
+        return [];
+    }
+
+    function escapeHtml(s) {
+        if (s === null || s === undefined) return '';
+        return String(s)
+            .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+    }
+
+    function formatDate(iso) {
+        if (!iso) return '—';
+        const d = new Date(iso);
+        if (isNaN(d)) return String(iso);
+        return d.toLocaleDateString('pl-PL', { day:'2-digit', month:'2-digit', year:'numeric' });
+    }
+    function formatMoney(v) {
+        if (v === null || v === undefined) return '—';
+        const num = Number(v);
+        if (isNaN(num)) return String(v);
+        return num.toLocaleString('pl-PL') + ' zł';
+    }
+    function toISO(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth()+1).padStart(2,'0');
+        const d = String(date.getDate()).padStart(2,'0');
+        return `${y}-${m}-${d}`;
+    }
+
+    // ==============================================================
+    // KALENDARZ REZERWACJI (blokady z API)
+    // GET /api/products/{id}/reservations/booked-dates - Kacper
+    // ==============================================================
     let startDate = null;
     let endDate   = null;
     let currentYear  = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
-
-    const blockedDates = [
-        '2025-12-10', '2025-12-11', '2025-12-12',
-    ];
+    let blockedDates = [];  // wypełniane fetchem
 
     function dateKey(y, m, d) {
         return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -315,9 +379,17 @@
         return endDate.getFullYear()===y && endDate.getMonth()===m && endDate.getDate()===d;
     }
     function daysBetween(a, b) { return Math.round((b - a) / (1000 * 60 * 60 * 24)); }
-    function formatDate(date) {
+    function formatDatePl(date) {
         if (!date) return '—';
         return date.toLocaleDateString('pl-PL', { day:'2-digit', month:'short', year:'numeric' });
+    }
+    function rangeContainsBlocked(start, end) {
+        const cur = new Date(start);
+        while (cur <= end) {
+            if (isBlocked(cur.getFullYear(), cur.getMonth(), cur.getDate())) return true;
+            cur.setDate(cur.getDate() + 1);
+        }
+        return false;
     }
 
     function renderCalendar() {
@@ -374,8 +446,16 @@
             startDate = clicked;
             endDate   = null;
         } else {
-            if (clicked <= startDate) { startDate = clicked; endDate = null; }
-            else { endDate = clicked; }
+            if (clicked <= startDate) {
+                startDate = clicked;
+                endDate = null;
+            } else {
+                if (rangeContainsBlocked(startDate, clicked)) {
+                    alert('Wybrany zakres zawiera termin już zarezerwowany. Wybierz inny okres.');
+                    return;
+                }
+                endDate = clicked;
+            }
         }
         renderCalendar();
         updatePriceBreakdown();
@@ -410,7 +490,7 @@
         if (serviceEl) serviceEl.textContent = `${SERVICE_FEE.toFixed(2).replace('.',',')} zł`;
         if (logistEl)  logistEl.textContent  = `${LOGISTICS_FEE.toFixed(2).replace('.',',')} zł`;
         if (totalEl)   totalEl.textContent   = `${total.toFixed(2).replace('.',',')} zł`;
-        if (rangeEl)   rangeEl.textContent   = `${formatDate(startDate)} → ${formatDate(endDate)}`;
+        if (rangeEl)   rangeEl.textContent   = `${formatDatePl(startDate)} → ${formatDatePl(endDate)}`;
         if (btnEl)     btnEl.classList.remove('product-btn-disabled');
     }
 
@@ -426,32 +506,318 @@
         renderCalendar();
     });
 
-    document.getElementById('product-btn-reserve')?.addEventListener('click', () => {
+    // ==============================================================
+    // Utworzenie rezerwacji - POST /api/products/{id}/reservations
+    // ==============================================================
+    async function createReservation() {
         if (!startDate || !endDate) return;
-        window.location.href = STRIPE_URL;
-    });
 
-  
-    const starInput = document.getElementById('star-input');
-    if (starInput) {
-        let selected = 0;
-        starInput.addEventListener('mousemove', (e) => {
-            const rect = starInput.getBoundingClientRect();
-            const idx = Math.ceil((e.clientX - rect.left) / (rect.width / 5));
-            starInput.textContent = '★'.repeat(idx) + '☆'.repeat(5 - idx);
-        });
-        starInput.addEventListener('mouseleave', () => {
-            starInput.textContent = '★'.repeat(selected) + '☆'.repeat(5 - selected);
-        });
-        starInput.addEventListener('click', (e) => {
-            const rect = starInput.getBoundingClientRect();
-            selected = Math.ceil((e.clientX - rect.left) / (rect.width / 5));
-            starInput.textContent = '★'.repeat(selected) + '☆'.repeat(5 - selected);
-        });
+        const btn = document.getElementById('product-btn-reserve');
+        btn.classList.add('product-btn-disabled');
+        btn.textContent = 'Rezerwuję...';
+
+        try {
+            const res = await apiJson('POST', `/api/products/${PRODUCT_ID}/reservations`, {
+                startDate: toISO(startDate),
+                endDate:   toISO(endDate),
+            });
+
+            if (res.status === 201) {
+                const data = await res.json().catch(() => ({}));
+                // Sukces - można przejść do płatności albo do moich rezerwacji
+                alert('Rezerwacja utworzona!' + (data.reservationId ? ' Numer: ' + data.reservationId : ''));
+                window.location.href = '/rezerwacje';
+                return;
+            }
+            if (res.status === 409) {
+                const err = await res.json().catch(() => ({}));
+                alert(err.message || 'Ten termin jest już zajęty.');
+            } else if (res.status === 422) {
+                alert('Nieprawidłowe dane. Sprawdź wybrane daty.');
+            } else if (res.status === 404) {
+                alert('Produkt nie istnieje.');
+            } else {
+                alert('Nie udało się utworzyć rezerwacji. Spróbuj później.');
+            }
+        } catch (e) {
+            alert('Błąd sieci przy tworzeniu rezerwacji.');
+            console.error(e);
+        } finally {
+            btn.textContent = 'Potwierdź i kontynuuj →';
+            btn.classList.remove('product-btn-disabled');
+        }
     }
 
+    document.getElementById('product-btn-reserve')?.addEventListener('click', createReservation);
+
+    // ==============================================================
+    // GWIAZDKI DO OCENY OPINII (5 osobnych spanów)
+    // ==============================================================
+    const starInput = document.getElementById('star-input');
+    if (starInput) {
+        const stars = starInput.querySelectorAll('span');
+        let selected = 0;
+
+        function paint(count) {
+            stars.forEach((star, i) => {
+                star.textContent = (i < count) ? '★' : '☆';
+            });
+        }
+        stars.forEach(star => {
+            const value = parseInt(star.dataset.v, 10);
+            star.addEventListener('mouseenter', () => paint(value));
+            star.addEventListener('click', () => {
+                selected = value;
+                starInput.dataset.selected = String(selected);
+                paint(selected);
+            });
+        });
+        starInput.addEventListener('mouseleave', () => paint(selected));
+    }
+
+    // ==============================================================
+    // Wysyłanie opinii - POST /api/products/{id}/opinions
+    // ==============================================================
+    document.getElementById('opinion-submit-btn')?.addEventListener('click', async () => {
+        const scaleValue  = parseInt(starInput?.dataset.selected || '0', 10);
+        const description = document.getElementById('opinion-description').value.trim();
+
+        if (scaleValue < 1) { alert('Wybierz ocenę (kliknij gwiazdki).'); return; }
+        if (description.length < 3) { alert('Napisz choć kilka słów opinii.'); return; }
+
+        try {
+            const res = await apiJson('POST', `/api/products/${PRODUCT_ID}/opinions`, {
+                scaleValue, description,
+            });
+            if (res.status === 201) {
+                alert('Dziękujemy za opinię!');
+                // Odśwież listę opinii i summary
+                loadOpinions();
+                loadOpinionsSummary();
+                loadCanReview();
+                document.getElementById('opinion-description').value = '';
+                if (starInput) { starInput.dataset.selected = '0'; starInput.querySelectorAll('span').forEach(s => s.textContent = '☆'); }
+                return;
+            }
+            if (res.status === 403) { alert('Opinię możesz dodać dopiero po zakończonym wypożyczeniu.'); return; }
+            if (res.status === 409) { alert('Dodałeś już opinię dla tego produktu.'); return; }
+            if (res.status === 422) { alert('Nieprawidłowe dane opinii.'); return; }
+            alert('Nie udało się dodać opinii.');
+        } catch (e) {
+            alert('Błąd sieci przy dodawaniu opinii.');
+            console.error(e);
+        }
+    });
+
+    // ==============================================================
+    // FETCHE - załadowanie danych z API
+    // ==============================================================
+
+    // Blokady kalendarza
+    async function loadBookedDates() {
+        try {
+            const res = await apiGet(`/api/products/${PRODUCT_ID}/reservations/booked-dates`);
+            if (!res.ok) return;
+            const payload = await res.json();
+            const list = extractList(payload);
+            const set = new Set();
+            for (const r of list) {
+                const s = new Date(r.startDate);
+                const e = new Date(r.endDate);
+                for (let d = new Date(s); d <= e; d.setDate(d.getDate()+1)) {
+                    set.add(dateKey(d.getFullYear(), d.getMonth(), d.getDate()));
+                }
+            }
+            blockedDates = Array.from(set);
+            renderCalendar();
+        } catch (e) { console.warn('booked-dates:', e); }
+    }
+
+    // Moje rezerwacje tego produktu
+    async function loadMyReservations() {
+        const activeEl = document.getElementById('my-active-reservations');
+        const historyEl = document.getElementById('my-history-reservations');
+
+        try {
+            const res = await apiGet(`/api/products/${PRODUCT_ID}/reservations/my`);
+            if (!res.ok) {
+                activeEl.innerHTML = '<p style="color:#6b7280;font-size:13px;">Brak aktywnych rezerwacji.</p>';
+                historyEl.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#6b7280;">Brak historii.</td></tr>';
+                return;
+            }
+            const payload = await res.json();
+            const list = extractList(payload);
+
+            const today = new Date(); today.setHours(0,0,0,0);
+            const isActive = (r) => ['active','pending','confirmed'].includes(r.statusOfReservation) && new Date(r.endDate) >= today;
+
+            const active = list.filter(isActive);
+            const history = list.filter(r => !isActive(r)).slice(0, 5);
+
+            // Aktywne
+            if (active.length === 0) {
+                activeEl.innerHTML = '<p style="color:#6b7280;font-size:13px;">Brak aktywnych rezerwacji tego produktu.</p>';
+            } else {
+                activeEl.innerHTML = active.map(r => `
+                    <div class="product-reservation-card" data-reservation-id="${escapeHtml(r.id)}">
+                        <div class="product-res-col">
+                            <div class="product-spec-label">Okres</div>
+                            <div class="product-res-id">${formatDate(r.startDate)} → ${formatDate(r.endDate)}</div>
+                        </div>
+                        <div class="product-res-col">
+                            <div class="product-spec-label">Status</div>
+                            <span>${escapeHtml(r.statusOfReservation)}</span>
+                        </div>
+                        <div class="product-res-col">
+                            <div class="product-spec-label">Suma</div>
+                            <div class="product-res-price">${formatMoney(r.totalPrice)}</div>
+                        </div>
+                        <button class="product-btn-cancel" type="button" data-action="cancel" data-id="${escapeHtml(r.id)}">Anuluj rezerwację</button>
+                    </div>
+                `).join('');
+            }
+
+            // Historia
+            if (history.length === 0) {
+                historyEl.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#6b7280;">Brak historii wynajmu.</td></tr>';
+            } else {
+                historyEl.innerHTML = history.map(r => `
+                    <tr>
+                        <td>#${escapeHtml(r.id)}</td>
+                        <td>${formatDate(r.startDate)} — ${formatDate(r.endDate)}</td>
+                        <td>${formatMoney(r.totalPrice)}</td>
+                        <td><span style="color:#6b7280;">${escapeHtml(r.statusOfReservation)}</span></td>
+                    </tr>
+                `).join('');
+            }
+        } catch (e) {
+            console.warn('reservations/my:', e);
+            activeEl.innerHTML = '<p style="color:#6b7280;font-size:13px;">Zaloguj się aby zobaczyć swoje rezerwacje.</p>';
+        }
+    }
+
+    // Anulowanie rezerwacji (delegacja - działa na przycisku "Anuluj rezerwację" w karcie)
+    document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('[data-action="cancel"]');
+        if (!btn) return;
+
+        if (!confirm('Czy na pewno chcesz anulować tę rezerwację?')) return;
+
+        const id = btn.dataset.id;
+        try {
+            const res = await apiJson('PATCH', `/api/reservations/${id}/cancel`);
+            if (res.ok) {
+                alert('Rezerwacja anulowana.');
+                loadMyReservations();
+                loadBookedDates(); // termin się zwolnił
+            } else if (res.status === 404) {
+                alert('Rezerwacja nie istnieje lub nie należy do Ciebie.');
+            } else if (res.status === 409) {
+                alert('Ta rezerwacja jest już anulowana lub zakończona.');
+            } else {
+                alert('Nie udało się anulować.');
+            }
+        } catch (err) {
+            alert('Błąd sieci.');
+            console.error(err);
+        }
+    });
+
+    // Lista opinii
+    async function loadOpinions() {
+        const container = document.getElementById('product-opinions-list');
+        try {
+            const res = await apiGet(`/api/products/${PRODUCT_ID}/opinions`);
+            if (!res.ok) return;
+            const payload = await res.json();
+            const list = extractList(payload);
+
+            if (list.length === 0) {
+                container.innerHTML = '<div class="product-review-card"><p style="color:#6b7280;font-size:13px;text-align:center;">Brak opinii. Bądź pierwszy!</p></div>';
+                return;
+            }
+
+            container.innerHTML = list.map(op => `
+                <div class="product-review-card">
+                    <div class="product-review-header">
+                        <div>
+                            <div class="product-reviewer-name">${escapeHtml(op.userName || 'Klient')}</div>
+                            <div class="product-review-date">${formatDate(op.createdAt)}</div>
+                        </div>
+                    </div>
+                    <div class="product-stars">${'★'.repeat(op.scaleValue || 0)}${'☆'.repeat(5 - (op.scaleValue || 0))}</div>
+                    <div class="product-review-text">${escapeHtml(op.description || '')}</div>
+                </div>
+            `).join('');
+        } catch (e) { console.warn('opinions:', e); }
+    }
+
+    // Ocena ogólna (summary)
+    async function loadOpinionsSummary() {
+        try {
+            const res = await apiGet(`/api/products/${PRODUCT_ID}/opinions/summary`);
+            if (!res.ok) return;
+            const payload = await res.json();
+            const data = payload.data || payload;
+
+            const avg = Number(data.averageRating ?? 0);
+            const count = Number(data.opinionsCount ?? 0);
+            const rounded = Math.round(avg);
+
+            document.getElementById('rating-avg').textContent = avg.toFixed(1);
+            document.getElementById('rating-stars').textContent = '★'.repeat(rounded) + '☆'.repeat(5 - rounded);
+            document.getElementById('rating-count').textContent =
+                count + ' ' + (count === 1 ? 'opinia' : (count < 5 && count > 1 ? 'opinie' : 'opinii'));
+
+            // Zaktualizuj też panel po prawej (booking) jeśli ma miejsce na ocenę
+            const bookingRating = document.querySelector('.product-booking-rating small');
+            if (bookingRating && count > 0) {
+                bookingRating.textContent = `${avg.toFixed(1)} (${count} ${count === 1 ? 'opinia' : 'opinii'})`;
+            } else if (bookingRating) {
+                bookingRating.textContent = 'Brak opinii';
+            }
+        } catch (e) { console.warn('opinions/summary:', e); }
+    }
+
+    // Czy można dodać opinię
+    async function loadCanReview() {
+        try {
+            const res = await apiGet(`/api/products/${PRODUCT_ID}/opinions/can-review`);
+            if (!res.ok) {
+                document.getElementById('opinion-form-wrapper').style.display = 'none';
+                return;
+            }
+            const payload = await res.json();
+            const data = payload.data || payload;
+
+            const formWrap = document.getElementById('opinion-form-wrapper');
+            const msgEl    = document.getElementById('opinion-blocked-message');
+
+            if (data.canReview) {
+                formWrap.style.display = '';
+                msgEl.style.display = 'none';
+            } else {
+                formWrap.style.display = 'none';
+                msgEl.style.display = '';
+                msgEl.textContent = data.message || 'Nie możesz dodać opinii dla tego produktu.';
+            }
+        } catch (e) {
+            console.warn('can-review:', e);
+            document.getElementById('opinion-form-wrapper').style.display = 'none';
+        }
+    }
+
+    // ==============================================================
+    // START
+    // ==============================================================
     renderCalendar();
     updatePriceBreakdown();
+
+    loadBookedDates();
+    loadMyReservations();
+    loadOpinions();
+    loadOpinionsSummary();
+    loadCanReview();
 })();
 </script>
 

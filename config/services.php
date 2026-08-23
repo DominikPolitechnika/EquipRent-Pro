@@ -39,5 +39,11 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'gateway_id' => env('STRIPE_GATEWAY_ID',1),
+        'fake_seller_nip' => env('STRIPE_FAKE_SELLER_NIP','PL0000000000'),
+        'fake_seller_footer' => env(
+            'STRIPE_FAKE_SELLER_FOOTER',
+            'Projekt niekomercyjny - dane sprzedawcy są symulowane, aplikacja nie działa produkcyjnie.'
+        ),
     ],
 ];

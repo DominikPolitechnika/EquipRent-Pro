@@ -110,7 +110,7 @@ class Product extends Model
         $now = Carbon::now();
 
         return $this->reservation()
-        ->whereIn('statusOfReservation',['pending','confirmed'])
+        ->whereIn('statusOfReservation',['pending','confirmed','active','zarezerwowany'])
         ->where('startDate','<=',$now)
         ->where('endDate','>=',$now)
         ->exists();

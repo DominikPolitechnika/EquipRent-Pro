@@ -1,56 +1,196 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\Payment;
-use Stripe\StripeClient;
+use App\Models\PaymentMethod;
+use App\Models\Reservation;
+use App\Services\PaymentFailedException;
+use App\Services\StripeService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
-    protected StripeClient $stripe;
+    public function __construct(protected StripeService $stripeService) {}
 
-    public function __contruct()
+    public function createSetupIntent(Request $request)
     {
-        $this->stripe = new StripeClient(config('services.stripe.secret'));
+        $setupIntent = $this->stripeService->createSetupIntent($request->user());
+
+        return response()->json(['client_secret' => $setupIntent->client_secret]);
     }
 
-    public function createIntent(Request $request)
+    public function storePaymentMethod(Request $request)
     {
-        $validated = $request->validate([
-            'reservationId' => 'required|integer|exists:reservations,id',
+        $data = $request->validate([
+            'payment_method_id' => ['required', 'string'],
         ]);
 
-        $reservation = $paymentService->findPayableReservation(
-            $validated['reservationID'],
-            auth()->id()
+        $paymentMethod = $this->stripeService->savePaymentMethod(
+            $request->user(),
+            $data['payment_method_id'],
         );
 
-        #brak walidacji
+        return response()->json($paymentMethod, 201);
+    }
 
-        $price = $reservation->getTotalPrice();
+    public function listPaymentMethods(Request $request)
+    {
+        return response()->json(
+            $request->user()->paymentMethods()->where('is_active', true)->latest('id')->get()
+        );
+    }
 
-        $paymentIntent = $this->stripe->paymentIntents->create([
-            'amount' => $price * 100, // Stripe liczy w groszach
-            'currency' => 'pln',
-            'automatic_payment_methods' => ['enabled' => true],
-            'metadata' => [
-                'reservationId' => $validated['reservationId'],
-                'userId' => auth()->id(),
-            ],
+    public function destroyPaymentMethod(Request $request, PaymentMethod $paymentMethod)
+    {
+        $this->stripeService->deactivatePaymentMethod($request->user(), $paymentMethod);
+
+        return response()->json(null, 204);
+    }
+
+    public function charge(Request $request)
+    {
+        $data = $request->validate([
+            'reservation_id' => ['required', 'integer'],
+            'amount' => ['nullable', 'integer', 'min:1'],//kwota wykorzystywana jedynie do walidacji
+            'currency' => ['required', 'string', 'size:3'],
+            'description' => ['required', 'string', 'max:255'],
+            'payment_method_id' => ['required', 'integer', 'exists:payment_methods,id'],
+            'buyer_nip' => ['nullable', 'string', 'max:20'],
+            'idempotency_key' => ['nullable', 'string', 'max:255'],
         ]);
 
-        Payment::create([
-            'userId' => auth()->id(),
-            'gatewayId' => 1, //stały ID oznaczający "Stripe"
-            'reservationID' => $validated['reservationId'],
-            'totalPrice' => $price,
-            'status' => 'pending',
-            'stripe_payment_intent_id' => $paymentIntent->id,
+        $user = $request->user();
+
+        $reservation = Reservation::where('id', $data['reservation_id'])
+            ->where('userId', $user->id)
+            ->firstOrFail();
+
+        abort_if($reservation->status !== 'awaiting_payment', 409, 'Ta rezerwacja nie oczekuje na płatność.');
+
+        $amount = (int) $reservation->total_price;
+
+        if (isset($data['amount']) && $data['amount'] !== $amount) {
+            Log::warning('Rozbieżność kwoty przy płatności za rezerwację', [
+                'user_id' => $user->id,
+                'reservation_id' => $reservation->id,
+                'client_amount' => $data['amount'],
+                'authoritative_amount' => $amount,
+            ]);
+        }
+
+        $paymentMethod = PaymentMethod::where('id', $data['payment_method_id'])
+            ->where('user_id', $user->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $payment = $this->stripeService->charge(
+            user: $user,
+            amount: $amount,
+            currency: strtolower($data['currency']),
+            description: $data['description'],
+            paymentMethod: $paymentMethod,
+            reservationId: $reservation->id,
+            idempotencyKey: $data['idempotency_key'] ?? (string) Str::uuid(),
+            offSession: false,
+            buyerNip: $data['buyer_nip'] ?? null,
+        );
+
+        return response()->json(
+            $payment,
+            $payment->status === Payment::STATUS_SUCCEEDED ? 201 : 402
+        );
+    }
+
+    public function chargeOffSession(Request $request)
+    {
+        $data = $request->validate([
+            'reservation_id' => ['required', 'integer'],
+            'amount' => ['required', 'integer', 'min:50'],
+            'currency' => ['required', 'string', 'size:3'],
+            'description' => ['required', 'string', 'max:255'],
+            'payment_method_id' => ['required', 'integer', 'exists:payment_methods,id'],
+            'idempotency_key' => ['nullable', 'string', 'max:255'],
         ]);
+
+        $user = $request->user();
+
+        $paymentMethod = PaymentMethod::where('id', $data['payment_method_id'])
+            ->where('user_id', $user->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $payment = $this->stripeService->charge(
+            user: $user,
+            amount: $data['amount'],
+            currency: strtolower($data['currency']),
+            description: $data['description'],
+            paymentMethod: $paymentMethod,
+            reservationId: $data['reservation_id'],
+            idempotencyKey: $data['idempotency_key'] ?? (string) Str::uuid(),
+            offSession: true,
+        );
+
+        return response()->json(
+            $payment,
+            $payment->status === Payment::STATUS_SUCCEEDED ? 201 : 402
+        );
+    }
+
+    public function listPayments(Request $request)
+    {
+        return response()->json(
+            $request->user()
+                ->payments()
+                ->orderByDesc('id')
+                ->paginate(20)
+        );
+    }
+
+    public function invoice(Request $request, Payment $payment)
+    {
+        abort_unless($payment->userId === $request->user()->id, 403);
+
+        $invoice = $this->stripeService->getInvoiceDetails($payment);
+
+        if (! $invoice) {
+            return response()->json(['message' => 'Faktura niedostępna dla tej płatności.'], 404);
+        }
 
         return response()->json([
-            'clientSecret' => $paymentIntent->client_secret,
+            'hosted_invoice_url' => $invoice->hosted_invoice_url,
+            'invoice_pdf' => $invoice->invoice_pdf,
+            'status' => $invoice->status,
         ]);
+    }
+
+    public function refund(Request $request, Payment $payment)
+    {
+        $this->authorize('refund', $payment);
+
+        $data = $request->validate([
+            'amount' => ['nullable', 'integer', 'min:1'],
+            'reason' => ['nullable', 'in:duplicate,fraudulent,requested_by_customer'],
+            'idempotency_key' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        try {
+            $payment = $this->stripeService->refund(
+                payment: $payment,
+                amount: $data['amount'] ?? null,
+                reason: $data['reason'] ?? null,
+                idempotencyKey: $data['idempotency_key'] ?? (string) Str::uuid(),
+            );
+        } catch (PaymentFailedException $e) {
+            return response()->json(
+                ['message' => $e->getMessage(), 'error_code' => $e->errorCode],
+                $e->httpStatus()
+            );
+        }
+
+        return response()->json($payment);
     }
 }

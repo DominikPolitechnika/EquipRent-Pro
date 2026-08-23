@@ -10,6 +10,17 @@ class Reservation extends Model
 {
     protected $table = "reservation";
 
+    protected $fillable = [
+        'userId',
+        'totalPrice',
+        'statusOfReservation',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'userId','id');
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class,'productId','id');

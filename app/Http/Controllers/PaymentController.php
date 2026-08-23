@@ -65,15 +65,15 @@ class PaymentController extends Controller
 
         $user = $request->user();
 
-        $reservation = Reservation::where('id', $data['reservation_id'])
-            ->where('userId', $user->id)
-            ->firstOrFail();
+        $payment = Payment::where('reservationID',$data['reservation_id'])
+        ->where('userId',$user->id)
+        ->firstOrFail();
 
-        abort_if($reservation->status !== 'awaiting_payment', 409, 'Ta rezerwacja nie oczekuje na płatność.');
+        abort_if($payment->status == 'succeeded', 409, 'Ta rezerwacja nie oczekuje na płatność.');
 
         $amount = (int) $reservation->total_price;
 
-        if (isset($data['amount']) && $data['amount'] !== $amount) {
+        if (isset($data['amount']) && $data['amount'] !== $amount) { //sprawdzenie zgodności kwoty przesłanej z frontendu
             Log::warning('Rozbieżność kwoty przy płatności za rezerwację', [
                 'user_id' => $user->id,
                 'reservation_id' => $reservation->id,
@@ -94,7 +94,7 @@ class PaymentController extends Controller
             description: $data['description'],
             paymentMethod: $paymentMethod,
             reservationId: $reservation->id,
-            idempotencyKey: $data['idempotency_key'] ?? (string) Str::uuid(),
+            idempotencyKey: $data['idempotency_key'] ?? (string) Str::uuid(), //generowany jedynie gdy nie został przesłany z frontendu
             offSession: false,
             buyerNip: $data['buyer_nip'] ?? null,
         );

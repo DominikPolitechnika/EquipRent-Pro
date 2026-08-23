@@ -93,9 +93,9 @@ class StripeService
     }
 
     /**
-     * @param  int  $amount  totalPrice w groszach
-     * @param  string  $idempotencyKey  unikalny klucz z kolumny idempotency_key tabeli payments
-     * @param  string|null  $buyerNip  opcjonalny, symulowany NIP nabywcy do wyświetlenia na fakturze
+     * @param  int
+     * @param  string  
+     * @param  string|null
      */
     public function charge(
         User $user,
@@ -108,8 +108,6 @@ class StripeService
         bool $offSession,
         ?string $buyerNip = null,
     ): Payment {
-        // Idempotencja na poziomie aplikacji: jeśli ten sam klucz już
-        // istnieje, zwracamy istniejący wynik zamiast obciążać ponownie.
         $existing = Payment::where('idempotency_key', $idempotencyKey)->first();
         if ($existing) {
             return $existing;
@@ -129,9 +127,6 @@ class StripeService
                 'idempotency_key' => $idempotencyKey,
             ]);
         } catch (QueryException $e) {
-            // Wyścig: dwa równoległe żądania z tym samym idempotency_key.
-            // Unikalny indeks w bazie (patrz migracja) złapał duplikat —
-            // ktoś inny już tworzy/utworzył ten rekord, więc go zwracamy.
             if ($this->isUniqueConstraintViolation($e)) {
                 return Payment::where('idempotency_key', $idempotencyKey)->firstOrFail();
             }
@@ -276,13 +271,9 @@ class StripeService
     }
 
     /**
-     * Zwrot środków (pełny lub częściowy) dla opłaconej płatności —
-     * typowo wywoływane przy anulowaniu rezerwacji.
-     *
-     * @param  int|null  $amount  kwota zwrotu w groszach; null = pełny zwrot pozostałej kwoty
-     * @param  string|null  $reason  jeden z: duplicate, fraudulent, requested_by_customer
-     *
-     * @throws PaymentFailedException  gdy płatność nie kwalifikuje się do zwrotu lub wystąpił błąd
+     * @param  int|null
+     * @param  string|null
+     * @throws PaymentFailedException
      */
     public function refund(
         Payment $payment,

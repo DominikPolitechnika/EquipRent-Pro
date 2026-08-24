@@ -488,7 +488,7 @@
 
 .prof-rez-details {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
     padding-top: 14px;
     border-top: 1px solid #eef3f7;

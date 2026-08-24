@@ -186,101 +186,47 @@
                 <a href="{{ route('rezerwacje') }}" class="prof-section-link">Zobacz historię</a>
             </div>
 
-            {{-- Rezerwacja 1 --}}
-            <div class="prof-rez-card">
-                <div class="prof-rez-top">
-                    <div class="prof-rez-info">
-                        <div class="prof-rez-icon-box">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="9"/>
-                                <line x1="5.5" y1="5.5" x2="18.5" y2="18.5"/>
-                            </svg>
-                        </div>
-                        <div class="prof-rez-titles">
-                            <div class="prof-rez-name">
-                                <span class="placeholder animate-pulse" style="width:220px;height:16px;"></span>
+            <div id="prof-active-reservations">
+                {{-- Skeleton karta - widoczna tylko do czasu fetch-a --}}
+                <div class="prof-rez-card" data-skeleton>
+                    <div class="prof-rez-top">
+                        <div class="prof-rez-info">
+                            <div class="prof-rez-icon-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="9"/>
+                                    <line x1="5.5" y1="5.5" x2="18.5" y2="18.5"/>
+                                </svg>
                             </div>
-                            <div class="prof-rez-id">
-                                <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
+                            <div class="prof-rez-titles">
+                                <div class="prof-rez-name">
+                                    <span class="placeholder animate-pulse" style="width:220px;height:16px;"></span>
+                                </div>
+                                <div class="prof-rez-id">
+                                    <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="prof-rez-status">
-                        <span class="prof-rez-badge late">
-                            <span class="placeholder animate-pulse" style="width:100px;height:12px;background:#ffffff55;"></span>
-                        </span>
-                        <div class="prof-rez-deadline">
-                            <span class="placeholder animate-pulse" style="width:110px;height:12px;"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="prof-rez-details">
-                    <div>
-                        <div class="prof-rez-detail-label">Okres wynajmu</div>
-                        <div class="prof-rez-detail-value">
-                            <span class="placeholder animate-pulse" style="width:130px;height:14px;"></span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="prof-rez-detail-label">Lokalizacja</div>
-                        <div class="prof-rez-detail-value">
-                            <span class="placeholder animate-pulse" style="width:140px;height:14px;"></span>
-                        </div>
-                    </div>
-                    <div class="prof-rez-detail penalty">
-                        <div class="prof-rez-detail-label">Naliczone kary</div>
-                        <div class="prof-rez-detail-value">
-                            <span class="placeholder animate-pulse" style="width:90px;height:14px;"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Rezerwacja 2 --}}
-            <div class="prof-rez-card">
-                <div class="prof-rez-top">
-                    <div class="prof-rez-info">
-                        <div class="prof-rez-icon-box">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 17l6-6 4 4 8-8"/>
-                                <path d="M14 7h7v7"/>
-                            </svg>
-                        </div>
-                        <div class="prof-rez-titles">
-                            <div class="prof-rez-name">
-                                <span class="placeholder animate-pulse" style="width:200px;height:16px;"></span>
-                            </div>
-                            <div class="prof-rez-id">
-                                <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
+                        <div class="prof-rez-status">
+                            <span class="prof-rez-badge late">
+                                <span class="placeholder animate-pulse" style="width:100px;height:12px;background:#ffffff55;"></span>
+                            </span>
+                            <div class="prof-rez-deadline">
+                                <span class="placeholder animate-pulse" style="width:110px;height:12px;"></span>
                             </div>
                         </div>
                     </div>
-                    <div class="prof-rez-status">
-                        <span class="prof-rez-badge active">
-                            <span class="placeholder animate-pulse" style="width:70px;height:12px;background:#ffffff55;"></span>
-                        </span>
-                        <div class="prof-rez-deadline">
-                            <span class="placeholder animate-pulse" style="width:110px;height:12px;"></span>
+                    <div class="prof-rez-details">
+                        <div>
+                            <div class="prof-rez-detail-label">Okres wynajmu</div>
+                            <div class="prof-rez-detail-value">
+                                <span class="placeholder animate-pulse" style="width:130px;height:14px;"></span>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="prof-rez-details">
-                    <div>
-                        <div class="prof-rez-detail-label">Okres wynajmu</div>
-                        <div class="prof-rez-detail-value">
-                            <span class="placeholder animate-pulse" style="width:130px;height:14px;"></span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="prof-rez-detail-label">Lokalizacja</div>
-                        <div class="prof-rez-detail-value">
-                            <span class="placeholder animate-pulse" style="width:130px;height:14px;"></span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="prof-rez-detail-label">Naliczone kary</div>
-                        <div class="prof-rez-detail-value">
-                            <span class="placeholder animate-pulse" style="width:60px;height:14px;"></span>
+                        <div class="prof-rez-detail penalty">
+                            <div class="prof-rez-detail-label">Naliczone kary</div>
+                            <div class="prof-rez-detail-value">
+                                <span class="placeholder animate-pulse" style="width:90px;height:14px;"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -415,6 +361,119 @@
         }).format(amount ?? 0);
     }
 
+    function formatDate(iso) {
+        if (!iso) return '—';
+        const d = new Date(iso);
+        if (isNaN(d)) return String(iso);
+        return d.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function daysUntil(iso) {
+        if (!iso) return null;
+        const target = new Date(iso);
+        const today = new Date();
+        target.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+        return Math.round((target - today) / 86400000);
+    }
+
+    function escapeHtml(s) {
+        if (s === null || s === undefined) return '';
+        return String(s)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function get(obj, ...keys) {
+        for (const k of keys) {
+            if (obj && obj[k] !== undefined && obj[k] !== null) return obj[k];
+        }
+        return null;
+    }
+
+    function renderActiveReservationCard(r) {
+        const id    = get(r, 'id', 'reservationId', 'reservationID');
+        const title = get(r, 'productTitle', 'product_name', 'title') || 'Sprzęt';
+        const start = get(r, 'startDate', 'start_date');
+        const end   = get(r, 'endDate', 'end_date');
+
+        const days = daysUntil(end);
+        const isUrgent = days !== null && days <= 2;
+        const badgeClass = isUrgent ? 'late' : 'active';
+        let badgeText;
+        if (days === null) badgeText = 'Aktywna';
+        else if (days < 0) badgeText = 'Po terminie';
+        else if (days === 0) badgeText = 'Zwrot dziś';
+        else if (days <= 2) badgeText = 'Kończy się';
+        else badgeText = 'Aktywna';
+
+        return `
+        <div class="prof-rez-card" data-reservation-id="${escapeHtml(id)}">
+            <div class="prof-rez-top">
+                <div class="prof-rez-info">
+                    <div class="prof-rez-icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                    </div>
+                    <div class="prof-rez-titles">
+                        <div class="prof-rez-name">${escapeHtml(title)}</div>
+                        <div class="prof-rez-id">Rezerwacja #${escapeHtml(id)}</div>
+                    </div>
+                </div>
+                <div class="prof-rez-status">
+                    <span class="prof-rez-badge ${badgeClass}">${badgeText}</span>
+                    <div class="prof-rez-deadline">Zwrot: ${formatDate(end)}</div>
+                </div>
+            </div>
+            <div class="prof-rez-details">
+                <div>
+                    <div class="prof-rez-detail-label">Okres wynajmu</div>
+                    <div class="prof-rez-detail-value">${formatDate(start)} – ${formatDate(end)}</div>
+                </div>
+                <div class="prof-rez-detail penalty">
+                    <div class="prof-rez-detail-label">Naliczone kary</div>
+                    <div class="prof-rez-detail-value">—</div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    async function loadActiveReservations() {
+        const container = document.getElementById('prof-active-reservations');
+        if (!container) return;
+
+        try {
+            const response = await fetch('/api/reservations/active', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                credentials: 'same-origin',
+            });
+
+            if (!response.ok) {
+                throw new Error('Nie udało się pobrać aktywnych rezerwacji.');
+            }
+
+            const json = await response.json();
+            const reservations = Array.isArray(json.data) ? json.data : [];
+
+            container.innerHTML = reservations.length
+                ? reservations.map(renderActiveReservationCard).join('')
+                : '<div class="prof-rez-empty" style="padding:24px;color:#6b7280;font-size:13px;text-align:center;">Nie masz aktywnych rezerwacji.</div>';
+        } catch (error) {
+            container.innerHTML = '<div class="prof-rez-empty" style="padding:24px;color:#6b7280;font-size:13px;text-align:center;">Nie udało się pobrać aktywnych rezerwacji.</div>';
+            console.error(error);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', async function () {
         try {
             const response = await fetch('/api/user/profile', {
@@ -442,6 +501,8 @@
         } catch (error) {
             console.error(error);
         }
+
+        loadActiveReservations();
     });
 })();
 </script>

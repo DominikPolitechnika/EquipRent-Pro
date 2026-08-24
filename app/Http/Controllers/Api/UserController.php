@@ -55,9 +55,7 @@ class UserController extends Controller
             ->where('endDate', '>=', now())
             ->count();
 
-        $rentedItemsCount = (clone $reservationsQuery)
-            ->whereIn('statusOfReservation', $this->completedStatuses)
-            ->count();
+        $rentedItemsCount = (clone $reservationsQuery)->count();
 
         $totalSpent = (clone $reservationsQuery)->sum('totalPrice');
 

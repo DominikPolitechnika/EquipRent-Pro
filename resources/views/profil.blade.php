@@ -100,68 +100,40 @@
         <div class="prof-card-notif">
             <div class="prof-notif-header">
                 <span class="prof-notif-title">Centrum Powiadomień</span>
-                <span class="prof-notif-badge">
+                <span class="prof-notif-badge" id="prof-notif-badge">
                     <span class="placeholder animate-pulse" style="width:50px;height:12px;background:#ffffff55;"></span>
                 </span>
             </div>
 
-            <div class="prof-notif-item urgent">
-                <div class="prof-notif-item-top">
-                    <span class="prof-notif-item-label">
-                        <span class="placeholder animate-pulse" style="width:80px;height:13px;"></span>
-                    </span>
-                    <span class="prof-notif-item-time">
-                        <span class="placeholder animate-pulse" style="width:50px;height:11px;"></span>
-                    </span>
+            <div id="prof-notif-list">
+                <div class="prof-notif-item urgent">
+                    <div class="prof-notif-item-top">
+                        <span class="prof-notif-item-label">
+                            <span class="placeholder animate-pulse" style="width:80px;height:13px;"></span>
+                        </span>
+                        <span class="prof-notif-item-time">
+                            <span class="placeholder animate-pulse" style="width:50px;height:11px;"></span>
+                        </span>
+                    </div>
+                    <div class="prof-notif-item-text">
+                        <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:4px;"></span>
+                        <span class="placeholder-block animate-pulse" style="width:80%;height:12px;"></span>
+                    </div>
                 </div>
-                <div class="prof-notif-item-text">
-                    <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:4px;"></span>
-                    <span class="placeholder-block animate-pulse" style="width:80%;height:12px;"></span>
-                </div>
-            </div>
 
-            <div class="prof-notif-item">
-                <div class="prof-notif-item-top">
-                    <span class="prof-notif-item-label">
-                        <span class="placeholder animate-pulse" style="width:100px;height:13px;"></span>
-                    </span>
-                    <span class="prof-notif-item-time">
-                        <span class="placeholder animate-pulse" style="width:50px;height:11px;"></span>
-                    </span>
-                </div>
-                <div class="prof-notif-item-text">
-                    <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:4px;"></span>
-                    <span class="placeholder-block animate-pulse" style="width:70%;height:12px;"></span>
-                </div>
-            </div>
-
-            <div class="prof-notif-item">
-                <div class="prof-notif-item-top">
-                    <span class="prof-notif-item-label">
-                        <span class="placeholder animate-pulse" style="width:110px;height:13px;"></span>
-                    </span>
-                    <span class="prof-notif-item-time">
-                        <span class="placeholder animate-pulse" style="width:50px;height:11px;"></span>
-                    </span>
-                </div>
-                <div class="prof-notif-item-text">
-                    <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:4px;"></span>
-                    <span class="placeholder-block animate-pulse" style="width:60%;height:12px;"></span>
-                </div>
-            </div>
-
-            <div class="prof-notif-item">
-                <div class="prof-notif-item-top">
-                    <span class="prof-notif-item-label">
-                        <span class="placeholder animate-pulse" style="width:90px;height:13px;"></span>
-                    </span>
-                    <span class="prof-notif-item-time">
-                        <span class="placeholder animate-pulse" style="width:50px;height:11px;"></span>
-                    </span>
-                </div>
-                <div class="prof-notif-item-text">
-                    <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:4px;"></span>
-                    <span class="placeholder-block animate-pulse" style="width:75%;height:12px;"></span>
+                <div class="prof-notif-item">
+                    <div class="prof-notif-item-top">
+                        <span class="prof-notif-item-label">
+                            <span class="placeholder animate-pulse" style="width:100px;height:13px;"></span>
+                        </span>
+                        <span class="prof-notif-item-time">
+                            <span class="placeholder animate-pulse" style="width:50px;height:11px;"></span>
+                        </span>
+                    </div>
+                    <div class="prof-notif-item-text">
+                        <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:4px;"></span>
+                        <span class="placeholder-block animate-pulse" style="width:70%;height:12px;"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -474,6 +446,94 @@
         }
     }
 
+    function notifLabel(type) {
+        if (type === 'rental_starting') return 'Rozpoczęcie wynajmu';
+        if (type === 'rental_ending') return 'Zwrot wynajmu';
+        return 'Powiadomienie';
+    }
+
+    function setNotifBadge(unreadCount) {
+        const badge = document.getElementById('prof-notif-badge');
+        if (!badge) return;
+        badge.textContent = unreadCount > 0 ? `${unreadCount} nowe` : 'Brak nowych';
+    }
+
+    function renderNotificationItem(n) {
+        const isUrgent = n.severity === 'warning';
+        const unreadStyle = n.state ? '' : ' style="font-weight:600;"';
+
+        return `
+        <div class="prof-notif-item${isUrgent ? ' urgent' : ''}" data-alert-id="${escapeHtml(n.id)}"${unreadStyle}>
+            <div class="prof-notif-item-top">
+                <span class="prof-notif-item-label">${escapeHtml(notifLabel(n.type))}</span>
+                <span class="prof-notif-item-time">${formatDate(n.createdAt)}</span>
+            </div>
+            <div class="prof-notif-item-text">${escapeHtml(n.description)}</div>
+        </div>`;
+    }
+
+    async function markNotificationRead(id, itemEl) {
+        try {
+            const response = await fetch(`/api/alerts/${id}/read`, {
+                method: 'PATCH',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                credentials: 'same-origin',
+            });
+
+            if (!response.ok) return;
+
+            itemEl.removeAttribute('style');
+            const badge = document.getElementById('prof-notif-badge');
+            const current = parseInt((badge.textContent.match(/\d+/) || ['0'])[0], 10);
+            setNotifBadge(Math.max(0, current - 1));
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function loadNotifications() {
+        const container = document.getElementById('prof-notif-list');
+        if (!container) return;
+
+        try {
+            const response = await fetch('/api/alerts', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                credentials: 'same-origin',
+            });
+
+            if (!response.ok) {
+                throw new Error('Nie udało się pobrać powiadomień.');
+            }
+
+            const json = await response.json();
+            const alerts = Array.isArray(json.data) ? json.data : [];
+
+            setNotifBadge(json.meta ? json.meta.unreadCount ?? 0 : 0);
+
+            container.innerHTML = alerts.length
+                ? alerts.map(renderNotificationItem).join('')
+                : '<div style="padding:16px 4px;color:#6b7280;font-size:13px;">Brak powiadomień.</div>';
+
+            container.querySelectorAll('.prof-notif-item[data-alert-id]').forEach((item) => {
+                item.addEventListener('click', () => {
+                    if (item.style.fontWeight === '600') {
+                        markNotificationRead(item.dataset.alertId, item);
+                    }
+                });
+            });
+        } catch (error) {
+            container.innerHTML = '<div style="padding:16px 4px;color:#6b7280;font-size:13px;">Nie udało się pobrać powiadomień.</div>';
+            setNotifBadge(0);
+            console.error(error);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', async function () {
         try {
             const response = await fetch('/api/user/profile', {
@@ -503,6 +563,7 @@
         }
 
         loadActiveReservations();
+        loadNotifications();
     });
 })();
 </script>

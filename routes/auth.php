@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\MockPasswordResetController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -23,6 +24,14 @@ Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
 Route::post('/reset-password', [NewPasswordController::class, 'store'])
     ->middleware('guest')
     ->name('password.store');
+
+Route::post('/password-reset-mock/send-code', [MockPasswordResetController::class, 'sendCode'])
+    ->middleware('guest')
+    ->name('password.mock.send-code');
+
+Route::post('/password-reset-mock/confirm', [MockPasswordResetController::class, 'resetPassword'])
+    ->middleware('guest')
+    ->name('password.mock.confirm');
 
 Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
     ->middleware(['auth', 'signed', 'throttle:6,1'])

@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\OpinionController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\AlertController;
 use App\Http\Controllers\ProfileController;
 
 // Strona główna - przekierowanie do logowania
@@ -90,6 +91,9 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/reservations/summary/count', [ReservationController::class, 'countSummary']);
     Route::get('/reservations/upcoming', [ReservationController::class, 'upcoming']);
     Route::get('/products/{productId}/reservations/booked-dates', [ReservationController::class, 'bookedDates']);
+
+    Route::get('/alerts', [AlertController::class, 'index']);
+    Route::patch('/alerts/{alertId}/read', [AlertController::class, 'markRead']);
 
     Route::get('/sample-equipment', function () {
         return response()->json([

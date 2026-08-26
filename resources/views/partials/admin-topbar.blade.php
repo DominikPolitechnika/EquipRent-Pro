@@ -210,6 +210,15 @@
                 <circle cx="12" cy="7" r="4"/>
             </svg>
         </div>
+
+        {{-- Wyloguj --}}
+        <button type="button" class="adm-icon-btn" id="adm-logout-btn" aria-label="Wyloguj się" title="Wyloguj się">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+        </button>
     </div>
 </header>
 
@@ -239,5 +248,26 @@
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && popover.classList.contains('open')) close();
     });
+
+    // ===== Wylogowanie =====
+    const logoutBtn = document.getElementById('adm-logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    credentials: 'same-origin',
+                });
+            } catch (error) {
+                console.error(error);
+            }
+            window.location.href = '/login';
+        });
+    }
 })();
 </script>

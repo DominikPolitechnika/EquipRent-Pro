@@ -78,6 +78,15 @@
             <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </a>
+
+{{-- Wyloguj --}}
+    <a href="#" class="icon" id="logout-link" title="Wyloguj się" aria-label="Wyloguj się">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+    </a>
 </div>
 
     </div>
@@ -114,6 +123,27 @@
         if (popover.contains(e.target)) return;
         close();
     });
+
+    // ===== Wylogowanie =====
+    const logoutLink = document.getElementById('logout-link');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                await fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    credentials: 'same-origin',
+                });
+            } catch (error) {
+                console.error(error);
+            }
+            window.location.href = '/login';
+        });
+    }
 
     // ===== Powiadomienia: pobranie z API =====
     const dot   = document.getElementById('notif-dot');

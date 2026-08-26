@@ -274,6 +274,13 @@
         return `<span class="rez-badge oczekuje">${escapeHtml(status || 'Aktywna')}</span>`;
     }
 
+    function cardImg(r, title) {
+        const url = get(r, 'productThumbnailUrl', 'thumbnailUrl', 'imageUrl');
+        return url
+            ? `<img class="rez-card-img" src="${escapeHtml(url)}" alt="${escapeHtml(title)}">`
+            : `<div class="rez-card-img placeholder"></div>`;
+    }
+
     function renderActiveCard(r) {
         const id         = get(r, 'id', 'reservationId', 'reservationID');
         const productId  = get(r, 'productId', 'product_id');
@@ -285,7 +292,7 @@
 
         return `
         <div class="rez-card" data-reservation-id="${escapeHtml(id)}">
-            <div class="rez-card-img placeholder"></div>
+            ${cardImg(r, title)}
             <div class="rez-card-body">
                 <div class="rez-card-top">
                     <span class="rez-card-name" style="flex:1; min-width:0;">${escapeHtml(title)}</span>
@@ -323,7 +330,7 @@
 
         return `
         <div class="rez-card-done" data-reservation-id="${escapeHtml(id)}">
-            <div class="rez-card-img placeholder"></div>
+            ${cardImg(r, title)}
             <div class="rez-card-body">
                 <div class="rez-card-name" style="margin-bottom:4px;">${escapeHtml(title)}</div>
                 <div class="rez-done-meta">Okres: ${formatDate(start)} — ${formatDate(end)}</div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -24,6 +25,18 @@ class ReservationController extends Controller
         'returned',
         'zwrócona',
     ];
+
+    private function attachProductThumbnails($reservations)
+    {
+        $productIds = $reservations->pluck('productId')->unique()->filter();
+        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+
+        return $reservations->map(function ($reservation) use ($products) {
+            $product = $products->get($reservation->productId);
+            $reservation->productThumbnailUrl = $product?->getThumbnailUrl();
+            return $reservation;
+        });
+    }
 
     public function my(Request $request)
     {
@@ -81,6 +94,8 @@ class ReservationController extends Controller
             ->orderBy('reservation.startDate')
             ->get();
 
+        $reservations = $this->attachProductThumbnails($reservations);
+
         return response()->json([
             'data' => $reservations,
         ]);
@@ -112,6 +127,8 @@ class ReservationController extends Controller
             )
             ->orderByDesc('reservation.endDate')
             ->get();
+
+        $reservations = $this->attachProductThumbnails($reservations);
 
         return response()->json([
             'data' => $reservations,

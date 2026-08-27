@@ -58,6 +58,9 @@ class StatisticsController extends Controller
         $rows = Reservation::select('productId', DB::raw('COUNT(*) as rentals_count'))
             ->where('isDeleted', false)
             ->whereBetween('createdAt', [$startThis, now()])
+            ->whereHas('product', function ($query) {
+                $query->where('is_deleted', false);
+            })
             ->groupBy('productId')
             ->orderByDesc('rentals_count')
             ->limit(3)

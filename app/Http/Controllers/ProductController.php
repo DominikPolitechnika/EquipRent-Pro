@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Http\Requests\Filter\ProductFilterRequest;
-use App\Models\Category;
+use App\Models\EquipmentCategory;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -22,7 +22,7 @@ class ProductController extends Controller
     {
         $validated = $request->validated();
 
-        $categories = Category::query()
+        $categories = EquipmentCategory::query()
             ->has('products')
             ->orderBy('name')
             ->get();

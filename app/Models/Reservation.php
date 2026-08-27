@@ -8,12 +8,21 @@ use Illuminate\Database\Eloquent\Relations\hasOne;
 
 class Reservation extends Model
 {
-    protected $table = "reservation";
+    protected $table = 'reservation';
+
+    const CREATED_AT = 'createdAt';
+    const UPDATED_AT = 'updatedAt';
 
     protected $fillable = [
-        'userId',
-        'totalPrice',
-        'statusOfReservation',
+        'userId', 'productId', 'startDate', 'endDate',
+        'totalPrice', 'statusOfReservation', 'isDeleted',
+    ];
+
+    protected $casts = [
+        'startDate'  => 'datetime',
+        'endDate'    => 'datetime',
+        'isDeleted'  => 'boolean',
+        'totalPrice' => 'integer',
     ];
 
     public function user(): BelongsTo

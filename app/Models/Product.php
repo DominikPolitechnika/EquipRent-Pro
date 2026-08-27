@@ -29,7 +29,7 @@ class Product extends Model
 
     public function equipment_category(): BelongsTo
     { //relacja products equipment_category
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(EquipmentCategory::class,'equipment_category_id');
     }
 
     public function reservation(): hasMany

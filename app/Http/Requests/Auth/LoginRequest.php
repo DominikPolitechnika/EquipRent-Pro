@@ -50,6 +50,14 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        if (Auth::user()->isBlocked) {
+            Auth::logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'To konto zostało zablokowane. Skontaktuj się z administratorem.',
+            ]);
+        }
+
         Auth::user()->update(['lastLogin' => now()]);
 
         RateLimiter::clear($this->throttleKey());

@@ -9,10 +9,10 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AlertController;
 use App\Http\Controllers\ProfileController;
 
-// Strona główna - przekierowanie do logowania
+// Strona główna - przekierowanie w zależności od roli / do logowania
 Route::get('/', function () {
     if (auth()->check()) {
-        return redirect()->route('catalog');
+        return redirect()->route(auth()->user()->isAdmin() ? 'dashboard' : 'catalog');
     }
     return redirect()->route('login');
 });
@@ -44,7 +44,7 @@ Route::put('/profil', [ProfileController::class, 'update'])
     ->middleware('auth')
     ->name('profil.update');
 
-// Trasy dostępne tylko dla zalogowanych użytkowników
+// Trasy dostępne dla wszystkich zalogowanych użytkowników (klient + admin)
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
@@ -56,24 +56,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
 
     Route::view('/demo-layout', 'pages.demo-layout');
-})->middleware('auth')->name('profil.update'); 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/catalog', [ProductController::class, 'show'])->name('catalog');
-    Route::get('/produkt/{id}', [ProductController::class, 'index'])->name('product');
+    Route::view('/platnosc', 'platnosc')->name('platnosc');
+});
+
+// Trasy panelu administracyjnego - tylko dla roli admina
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/produkt/{id}/edytuj', [ProductController::class, 'edit'])->name('product.edit');
     Route::view('/inwentarz', 'list_equipment')->name('equipment.list');
     Route::view('/lista-uzytkownikow', 'list_users')->name('users.list');
-    Route::view('/uzytkownik-szczegoly', 'user_details')->name('users.show');
+    Route::view('/uzytkownik-szczegoly/{id}', 'user_details')->name('users.show');
     Route::view('/rejestr-wypozyczen', 'list_rentals')->name('rentals.list');
     Route::view('/panel-glowny', 'dashboard')->name('dashboard');
-    Route::view('/platnosc', 'platnosc')->name('platnosc');
 });
 
 // API - dostępne tylko dla zalogowanych
 Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/user/profile', [UserController::class, 'me']);
-    Route::get('/users/{userID}', [UserController::class, 'getUsersDetails']);
 
     Route::get('/reservations/my', [ReservationController::class, 'my']);
     Route::get('/reservations/active', [ReservationController::class, 'active']);
@@ -94,6 +92,13 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
 
     Route::get('/alerts', [AlertController::class, 'index']);
     Route::patch('/alerts/{alertId}/read', [AlertController::class, 'markRead']);
+
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/users', [UserController::class, 'index']);
+        Route::get('/users/{userID}', [UserController::class, 'getUsersDetails']);
+        Route::patch('/users/{userID}', [UserController::class, 'update']);
+        Route::patch('/users/{userID}/toggle-block', [UserController::class, 'toggleBlock']);
+    });
 
     Route::get('/sample-equipment', function () {
         return response()->json([

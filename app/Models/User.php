@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'surname', 'email', 'password', 'klub', 'profilDescription', 'lastLogin'])]
 #[Hidden(['password', 'remember_token'])]
@@ -95,5 +97,15 @@ class User extends Authenticatable
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class, 'userId');
+    }
+
+    public function roleRecord(): BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'role', 'id');
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->roleRecord?->roleName === 'Administrator';
     }
 }

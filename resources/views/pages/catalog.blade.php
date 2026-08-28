@@ -65,6 +65,7 @@
                         <i class="fa-regular fa-calendar date-icon"></i>
                         <input type="date" class="date-input" name="date_from"
                                value="{{ request('date_from') }}"
+                               min="{{ now()->toDateString() }}"
                                onfocus="this.showPicker()">
                     </div>
                 </div>
@@ -74,10 +75,16 @@
                         <i class="fa-regular fa-calendar date-icon"></i>
                         <input type="date" class="date-input" name="date_to"
                                value="{{ request('date_to') }}"
+                               min="{{ now()->toDateString() }}"
                                onfocus="this.showPicker()">
                     </div>
                 </div>
             </div>
+
+            <p id="date-range-error"
+               class="date-range-error"
+               style="color:#dc2626;font-size:0.85rem;margin:6px 0 0;height:1.1em;line-height:1.1em;
+                      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;visibility:hidden;"></p>
 
             <button class="reset-btn" type="button">Resetuj filtry</button>
         </div>
@@ -158,7 +165,62 @@
 
     let debounceTimer;
 
+    // ----- Walidacja zakresu dat po stronie frontendu -----
+    const dateFromInput = sidebar.querySelector('[name="date_from"]');
+    const dateToInput   = sidebar.querySelector('[name="date_to"]');
+    const dateErrorEl = document.getElementById('date-range-error');
+
+    function clearDateError() {
+        dateFromInput.style.borderColor = '';
+        dateToInput.style.borderColor = '';
+        dateErrorEl.textContent = '';
+        dateErrorEl.removeAttribute('title');
+        dateErrorEl.style.visibility = 'hidden';
+    }
+
+    function showDateError(message) {
+        dateFromInput.style.borderColor = '#dc2626';
+        dateToInput.style.borderColor = '#dc2626';
+
+        dateErrorEl.textContent = message;
+        dateErrorEl.title = message;
+        dateErrorEl.style.visibility = 'visible';
+
+        alert(message);
+    }
+
+    // Zwraca true, jeśli zakres dat jest poprawny (albo jedna/obie daty puste).
+    function validateDateRange() {
+        clearDateError();
+
+        const dateFrom = dateFromInput.value;
+        const dateTo   = dateToInput.value;
+        const todayStr = new Date().toISOString().slice(0, 10);
+
+        if (dateFrom && dateFrom < todayStr) {
+            showDateError('Data "od" nie może być z przeszłości.');
+            return false;
+        }
+
+        if (dateTo && dateTo < todayStr) {
+            showDateError('Data "do" nie może być z przeszłości.');
+            return false;
+        }
+
+        if (dateFrom && dateTo && dateFrom > dateTo) {
+            showDateError('Data "od" nie może być późniejsza niż data "do".');
+            return false;
+        }
+
+        return true;
+    }
+
     function fetchProducts(page = 1) {
+        // Nie wysyłamy żądania z nieprawidłowym zakresem dat
+        if (!validateDateRange()) {
+            return;
+        }
+
         const params = new URLSearchParams();
 
         const search      = sidebar.querySelector('[name="search"]').value;
@@ -192,7 +254,12 @@
         })
         .then(response => {
             if (response.status === 422) {
-                throw new Error('Nieprawidłowe filtry.');
+                return response.json().then(body => {
+                    const firstError = body.errors
+                        ? Object.values(body.errors)[0]?.[0]
+                        : null;
+                    throw new Error(firstError || body.message || 'Nieprawidłowe filtry.');
+                });
             }
             if (!response.ok) throw new Error('Błąd serwera: ' + response.status);
             return response.text();
@@ -205,7 +272,7 @@
         })
         .catch(err => {
             console.error(err);
-            container.innerHTML = '<p style="padding:40px;text-align:center;color:#dc2626;">Wystąpił błąd podczas ładowania produktów.</p>';
+            container.innerHTML = `<p style="padding:40px;text-align:center;color:#dc2626;">${err.message}</p>`;
             container.style.opacity = '1';
         });
     }
@@ -242,6 +309,7 @@
         });
         document.querySelector('[name="sort"]').value = '';
         document.getElementById('price-display').textContent = '200 zł';
+        clearDateError();
         fetchProducts(1);
     });
 

@@ -3,8 +3,11 @@
 namespace App\Http\Requests\Filter;
 
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class ProductFilterRequest extends FormRequest
 {
@@ -38,6 +41,42 @@ class ProductFilterRequest extends FormRequest
         return $value === '' ? null : $value;
     }
 
+    protected function failedValidation(Validator $validator): void
+    {
+        if ($this->ajax() || $this->wantsJson()) {
+            throw new HttpResponseException(response()->json([
+                'message' => 'Nieprawidłowe filtry.',
+                'errors' => $validator->errors(),
+            ], 422));
+        }
+
+        $safeParams = $this->except(['date_from', 'date_to']);
+
+        $redirectUrl = url($this->path());
+        if (!empty($safeParams)) {
+            $redirectUrl .= '?'.http_build_query($safeParams);
+        }
+
+        throw (new ValidationException($validator))->redirectTo($redirectUrl);
+    }
+
+    /**
+     * Komunikaty walidacji po polsku
+     */
+    public function messages(): array
+    {
+        return [
+            'date_from.after_or_equal' => 'Data "od" nie może być wcześniejsza niż dzisiaj.',
+            'date_to.after_or_equal' => 'Data "do" musi być dzisiejsza lub późniejsza i nie może wypadać przed datą "od".',
+            'date_from.before_or_equal' => 'Data "od" nie może być późniejsza niż data "do".',
+            'date_from.date' => 'Podana data "od" jest nieprawidłowa.',
+            'date_to.date' => 'Podana data "do" jest nieprawidłowa.',
+            'categories.array' => 'Nieprawidłowy format kategorii.',
+            'categories.*.exists' => 'Wybrana kategoria nie istnieje.',
+            'sort.in' => 'Nieprawidłowa opcja sortowania.',
+            'search.max' => 'Wyszukiwana fraza jest za długa (maksymalnie 255 znaków).',
+        ];
+    }
 
     public function rules(): array
     {

@@ -77,7 +77,7 @@ class StatisticsController extends Controller
                 'title'        => $product->title,
                 'oneDayPrice'  => $product->one_day_price,
                 'rentalsCount' => (int) $row->rentals_count,
-                'isAvailable'  => (bool) $product->is_available,
+                'status'  => $product->getStatus(),
                 'thumbnailUrl' => $product->getThumbnailUrl(),
             ];
         })->filter()->values()->all();

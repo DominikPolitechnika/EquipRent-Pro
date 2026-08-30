@@ -21,6 +21,10 @@ Route::get('/', function () {
 Route::view('/login', 'auth.login')
     ->middleware('guest')
     ->name('login');
+// ===== Strony informacyjne (dostępne dla wszystkich) =====
+Route::view('/o-nas',                 'o_nas')->name('o_nas');
+Route::view('/regulamin',             'regulamin')->name('regulamin');
+Route::view('/polityka-prywatnosci',  'polityka_prywatnosci')->name('polityka');
 
 Route::view('/register', 'auth.register')
     ->middleware('guest')

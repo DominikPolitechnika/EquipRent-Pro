@@ -222,6 +222,7 @@
         }
         .rez-badge.wypozyczone { background: #075071; color: #fff; }
         .rez-badge.oczekuje    { background: #e5e7eb; color: #4b5563; }
+        .rez-badge.oczekuje-platnosci { background: #fef3c7; color: #92400e; }
 
 .rez-card-meta {
     font-size: 12px;
@@ -539,7 +540,7 @@
             .rez-card-actions { padding: 0 18px 14px; }
             .rez-btn-rebook { margin: 0 18px 14px; }
             .rez-page-header {padding: 20px;}
-
+        }
 /* ================================================
    ZAOKRĄGLENIA - dopasowane do konkretnych klas w HTML
 ================================================ */

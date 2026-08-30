@@ -265,6 +265,9 @@
 
     function statusBadge(status) {
         const s = String(status || '').toLowerCase();
+        if (s === 'awaiting_payment') {
+            return '<span class="rez-badge oczekuje-platnosci">Oczekuje na płatność</span>';
+        }
         if (s === 'active' || s === 'confirmed' || s === 'wypozyczone' || s === 'in_progress') {
             return '<span class="rez-badge wypozyczone">Wypożyczone</span>';
         }
@@ -289,6 +292,7 @@
         const end        = get(r, 'endDate', 'end_date', 'to');
         const status     = get(r, 'statusOfReservation', 'status');
         const total      = get(r, 'totalPrice', 'total_price', 'total');
+        const awaitingPayment = String(status || '').toLowerCase() === 'awaiting_payment';
 
         return `
         <div class="rez-card" data-reservation-id="${escapeHtml(id)}">
@@ -310,6 +314,9 @@
                 </div>
             </div>
             <div class="rez-card-actions">
+                ${awaitingPayment
+                    ? `<a class="rez-btn-cancel" style="text-decoration:none;text-align:center;background:#075071;" href="/platnosc?reservation=${escapeHtml(id)}">Dokończ płatność</a>`
+                    : ''}
                 <button class="rez-btn-cancel" type="button" data-action="open-cancel" data-id="${escapeHtml(id)}" data-title="${escapeHtml(title)}">
                     Anuluj rezerwację
                 </button>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use App\Services\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\Exception\SignatureVerificationException;
@@ -12,6 +13,8 @@ use UnexpectedValueException;
 
 class StripeWebhookController extends Controller
 {
+    public function __construct(protected StripeService $stripeService) {}
+
     public function handle(Request $request)
     {
         $payload = $request->getContent();
@@ -35,6 +38,10 @@ class StripeWebhookController extends Controller
                 default => null,
             };
         } catch (\Throwable $e) {
+            // Zwracamy mimo błędu 200, żeby Stripe nie zasypał nas
+            // retry'ami błędu, który i tak wynika z bugu po naszej
+            // stronie (retry tego nie naprawi) — ale koniecznie logujemy,
+            // bo inaczej zdarzenie (np. udany zwrot) zniknie bez śladu.
             Log::error('Błąd podczas przetwarzania webhooka Stripe', [
                 'event_type' => $event->type,
                 'event_id' => $event->id,
@@ -47,6 +54,8 @@ class StripeWebhookController extends Controller
 
     protected function findPayment($stripeInvoice): ?Payment
     {
+        // payments.stripe_payment_intent_id jest naszym jedynym punktem
+        // zaczepienia — invoice.payment_intent to ID PaymentIntenta.
         if (! $stripeInvoice->payment_intent) {
             return null;
         }
@@ -56,10 +65,22 @@ class StripeWebhookController extends Controller
 
     protected function onInvoicePaid($stripeInvoice): void
     {
-        $this->findPayment($stripeInvoice)?->update([
+        $payment = $this->findPayment($stripeInvoice);
+
+        if (! $payment) {
+            return;
+        }
+
+        $payment->update([
             'status' => Payment::STATUS_SUCCEEDED,
             'paid_at' => now(),
         ]);
+
+        // Domyka to samo, co StripeService::charge() robi synchronicznie —
+        // ważne dla przypadków, gdy potwierdzenie 3DS przychodzi
+        // asynchronicznie (poza naszym stub-em) i status succeeded trafia
+        // do nas dopiero przez webhook.
+        $this->stripeService->activateReservationIfAwaitingPayment($payment->fresh());
     }
 
     protected function onInvoicePaymentFailed($stripeInvoice): void
@@ -74,8 +95,19 @@ class StripeWebhookController extends Controller
         $this->findPayment($stripeInvoice)?->update([
             'status' => Payment::STATUS_REQUIRES_ACTION,
         ]);
+
+        // tu warto wysłać e-mail z linkiem hosted_invoice_url, żeby klient
+        // ręcznie dokończył autoryzację 3DS przy obciążeniu off-session
     }
 
+    /**
+     * Domykający element obsługi zwrotów: gdyby zwrot został wykonany
+     * poza naszym API (np. ręcznie z panelu Stripe) albo gdyby jego
+     * status zmienił się asynchronicznie (niektóre metody zwrotu nie są
+     * natychmiastowe), ten webhook i tak zsynchronizuje lokalny rekord.
+     * Idempotentny z natury — wielokrotne wywołanie z tym samym stanem
+     * nic nie psuje.
+     */
     protected function onChargeRefunded($charge): void
     {
         if (! $charge->payment_intent) {

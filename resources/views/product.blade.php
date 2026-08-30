@@ -524,9 +524,15 @@
 
             if (res.status === 201) {
                 const data = await res.json().catch(() => ({}));
-                // Sukces - można przejść do płatności albo do moich rezerwacji
-                alert('Rezerwacja utworzona!' + (data.reservationId ? ' Numer: ' + data.reservationId : ''));
-                window.location.href = '/rezerwacje';
+                // Rezerwacja utworzona w stanie "awaiting_payment" - termin
+                // jest zablokowany, ale trzeba dokończyć płatność zanim
+                // stanie się "active". Przenosimy więc od razu na widok
+                // płatności zamiast do listy "Moje rezerwacje".
+                if (data.reservationId) {
+                    window.location.href = `/platnosc?reservation=${encodeURIComponent(data.reservationId)}`;
+                } else {
+                    window.location.href = '/rezerwacje';
+                }
                 return;
             }
             if (res.status === 409) {
@@ -649,7 +655,7 @@
             const list = extractList(payload);
 
             const today = new Date(); today.setHours(0,0,0,0);
-            const isActive = (r) => ['active','pending','confirmed'].includes(r.statusOfReservation) && new Date(r.endDate) >= today;
+            const isActive = (r) => ['active','pending','confirmed','awaiting_payment'].includes(r.statusOfReservation) && new Date(r.endDate) >= today;
 
             const active = list.filter(isActive);
             const history = list.filter(r => !isActive(r)).slice(0, 5);
@@ -658,7 +664,9 @@
             if (active.length === 0) {
                 activeEl.innerHTML = '<p style="color:#6b7280;font-size:13px;">Brak aktywnych rezerwacji tego produktu.</p>';
             } else {
-                activeEl.innerHTML = active.map(r => `
+                activeEl.innerHTML = active.map(r => {
+                    const awaitingPayment = r.statusOfReservation === 'awaiting_payment';
+                    return `
                     <div class="product-reservation-card" data-reservation-id="${escapeHtml(r.id)}">
                         <div class="product-res-col">
                             <div class="product-spec-label">Okres</div>
@@ -666,15 +674,18 @@
                         </div>
                         <div class="product-res-col">
                             <div class="product-spec-label">Status</div>
-                            <span>${escapeHtml(r.statusOfReservation)}</span>
+                            <span>${awaitingPayment ? 'Oczekuje na płatność' : escapeHtml(r.statusOfReservation)}</span>
                         </div>
                         <div class="product-res-col">
                             <div class="product-spec-label">Suma</div>
                             <div class="product-res-price">${formatMoney(r.totalPrice)}</div>
                         </div>
+                        ${awaitingPayment
+                            ? `<a class="product-btn-cancel" style="text-decoration:none;text-align:center;background:#075071;" href="/platnosc?reservation=${encodeURIComponent(r.id)}">Dokończ płatność</a>`
+                            : ''}
                         <button class="product-btn-cancel" type="button" data-action="cancel" data-id="${escapeHtml(r.id)}">Anuluj rezerwację</button>
                     </div>
-                `).join('');
+                `; }).join('');
             }
 
             // Historia

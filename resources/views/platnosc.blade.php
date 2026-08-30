@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="stripe-key" content="{{ config('services.stripe.key') }}">
     <title>Finalizacja Wynajmu – EquipRent Pro</title>
     <link rel="stylesheet" href="{{ asset('style-head.css') }}">
     <link rel="stylesheet" href="{{ asset('style-foot.css') }}">
     <link rel="stylesheet" href="{{ asset('style-platnosc.css') }}">
     <link rel="icon" type="image/png" href="{{ asset('E.png') }}">
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body class="pay-page">
 
@@ -26,6 +28,12 @@
     </a>
     <h1 class="pay-title">Finalizacja Wynajmu</h1>
 
+    {{-- Banner statusu płatności (ukryty domyślnie, pokazywany przez JS) --}}
+    <div class="pay-banner" id="pay-banner">
+        <span id="pay-banner-text"></span>
+        <button type="button" class="pay-banner-redirect" id="pay-banner-redirect-btn">Przejdź teraz →</button>
+    </div>
+
     <div class="pay-grid">
 
         {{-- ===== LEWA KOLUMNA - FORMULARZ ===== --}}
@@ -41,39 +49,40 @@
                 </span>
             </div>
 
-            <form id="pay-form" onsubmit="event.preventDefault(); /* TODO: integracja z bramką płatności */">
+            <form id="pay-form" onsubmit="event.preventDefault();">
 
-                <div class="pay-form-group">
-                    <label class="pay-label" for="pay-name">Imię i nazwisko posiadacza karty</label>
-                    <input type="text" id="pay-name" class="pay-input" placeholder="Jan Kowalski" autocomplete="cc-name">
+                {{-- Zapisane metody płatności + opcja nowej karty - wypełniane przez JS --}}
+                <div class="pay-methods-list" id="pay-methods-list">
+                    <div style="font-size:12px;color:#9aa5ad;">Ładowanie zapisanych metod płatności…</div>
                 </div>
 
-                <div class="pay-form-group">
-                    <label class="pay-label" for="pay-number">Dane karty</label>
-                    <div class="pay-input-with-icon">
-                        <span class="pay-input-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                                <line x1="1" y1="10" x2="23" y2="10"/>
-                            </svg>
-                        </span>
-                        <input type="text" id="pay-number" class="pay-input" placeholder="0000 0000 0000 0000" inputmode="numeric" maxlength="19" autocomplete="cc-number">
-                    </div>
+                <div id="pay-methods-limit-note" class="pay-methods-limit-note" style="display:none;">
+                    Osiągnięto limit 3 zapisanych metod płatności — usuń jedną z kart powyżej (✕), aby zapisać nową.
                 </div>
 
-                <div class="pay-form-row">
-                    <div class="pay-form-group" style="margin-bottom:0;">
-                        <label class="pay-label" for="pay-expiry">Data ważności</label>
-                        <input type="text" id="pay-expiry" class="pay-input" placeholder="MM / RR" inputmode="numeric" maxlength="7" autocomplete="cc-exp">
+                {{-- Formularz nowej karty (Stripe Card Element) --}}
+                <div id="pay-new-card-block">
+                    <div class="pay-form-group">
+                        <label class="pay-label" for="pay-name">Imię i nazwisko posiadacza karty *</label>
+                        <input type="text" id="pay-name" class="pay-input" placeholder="Jan Kowalski" autocomplete="cc-name">
                     </div>
-                    <div class="pay-form-group" style="margin-bottom:0;">
-                        <label class="pay-label" for="pay-cvc">Kod CVC</label>
-                        <input type="text" id="pay-cvc" class="pay-input" placeholder="123" inputmode="numeric" maxlength="4" autocomplete="cc-csc">
+
+                    <div class="pay-form-group">
+                        <label class="pay-label">Dane karty (Stripe — tryb testowy)</label>
+                        <div class="pay-card-element-wrap show" id="pay-card-element-wrap">
+                            <div id="pay-card-element"><!-- Stripe Card Element montowany tutaj --></div>
+                        </div>
+                        <div class="pay-card-error" id="pay-card-error"></div>
                     </div>
+
+                    <label class="pay-save-row" id="pay-save-row">
+                        <input type="checkbox" id="pay-save-card" checked>
+                        Zapisz kartę do przyszłych płatności (maks. 3 karty)
+                    </label>
                 </div>
 
-                <button type="submit" class="pay-submit">
-                    Zapłać 345,00 PLN teraz
+                <button type="submit" class="pay-submit" id="pay-submit-btn">
+                    <span id="pay-submit-label">Zapłać teraz</span>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"/>
                         <polyline points="12 5 19 12 12 19"/>
@@ -96,46 +105,38 @@
         <div>
             <div class="pay-summary">
 
-                {{-- Hero z obrazkiem produktu --}}
+                {{-- Hero z tytułem produktu --}}
                 <div class="pay-hero">
                     <div class="pay-hero-overlay"></div>
                     <span class="pay-hero-cat">Sprzęt sportowy</span>
-                    <div class="pay-hero-title">Wynajem Roweru MTB</div>
+                    <div class="pay-hero-title" id="pay-hero-title">Ładowanie…</div>
                 </div>
 
                 {{-- Daty --}}
                 <div class="pay-dates">
                     <div class="pay-date-col">
                         <div class="pay-date-label">Odbiór</div>
-                        <div class="pay-date-value">24 paź 2023</div>
+                        <div class="pay-date-value" id="pay-date-start">—</div>
                     </div>
                     <div class="pay-date-arrow">→</div>
                     <div class="pay-date-col end">
                         <div class="pay-date-label">Zwrot</div>
-                        <div class="pay-date-value">31 paź 2023</div>
+                        <div class="pay-date-value" id="pay-date-end">—</div>
                     </div>
                 </div>
 
                 {{-- Pozycje rachunku --}}
                 <div class="pay-items">
                     <div class="pay-item">
-                        <span class="pay-item-label">Wynajem <small>(2 dni)</small></span>
-                        <span class="pay-item-amount">240,00 PLN</span>
-                    </div>
-                    <div class="pay-item">
-                        <span class="pay-item-label">Wynajem <small>(2 dni) 60,00 PLN</small></span>
-                        <span class="pay-item-amount">60,00 PLN</span>
-                    </div>
-                    <div class="pay-item">
-                        <span class="pay-item-label">Serwis i przygotowanie</span>
-                        <span class="pay-item-amount">45,00 PLN</span>
+                        <span class="pay-item-label" id="pay-days-label">Wynajem</span>
+                        <span class="pay-item-amount" id="pay-days-amount">—</span>
                     </div>
                 </div>
 
                 {{-- Suma --}}
                 <div class="pay-total">
-                    <span class="pay-total-label">Wynajem <small style="color:#9aa5ad;font-weight:400;">(2 dni)</small></span>
-                    <span class="pay-total-amount">240,00 PLN</span>
+                    <span class="pay-total-label">Do zapłaty</span>
+                    <span class="pay-total-amount" id="pay-total-amount">—</span>
                 </div>
 
                 {{-- Timer --}}
@@ -162,45 +163,499 @@
     </div>
 </main>
 
+{{-- ===== MODAL 3D SECURE (ZAŚLEPKA) =====
+     Projekt nigdy nie działa produkcyjnie ("aplikacja nigdy nie będzie live"),
+     więc zamiast integrować prawdziwy ekran autoryzacji banku, symulujemy go
+     lokalnie. Kliknięcie "Zatwierdź" / "Odrzuć" wywołuje
+     POST /api/payments/{payment}/confirm-3ds-stub, który ręcznie ustawia
+     status płatności w bazie. To NIE jest prawdziwe 3D Secure. --}}
+<div class="pay-tds-backdrop" id="pay-tds-backdrop">
+    <div class="pay-tds-modal">
+        <div class="pay-tds-bank-header">
+            <span class="pay-tds-bank-dot"></span>
+            <span class="pay-tds-bank-name">Bank Testowy — Weryfikacja 3D Secure</span>
+        </div>
+        <span class="pay-tds-badge">Symulacja — tryb testowy</span>
+        <h3 class="pay-tds-title">Potwierdź płatność</h3>
+        <p class="pay-tds-text">
+            Twój bank wymaga dodatkowej weryfikacji tej transakcji.
+            To jest <strong>zaślepka demonstracyjna</strong> — żadna prawdziwa
+            autoryzacja nie jest tu przeprowadzana. Wybierz, jak ma zakończyć
+            się symulacja.
+        </p>
+        <div class="pay-tds-actions">
+            <button type="button" class="pay-tds-btn" id="pay-tds-decline">Odrzuć</button>
+            <button type="button" class="pay-tds-btn primary" id="pay-tds-approve">Zatwierdź</button>
+        </div>
+    </div>
+</div>
+
 @include('partials.footer')
 
 <script>
 (function() {
-    // ===== Formatowanie numeru karty =====
-    const numberInput = document.getElementById('pay-number');
-    if (numberInput) {
-        numberInput.addEventListener('input', (e) => {
-            // tylko cyfry, grupy po 4 oddzielone spacją
-            const digits = e.target.value.replace(/\D/g, '').slice(0, 16);
-            e.target.value = digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+    'use strict';
+
+    // ==============================================================
+    // Konfiguracja
+    // ==============================================================
+    const CSRF = document.querySelector('meta[name="csrf-token"]').content;
+    const STRIPE_KEY = document.querySelector('meta[name="stripe-key"]').content;
+    const RESERVATION_ID = new URLSearchParams(window.location.search).get('reservation');
+    const MAX_SAVED_METHODS = 3;
+
+    const $ = (sel) => document.querySelector(sel);
+
+    function apiGet(url) {
+        return fetch(url, { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' });
+    }
+    function apiJson(method, url, body) {
+        return fetch(url, {
+            method,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': CSRF,
+            },
+            credentials: 'same-origin',
+            body: body !== undefined ? JSON.stringify(body) : undefined,
         });
     }
 
-    // ===== Formatowanie daty MM / RR =====
-    const expiryInput = document.getElementById('pay-expiry');
-    if (expiryInput) {
-        expiryInput.addEventListener('input', (e) => {
-            const digits = e.target.value.replace(/\D/g, '').slice(0, 4);
-            if (digits.length >= 3) {
-                e.target.value = digits.slice(0, 2) + ' / ' + digits.slice(2);
-            } else {
-                e.target.value = digits;
+    function escapeHtml(s) {
+        if (s === null || s === undefined) return '';
+        return String(s)
+            .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+    }
+    function formatDate(iso) {
+        if (!iso) return '—';
+        const d = new Date(iso);
+        if (isNaN(d)) return String(iso);
+        return d.toLocaleDateString('pl-PL', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+    function formatMoney(v) {
+        if (v === null || v === undefined) return '—';
+        const num = Number(v);
+        if (isNaN(num)) return String(v);
+        return num.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' PLN';
+    }
+    function daysBetween(a, b) {
+        return Math.max(1, Math.round((new Date(b) - new Date(a)) / 86400000) + 1);
+    }
+    function uuidv4() {
+        if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    // ==============================================================
+    // Brak reservation w URL — nie ma czego płacić
+    // ==============================================================
+    if (!RESERVATION_ID) {
+        showBanner('error', 'Nie wskazano rezerwacji do opłacenia. Przechodzę do listy rezerwacji…');
+        setTimeout(() => window.location.href = '/rezerwacje', 2000);
+        return;
+    }
+
+    // ==============================================================
+    // Stripe.js
+    // ==============================================================
+    const stripe = (window.Stripe && STRIPE_KEY) ? Stripe(STRIPE_KEY) : null;
+    const elements = stripe ? stripe.elements() : null;
+    let cardElement = null;
+    if (elements) {
+        cardElement = elements.create('card', {
+            // Stripe domyślnie włącza "Link" (przycisk zapisu/logowania
+            // Link, autouzupełnianie karty) w Card Element dla każdego
+            // konta z dostępem — bez zmian w kodzie. disableLink:true
+            // wyłącza to jawnie na poziomie tego Elementu (alternatywnie
+            // można to wyłączyć globalnie w Dashboard → Ustawienia →
+            // Metody płatności → Link → "Disable Link in Card Element",
+            // ale wersja w kodzie jest pewniejsza i nie zależy od
+            // konfiguracji konta).
+            disableLink: true,
+            style: {
+                base: {
+                    fontFamily: "'Poppins', sans-serif",
+                    fontSize: '14px',
+                    color: '#111827',
+                    '::placeholder': { color: '#9aa5ad' },
+                },
+                invalid: { color: '#dc2626' },
+            },
+        });
+        cardElement.mount('#pay-card-element');
+        cardElement.on('change', (event) => {
+            $('#pay-card-error').textContent = event.error ? event.error.message : '';
+        });
+    } else {
+        $('#pay-card-error').textContent = 'Nie udało się załadować Stripe.js — sprawdź klucz publiczny (STRIPE_KEY) w konfiguracji.';
+    }
+
+    // ==============================================================
+    // Banner statusu płatności
+    // ==============================================================
+    function showBanner(type, text, { withRedirectButton = false } = {}) {
+        const banner = $('#pay-banner');
+        banner.className = 'pay-banner show ' + type;
+        $('#pay-banner-text').textContent = text;
+        $('#pay-banner-redirect-btn').style.display = withRedirectButton ? '' : 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    $('#pay-banner-redirect-btn').addEventListener('click', () => {
+        window.location.href = '/rezerwacje';
+    });
+
+    /**
+     * Po ostatecznym (terminal) statusie płatności — succeeded albo failed —
+     * informujemy użytkownika i przenosimy go na widok "Moje rezerwacje",
+     * zgodnie z ustalonym przepływem: widok płatności -> powiadomienie ->
+     * przekierowanie.
+     */
+    function finishAndRedirect(type, text, delayMs = 2500) {
+        showBanner(type, text, { withRedirectButton: true });
+        setTimeout(() => window.location.href = '/rezerwacje', delayMs);
+    }
+
+    // ==============================================================
+    // Ładowanie danych rezerwacji - GET /api/reservations/{id}
+    // ==============================================================
+    let reservation = null;
+
+    async function loadReservation() {
+        try {
+            const res = await apiGet(`/api/reservations/${encodeURIComponent(RESERVATION_ID)}`);
+
+            if (res.status === 403 || res.status === 404) {
+                showBanner('error', 'Ta rezerwacja nie istnieje lub nie należy do Ciebie.');
+                setTimeout(() => window.location.href = '/rezerwacje', 2000);
+                return;
             }
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const payload = await res.json();
+            reservation = payload.data || payload;
+
+            if (reservation.statusOfReservation !== 'awaiting_payment') {
+                const info = reservation.statusOfReservation === 'active'
+                    ? 'Ta rezerwacja została już opłacona.'
+                    : 'Ta rezerwacja nie oczekuje już na płatność.';
+                showBanner('info', info + ' Przechodzę do Twoich rezerwacji…');
+                setTimeout(() => window.location.href = '/rezerwacje', 2000);
+                return;
+            }
+
+            renderReservationSummary(reservation);
+        } catch (e) {
+            console.error('reservations/{id}:', e);
+            showBanner('error', 'Nie udało się pobrać danych rezerwacji. Spróbuj ponownie później.');
+        }
+    }
+
+    function renderReservationSummary(r) {
+        $('#pay-hero-title').textContent = r.productTitle || 'Wynajem sprzętu';
+        $('#pay-date-start').textContent = formatDate(r.startDate);
+        $('#pay-date-end').textContent = formatDate(r.endDate);
+
+        const days = daysBetween(r.startDate, r.endDate);
+        $('#pay-days-label').innerHTML = `Wynajem <small>(${days} ${days === 1 ? 'dzień' : 'dni'})</small>`;
+        $('#pay-days-amount').textContent = formatMoney(r.totalPrice);
+        $('#pay-total-amount').textContent = formatMoney(r.totalPrice);
+        $('#pay-submit-label').textContent = `Zapłać ${formatMoney(r.totalPrice)} teraz`;
+
+        const hero = document.querySelector('.pay-hero');
+        if (r.productThumbnailUrl && hero) {
+            hero.style.backgroundImage =
+                `linear-gradient(to bottom, rgba(0,0,0,.15) 30%, rgba(0,0,0,.65) 100%), url('${r.productThumbnailUrl}')`;
+            hero.style.backgroundSize = 'cover';
+            hero.style.backgroundPosition = 'center';
+        }
+    }
+
+    // ==============================================================
+    // Zapisane metody płatności - GET /api/payments/payment-methods
+    // ==============================================================
+    let savedMethods = [];
+    let selectedMethodId = 'new'; // 'new' albo lokalne id z payment_methods
+
+    async function loadPaymentMethods() {
+        try {
+            const res = await apiGet('/api/payments/payment-methods');
+            savedMethods = res.ok ? await res.json() : [];
+        } catch (e) {
+            console.warn('payment-methods:', e);
+            savedMethods = [];
+        }
+        renderPaymentMethods();
+    }
+
+    function renderPaymentMethods() {
+        const list = $('#pay-methods-list');
+        const atLimit = savedMethods.length >= MAX_SAVED_METHODS;
+
+        const savedHtml = savedMethods.map(pm => `
+            <label class="pay-method-option" data-value="${pm.id}">
+                <input type="radio" name="pay-method" value="${pm.id}">
+                <span class="pay-method-label">
+                    ${escapeHtml((pm.brand || 'Karta').toUpperCase())} •••• ${escapeHtml(pm.last4 || '----')}
+                    <div class="pay-method-sub">
+                        ${pm.cardholder_name ? escapeHtml(pm.cardholder_name) + ' · ' : ''}Ważna do ${String(pm.exp_month).padStart(2, '0')}/${pm.exp_year} · zapisana
+                    </div>
+                </span>
+                <button type="button" class="pay-method-remove" data-remove-id="${pm.id}" title="Usuń kartę">✕</button>
+            </label>
+        `).join('');
+
+        const newCardHtml = `
+            <label class="pay-method-option" data-value="new">
+                <input type="radio" name="pay-method" value="new">
+                <span class="pay-method-label">
+                    Nowa karta
+                    <div class="pay-method-sub">Wpisz dane karty poniżej (Stripe, tryb testowy)</div>
+                </span>
+            </label>
+        `;
+
+        list.innerHTML = savedHtml + newCardHtml;
+
+        // Domyślny wybór: pierwsza zapisana karta, jeśli istnieje.
+        selectedMethodId = savedMethods.length > 0 ? String(savedMethods[0].id) : 'new';
+        applySelection();
+
+        $('#pay-methods-limit-note').style.display = atLimit ? '' : 'none';
+        const saveCheckbox = $('#pay-save-card');
+        const saveRow = $('#pay-save-row');
+        if (atLimit) {
+            saveCheckbox.checked = false;
+            saveCheckbox.disabled = true;
+            saveRow.classList.add('disabled');
+        } else {
+            saveCheckbox.disabled = false;
+            saveRow.classList.remove('disabled');
+        }
+
+        list.querySelectorAll('input[name="pay-method"]').forEach(input => {
+            input.addEventListener('change', () => {
+                selectedMethodId = input.value;
+                applySelection();
+            });
+        });
+
+        list.querySelectorAll('[data-remove-id]').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (!confirm('Usunąć tę zapisaną kartę?')) return;
+                try {
+                    const res = await apiJson('DELETE', `/api/payments/payment-methods/${btn.dataset.removeId}`);
+                    if (res.ok || res.status === 204) {
+                        await loadPaymentMethods();
+                    } else {
+                        alert('Nie udało się usunąć karty.');
+                    }
+                } catch (err) {
+                    alert('Błąd sieci przy usuwaniu karty.');
+                }
+            });
         });
     }
 
-    // ===== Tylko cyfry w CVC =====
-    const cvcInput = document.getElementById('pay-cvc');
-    if (cvcInput) {
-        cvcInput.addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+    function applySelection() {
+        document.querySelectorAll('.pay-method-option').forEach(el => {
+            const isSelected = el.dataset.value === selectedMethodId;
+            el.classList.toggle('selected', isSelected);
+            const radio = el.querySelector('input[type="radio"]');
+            if (radio) radio.checked = isSelected;
         });
+
+        const showNewCardBlock = selectedMethodId === 'new';
+        $('#pay-new-card-block').style.display = showNewCardBlock ? '' : 'none';
     }
 
-    // ===== Odliczanie timera 15 min =====
-    const timerEl = document.getElementById('pay-timer-text');
+    // ==============================================================
+    // Modal 3DS (zaślepka)
+    // ==============================================================
+    let pendingPaymentId = null;
+
+    function openTdsModal(paymentId) {
+        pendingPaymentId = paymentId;
+        $('#pay-tds-backdrop').classList.add('open');
+    }
+    function closeTdsModal() {
+        $('#pay-tds-backdrop').classList.remove('open');
+        pendingPaymentId = null;
+    }
+
+    async function resolveTdsStub(approve) {
+        if (!pendingPaymentId) return;
+        const paymentId = pendingPaymentId;
+        closeTdsModal();
+        setSubmitting(true, 'Finalizowanie…');
+
+        try {
+            const res = await apiJson('POST', `/api/payments/${paymentId}/confirm-3ds-stub`, { approve });
+            const payment = await res.json().catch(() => ({}));
+
+            if (approve && payment.status === 'succeeded') {
+                finishAndRedirect('success', 'Płatność zakończona sukcesem! Przenoszę Cię do Twoich rezerwacji…');
+            } else {
+                finishAndRedirect('error', 'Płatność nie powiodła się (odrzucona podczas weryfikacji 3D Secure). Możesz spróbować ponownie z widoku "Moje rezerwacje".');
+            }
+        } catch (e) {
+            console.error('confirm-3ds-stub:', e);
+            finishAndRedirect('error', 'Błąd podczas finalizowania płatności. Spróbuj ponownie z widoku "Moje rezerwacje".');
+        }
+    }
+
+    $('#pay-tds-approve').addEventListener('click', () => resolveTdsStub(true));
+    $('#pay-tds-decline').addEventListener('click', () => resolveTdsStub(false));
+
+    // ==============================================================
+    // Stan przycisku "Zapłać"
+    // ==============================================================
+    function setSubmitting(isSubmitting, label) {
+        const btn = $('#pay-submit-btn');
+        btn.disabled = isSubmitting;
+        btn.classList.toggle('disabled', isSubmitting);
+        if (label) $('#pay-submit-label').textContent = label;
+        else if (reservation) $('#pay-submit-label').textContent = `Zapłać ${formatMoney(reservation.totalPrice)} teraz`;
+    }
+
+    // ==============================================================
+    // Uzyskanie lokalnego payment_method_id do obciążenia
+    // (albo istniejący zapisany, albo nowa karta przez Stripe Elements)
+    // ==============================================================
+    async function resolvePaymentMethodId() {
+        if (selectedMethodId !== 'new') {
+            return parseInt(selectedMethodId, 10);
+        }
+
+        if (!stripe || !cardElement) {
+            throw new Error('Stripe.js nie jest dostępne — nie można dodać nowej karty.');
+        }
+
+        // Wymagane, bo od teraz zapisujemy je lokalnie razem z metodą
+        // płatności (payment_methods.cardholder_name) - sprawdzamy PRZED
+        // wywołaniem setup-intent, żeby nie robić zbędnego zapytania.
+        const cardName = $('#pay-name').value.trim();
+        if (!cardName) {
+            $('#pay-card-error').textContent = 'Podaj imię i nazwisko posiadacza karty.';
+            $('#pay-name').focus();
+            throw new Error('Brak imienia i nazwiska posiadacza karty.');
+        }
+
+        // 1) SetupIntent
+        const siRes = await apiJson('POST', '/api/payments/setup-intent');
+        if (!siRes.ok) throw new Error('Nie udało się zainicjować dodania karty.');
+        const { client_secret } = await siRes.json();
+
+        // 2) Potwierdzenie karty po stronie Stripe.js (tryb testowy)
+        const { setupIntent, error } = await stripe.confirmCardSetup(client_secret, {
+            payment_method: {
+                card: cardElement,
+                billing_details: { name: cardName },
+            },
+        });
+
+        if (error) {
+            $('#pay-card-error').textContent = error.message || 'Nieprawidłowe dane karty.';
+            throw new Error(error.message || 'Błąd karty.');
+        }
+
+        // 3) Zapis lokalny (save = checkbox "zapisz kartę")
+        const save = $('#pay-save-card').checked && !$('#pay-save-card').disabled;
+        const pmRes = await apiJson('POST', '/api/payments/payment-methods', {
+            payment_method_id: setupIntent.payment_method,
+            save,
+        });
+
+        if (pmRes.status === 409) {
+            const err = await pmRes.json().catch(() => ({}));
+            throw new Error(err.message || 'Osiągnięto limit zapisanych metod płatności.');
+        }
+        if (!pmRes.ok) throw new Error('Nie udało się zapisać karty.');
+
+        const savedPm = await pmRes.json();
+        return savedPm.id;
+    }
+
+    // ==============================================================
+    // Wysłanie płatności - POST /api/payments/charge
+    // ==============================================================
+    async function submitPayment() {
+        if (!reservation) return;
+
+        setSubmitting(true, 'Przetwarzanie…');
+        $('#pay-card-error').textContent = '';
+
+        let paymentMethodId;
+        try {
+            paymentMethodId = await resolvePaymentMethodId();
+        } catch (e) {
+            setSubmitting(false);
+            if (e.message) $('#pay-card-error').textContent = e.message;
+            return;
+        }
+
+        try {
+            const res = await apiJson('POST', '/api/payments/charge', {
+                reservation_id: parseInt(RESERVATION_ID, 10),
+                // Sanity-check dla backendu — sam backend i tak przelicza
+                // autorytatywnie z reservation.totalPrice (PLN -> grosze).
+                amount: Math.round(reservation.totalPrice * 100),
+                currency: 'pln',
+                description: `Wynajem — rezerwacja #${RESERVATION_ID}`,
+                payment_method_id: paymentMethodId,
+                idempotency_key: uuidv4(),
+            });
+
+            const payment = await res.json().catch(() => ({}));
+
+            if (res.status === 201 && payment.status === 'succeeded') {
+                finishAndRedirect('success', 'Płatność zakończona sukcesem! Przenoszę Cię do Twoich rezerwacji…');
+                return;
+            }
+
+            if (res.status === 402 && payment.status === 'requires_action') {
+                setSubmitting(false);
+                openTdsModal(payment.id);
+                return;
+            }
+
+            if (res.status === 402) {
+                setSubmitting(false);
+                finishAndRedirect('error', 'Płatność nie powiodła się. Za chwilę przeniesiemy Cię do Twoich rezerwacji, skąd możesz spróbować ponownie.');
+                return;
+            }
+
+            if (res.status === 409) {
+                setSubmitting(false);
+                showBanner('info', payment.message || 'Ta rezerwacja nie oczekuje już na płatność.', { withRedirectButton: true });
+                setTimeout(() => window.location.href = '/rezerwacje', 2500);
+                return;
+            }
+
+            setSubmitting(false);
+            showBanner('error', payment.message || 'Nie udało się przetworzyć płatności. Spróbuj ponownie.');
+        } catch (e) {
+            console.error('payments/charge:', e);
+            setSubmitting(false);
+            showBanner('error', 'Błąd sieci przy przetwarzaniu płatności.');
+        }
+    }
+
+    $('#pay-form').addEventListener('submit', submitPayment);
+
+    // ==============================================================
+    // Timer 15 min (kosmetyczny - blokada terminu jest egzekwowana
+    // przez backend, tu tylko informujemy użytkownika)
+    // ==============================================================
+    const timerEl = $('#pay-timer-text');
     if (timerEl) {
-        let seconds = 15 * 60 - 1; // start od 14:59
+        let seconds = 15 * 60 - 1;
         const tick = () => {
             const m = Math.floor(seconds / 60);
             const s = seconds % 60;
@@ -210,6 +665,12 @@
         tick();
         setInterval(tick, 1000);
     }
+
+    // ==============================================================
+    // START
+    // ==============================================================
+    loadReservation();
+    loadPaymentMethods();
 })();
 </script>
 

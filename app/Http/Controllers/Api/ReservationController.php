@@ -161,6 +161,54 @@ class ReservationController extends Controller
         ]);
     }
 
+    /**
+     * Szczegóły pojedynczej rezerwacji — używane m.in. przez widok
+     * płatności (platnosc.blade.php), żeby pokazać produkt, daty i kwotę
+     * do zapłaty przed obciążeniem karty.
+     */
+    public function show(Request $request, int $reservationId)
+    {
+        $userId = $request->user()->id;
+
+        $reservation = DB::table('reservation')
+            ->join('products', 'reservation.productId', '=', 'products.id')
+            ->where('reservation.id', $reservationId)
+            ->where('reservation.isDeleted', false)
+            ->select(
+                'reservation.id',
+                'reservation.userId',
+                'reservation.productId',
+                'products.title as productTitle',
+                'products.one_day_price as oneDayPrice',
+                'reservation.startDate',
+                'reservation.endDate',
+                'reservation.totalPrice',
+                'reservation.statusOfReservation',
+                'reservation.createdAt',
+                'reservation.updatedAt'
+            )
+            ->first();
+
+        if (!$reservation) {
+            return response()->json([
+                'message' => 'Rezerwacja nie istnieje.',
+            ], 404);
+        }
+
+        if ((int) $reservation->userId !== (int) $userId) {
+            return response()->json([
+                'message' => 'Brak dostępu do tej rezerwacji.',
+            ], 403);
+        }
+
+        $product = Product::where('id', $reservation->productId)->first();
+        $reservation->productThumbnailUrl = $product?->getThumbnailUrl();
+
+        return response()->json([
+            'data' => $reservation,
+        ]);
+    }
+
         public function cancel(Request $request, int $reservationId)
     {
         $userId = $request->user()->id;
@@ -260,13 +308,20 @@ class ReservationController extends Controller
                 $days = $startDate->copy()->startOfDay()->diffInDays($endDate->copy()->startOfDay()) + 1;
                 $totalPrice = $days * (int) $product->one_day_price;
 
+                // Rezerwacja startuje w stanie "awaiting_payment" (oczekuje na
+                // płatność) zamiast od razu "active" — termin jest już
+                // zablokowany w kalendarzu (patrz overlap-check wyżej i
+                // bookedDates() niżej, które nie wykluczają tego statusu),
+                // ale rezerwacja staje się w pełni "active" dopiero po
+                // udanej płatności, ustawianej przez API płatności
+                // (PaymentController::charge -> StripeService::charge).
                 return DB::table('reservation')->insertGetId([
                     'userId' => $userId,
                     'productId' => $productId,
                     'startDate' => $startDate,
                     'endDate' => $endDate,
                     'totalPrice' => $totalPrice,
-                    'statusOfReservation' => 'active',
+                    'statusOfReservation' => 'awaiting_payment',
                     'createdAt' => now(),
                     'updatedAt' => now(),
                     'isDeleted' => false,

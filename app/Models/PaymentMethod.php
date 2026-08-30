@@ -18,13 +18,16 @@ class PaymentMethod extends Model
         'stripe_payment_method_id',
         'brand',
         'last4',
+        'cardholder_name',
         'exp_month',
         'exp_year',
         'is_active',
+        'is_saved',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_saved' => 'boolean',
         'exp_month' => 'integer',
         'exp_year' => 'integer',
     ];

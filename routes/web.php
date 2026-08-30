@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\OpinionController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AlertController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\ProfileController;
 
 // Strona główna - przekierowanie w zależności od roli / do logowania
@@ -94,46 +95,34 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/reservations/upcoming', [ReservationController::class, 'upcoming']);
     Route::get('/products/{productId}/reservations/booked-dates', [ReservationController::class, 'bookedDates']);
 
+    //trasa wykorzystywana przez system płatności
+    Route::get('/reservations/{reservationId}', [ReservationController::class, 'show'])
+        ->whereNumber('reservationId');
+
     Route::get('/alerts', [AlertController::class, 'index']);
     Route::patch('/alerts/{alertId}/read', [AlertController::class, 'markRead']);
+
+    // ===================== PŁATNOŚCI (Stripe) =====================
+    Route::prefix('payments')->group(function () {
+        Route::post('/setup-intent', [PaymentController::class, 'createSetupIntent']);
+        Route::post('/payment-methods', [PaymentController::class, 'storePaymentMethod']);
+        Route::get('/payment-methods', [PaymentController::class, 'listPaymentMethods']);
+        Route::delete('/payment-methods/{paymentMethod}', [PaymentController::class, 'destroyPaymentMethod']);
+
+        Route::post('/charge', [PaymentController::class, 'charge']);
+        Route::post('/charge-off-session', [PaymentController::class, 'chargeOffSession']);
+        Route::post('/{payment}/confirm-3ds-stub', [PaymentController::class, 'confirmThreeDsStub']);
+
+        Route::get('/', [PaymentController::class, 'listPayments']);
+        Route::get('/{payment}/invoice', [PaymentController::class, 'invoice']);
+        Route::post('/{payment}/refund', [PaymentController::class, 'refund']);
+    });
 
     Route::middleware(['admin'])->group(function () {
         Route::get('/users', [UserController::class, 'index']);
         Route::get('/users/{userID}', [UserController::class, 'getUsersDetails']);
         Route::patch('/users/{userID}', [UserController::class, 'update']);
         Route::patch('/users/{userID}/toggle-block', [UserController::class, 'toggleBlock']);
-    });
-
-    Route::get('/sample-equipment', function () {
-        return response()->json([
-            'data' => [
-                [
-                    'id' => 1,
-                    'name' => 'Wiertarka Bosch GSB 18V-55',
-                    'category' => 'Elektronarzedzia',
-                    'daily_rate' => 49.99,
-                    'status' => 'dostepny',
-                ],
-                [
-                    'id' => 2,
-                    'name' => 'Zageszczarka 85 kg',
-                    'category' => 'Budowlane',
-                    'daily_rate' => 129.00,
-                    'status' => 'wypozyczony',
-                ],
-                [
-                    'id' => 3,
-                    'name' => 'Drabina aluminiowa 3x9',
-                    'category' => 'Rusztowania i drabiny',
-                    'daily_rate' => 39.50,
-                    'status' => 'serwis',
-                ],
-            ],
-            'meta' => [
-                'currency' => 'PLN',
-                'generated_at' => now()->toIso8601String(),
-            ],
-        ]);
     });
 });
 

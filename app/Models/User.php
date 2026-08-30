@@ -13,7 +13,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'surname', 'email', 'password', 'klub', 'profilDescription', 'lastLogin'])]
+#[Fillable(['name', 'surname', 'email', 'password', 'klub', 'profilDescription', 'lastLogin', 'stripe_customer_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

@@ -106,6 +106,6 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->roleRecord?->roleName === 'Admin';
+        return $this->roleRecord?->roleName === 'Administrator';
     }
 }

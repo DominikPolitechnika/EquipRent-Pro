@@ -308,13 +308,6 @@ class ReservationController extends Controller
                 $days = $startDate->copy()->startOfDay()->diffInDays($endDate->copy()->startOfDay()) + 1;
                 $totalPrice = $days * (int) $product->one_day_price;
 
-                // Rezerwacja startuje w stanie "awaiting_payment" (oczekuje na
-                // płatność) zamiast od razu "active" — termin jest już
-                // zablokowany w kalendarzu (patrz overlap-check wyżej i
-                // bookedDates() niżej, które nie wykluczają tego statusu),
-                // ale rezerwacja staje się w pełni "active" dopiero po
-                // udanej płatności, ustawianej przez API płatności
-                // (PaymentController::charge -> StripeService::charge).
                 return DB::table('reservation')->insertGetId([
                     'userId' => $userId,
                     'productId' => $productId,

@@ -163,13 +163,7 @@
     </div>
 </main>
 
-{{-- ===== MODAL 3D SECURE (ZAŚLEPKA) =====
-     Projekt nigdy nie działa produkcyjnie ("aplikacja nigdy nie będzie live"),
-     więc zamiast integrować prawdziwy ekran autoryzacji banku, symulujemy go
-     lokalnie. Kliknięcie "Zatwierdź" / "Odrzuć" wywołuje
-     POST /api/payments/{payment}/confirm-3ds-stub, który ręcznie ustawia
-     status płatności w bazie. To NIE jest prawdziwe 3D Secure. --}}
-<div class="pay-tds-backdrop" id="pay-tds-backdrop">
+{{-- ===== MODAL 3D SECURE (ZAŚLEPKA) ===== --}}
     <div class="pay-tds-modal">
         <div class="pay-tds-bank-header">
             <span class="pay-tds-bank-dot"></span>
@@ -269,14 +263,6 @@
     let cardElement = null;
     if (elements) {
         cardElement = elements.create('card', {
-            // Stripe domyślnie włącza "Link" (przycisk zapisu/logowania
-            // Link, autouzupełnianie karty) w Card Element dla każdego
-            // konta z dostępem — bez zmian w kodzie. disableLink:true
-            // wyłącza to jawnie na poziomie tego Elementu (alternatywnie
-            // można to wyłączyć globalnie w Dashboard → Ustawienia →
-            // Metody płatności → Link → "Disable Link in Card Element",
-            // ale wersja w kodzie jest pewniejsza i nie zależy od
-            // konfiguracji konta).
             disableLink: true,
             style: {
                 base: {
@@ -310,12 +296,6 @@
         window.location.href = '/rezerwacje';
     });
 
-    /**
-     * Po ostatecznym (terminal) statusie płatności — succeeded albo failed —
-     * informujemy użytkownika i przenosimy go na widok "Moje rezerwacje",
-     * zgodnie z ustalonym przepływem: widok płatności -> powiadomienie ->
-     * przekierowanie.
-     */
     function finishAndRedirect(type, text, delayMs = 2500) {
         showBanner(type, text, { withRedirectButton: true });
         setTimeout(() => window.location.href = '/rezerwacje', delayMs);
@@ -380,7 +360,7 @@
     // Zapisane metody płatności - GET /api/payments/payment-methods
     // ==============================================================
     let savedMethods = [];
-    let selectedMethodId = 'new'; // 'new' albo lokalne id z payment_methods
+    let selectedMethodId = 'new';
 
     async function loadPaymentMethods() {
         try {
@@ -476,7 +456,7 @@
     }
 
     // ==============================================================
-    // Modal 3DS (zaślepka)
+    // 3DS (zaślepka)
     // ==============================================================
     let pendingPaymentId = null;
 
@@ -524,10 +504,6 @@
         else if (reservation) $('#pay-submit-label').textContent = `Zapłać ${formatMoney(reservation.totalPrice)} teraz`;
     }
 
-    // ==============================================================
-    // Uzyskanie lokalnego payment_method_id do obciążenia
-    // (albo istniejący zapisany, albo nowa karta przez Stripe Elements)
-    // ==============================================================
     async function resolvePaymentMethodId() {
         if (selectedMethodId !== 'new') {
             return parseInt(selectedMethodId, 10);
@@ -537,9 +513,6 @@
             throw new Error('Stripe.js nie jest dostępne — nie można dodać nowej karty.');
         }
 
-        // Wymagane, bo od teraz zapisujemy je lokalnie razem z metodą
-        // płatności (payment_methods.cardholder_name) - sprawdzamy PRZED
-        // wywołaniem setup-intent, żeby nie robić zbędnego zapytania.
         const cardName = $('#pay-name').value.trim();
         if (!cardName) {
             $('#pay-card-error').textContent = 'Podaj imię i nazwisko posiadacza karty.';
@@ -603,8 +576,6 @@
         try {
             const res = await apiJson('POST', '/api/payments/charge', {
                 reservation_id: parseInt(RESERVATION_ID, 10),
-                // Sanity-check dla backendu — sam backend i tak przelicza
-                // autorytatywnie z reservation.totalPrice (PLN -> grosze).
                 amount: Math.round(reservation.totalPrice * 100),
                 currency: 'pln',
                 description: `Wynajem — rezerwacja #${RESERVATION_ID}`,
@@ -651,7 +622,7 @@
 
     // ==============================================================
     // Timer 15 min (kosmetyczny - blokada terminu jest egzekwowana
-    // przez backend, tu tylko informujemy użytkownika)
+    // przez backend)
     // ==============================================================
     const timerEl = $('#pay-timer-text');
     if (timerEl) {

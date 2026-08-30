@@ -524,10 +524,6 @@
 
             if (res.status === 201) {
                 const data = await res.json().catch(() => ({}));
-                // Rezerwacja utworzona w stanie "awaiting_payment" - termin
-                // jest zablokowany, ale trzeba dokończyć płatność zanim
-                // stanie się "active". Przenosimy więc od razu na widok
-                // płatności zamiast do listy "Moje rezerwacje".
                 if (data.reservationId) {
                     window.location.href = `/platnosc?reservation=${encodeURIComponent(data.reservationId)}`;
                 } else {

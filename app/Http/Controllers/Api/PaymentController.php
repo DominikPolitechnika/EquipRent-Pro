@@ -14,10 +14,6 @@ use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
-    /**
-     * Maksymalna liczba kart, które użytkownik może mieć jednocześnie
-     * zapisanych ("is_saved" = true) do przyszłych płatności.
-     */
     private const MAX_SAVED_PAYMENT_METHODS = 3;
 
     public function __construct(protected StripeService $stripeService) {}
@@ -29,15 +25,6 @@ class PaymentController extends Controller
         return response()->json(['client_secret' => $setupIntent->client_secret]);
     }
 
-    /**
-     * Zapisuje/podpina kartę (payment_method_id ze Stripe.js, np. po
-     * stripe.confirmCardSetup()). `save`=true (domyślnie) oznacza trwały
-     * zapis widoczny w profilu i liczący się do limitu
-     * MAX_SAVED_PAYMENT_METHODS. `save`=false — karta jednorazowa użyta
-     * z widoku płatności bez zaznaczenia "zapisz kartę": nadal podpięta
-     * w Stripe (wymagane do obciążenia przez Invoicing API), ale ukryta
-     * i nie wliczana do limitu.
-     */
     public function storePaymentMethod(Request $request)
     {
         $data = $request->validate([
@@ -88,18 +75,10 @@ class PaymentController extends Controller
         return response()->json(null, 204);
     }
 
-    /**
-     * Jednorazowa płatność "on-session" powiązana z rezerwacją.
-     * Klient wskazuje konkretną (swoją) zapisaną kartę payment_method_id
-     * (id z tabeli payment_methods, nie ID ze Stripe).
-     */
     public function charge(Request $request)
     {
         $data = $request->validate([
             'reservation_id' => ['required', 'integer'],
-            // Kwota od klienta traktowana jest wyłącznie jako sanity-check
-            // (żeby wychwycić rozjazd frontend/backend), NIGDY jako źródło
-            // prawdy — poniżej i tak nadpisujemy ją ceną z `reservations`.
             'amount' => ['nullable', 'integer', 'min:50'],
             'currency' => ['required', 'string', 'size:3'],
             'description' => ['required', 'string', 'max:255'],
@@ -110,27 +89,15 @@ class PaymentController extends Controller
 
         $user = $request->user();
 
-        // Autorytatywne źródło ceny i własności — kolumny zgodne z
-        // rzeczywistą tabelą `reservation` (patrz api_rezerwacje/ReservationController
-        // oraz app/Models/Reservation.php): userId / totalPrice / statusOfReservation.
         $reservation = Reservation::where('id', $data['reservation_id'])
             ->where('userId', $user->id)
             ->firstOrFail();
 
         abort_if($reservation->statusOfReservation !== 'awaiting_payment', 409, 'Ta rezerwacja nie oczekuje na płatność.');
 
-        // UWAGA na jednostki: `reservation.totalPrice` jest przechowywane
-        // i wyświetlane w całych złotówkach (tak liczy ReservationController::store
-        // w module api_rezerwacje oraz każdy widok — np. "240,00 PLN"), a
-        // StripeService::charge() oczekuje kwoty w groszach (najmniejsza
-        // jednostka waluty, wymóg Stripe API). Konwersja PLN -> grosze
-        // następuje właśnie tutaj, w jednym, jawnie udokumentowanym miejscu.
         $amount = (int) round($reservation->totalPrice * 100);
 
         if (isset($data['amount']) && $data['amount'] !== $amount) {
-            // Rozjazd między tym co wysłał klient a ceną w bazie — nie
-            // blokujemy (i tak używamy $amount z bazy), ale logujemy jako
-            // potencjalną próbę manipulacji albo bug we frontendzie.
             Log::warning('Rozbieżność kwoty przy płatności za rezerwację', [
                 'user_id' => $user->id,
                 'reservation_id' => $reservation->id,
@@ -162,17 +129,6 @@ class PaymentController extends Controller
         );
     }
 
-    /**
-     * Obciążenie zapisanej wcześniej karty bez udziału użytkownika.
-     * Wywoływane np. z zadania w kolejce / komendy artisan (rozliczenie
-     * rezerwacji, opłata za brak stawiennictwa itp.).
-     *
-     * UWAGA: `amount` tutaj musi być podane w groszach (najmniejsza
-     * jednostka Stripe) — w przeciwieństwie do `reservation.totalPrice`,
-     * które w module rezerwacji jest przechowywane w całych PLN. Jeśli
-     * kwota pochodzi z reservation.totalPrice, pamiętaj o przeliczeniu
-     * (* 100), tak jak robi to charge() powyżej.
-     */
     public function chargeOffSession(Request $request)
     {
         $data = $request->validate([
@@ -208,12 +164,6 @@ class PaymentController extends Controller
         );
     }
 
-    /**
-     * ZAŚLEPKA 3D Secure — patrz komentarz w StripeService::confirmThreeDsStub().
-     * Wywoływane przez front-end po tym, jak użytkownik "zatwierdzi" albo
-     * "odrzuci" w naszym własnym (nie-Stripe'owym) modalu symulującym
-     * ekran weryfikacji banku.
-     */
     public function confirmThreeDsStub(Request $request, Payment $payment)
     {
         abort_unless($payment->userId === $request->user()->id, 403);
@@ -240,10 +190,6 @@ class PaymentController extends Controller
         );
     }
 
-    /**
-     * Faktura (hosted_invoice_url + invoice_pdf) pobierana na żądanie
-     * bezpośrednio ze Stripe, bo tabela payments tych pól nie przechowuje.
-     */
     public function invoice(Request $request, Payment $payment)
     {
         abort_unless($payment->userId === $request->user()->id, 403);
@@ -261,14 +207,6 @@ class PaymentController extends Controller
         ]);
     }
 
-    /**
-     * Zwrot środków przy anulowaniu rezerwacji. `amount` opcjonalne —
-     * brak = pełny zwrot pozostałej (jeszcze niezwróconej) kwoty.
-     *
-     * Autoryzacja: App\Policies\PaymentPolicy::refund() — domyślnie tylko
-     * role admin/staff (patrz komentarz w tej klasie co do ew. samoobsługi
-     * klienta). To NIE jest publiczny endpoint dla zwykłego użytkownika.
-     */
     public function refund(Request $request, Payment $payment)
     {
         $this->authorize('refund', $payment);

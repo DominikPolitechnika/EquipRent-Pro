@@ -116,7 +116,17 @@ class Product extends Model
         ->exists();
     }
 
-    public function getStatus(): string{
+    public function getStatus(): string
+    {
+        if ($this->is_deleted) {
+            return 'Usunięty';
+        }
+
+        // isAvailable=0 + isDeleted=0 oznacza sprzęt znajdujący się w serwisie.
+        if (!$this->is_available) {
+            return 'Serwis';
+        }
+
         return $this->isReserved() ? 'Wypożyczony' : 'Dostępny';
     }
 

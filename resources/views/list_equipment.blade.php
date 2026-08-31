@@ -4,187 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Lista Sprzętu – EquipRent Pro</title>
+    <title>Inwentarz – EquipRent Pro</title>
     <link rel="stylesheet" href="{{ asset('style-admin.css') }}">
     <link rel="stylesheet" href="{{ asset('style-list-equipment.css') }}">
     <style>
-        /* ===== Cena - dropdown z suwakiem zakresu ===== */
-        .le-price-group { position: relative; }
-
-        .le-price-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            background: #fff;
-            border: 1px solid #e8ebee;
-            border-radius: 8px;
-            padding: 10px 12px;
-            font-family: 'Barlow', sans-serif;
-            font-size: 13px;
-            color: #2a3439;
-            cursor: pointer;
-            box-sizing: border-box;
-        }
-        .le-price-toggle svg { width: 14px; height: 14px; color: #777; flex-shrink: 0; }
-        .le-price-toggle:hover { border-color: #aaa; }
-
-        .le-price-popover {
-            display: none;
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            width: 260px;
-            background: #fff;
-            border: 1px solid #e8ebee;
-            border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-            padding: 18px 18px 16px;
-            z-index: 100;
-        }
-        .le-price-popover.open { display: block; }
-
-        .le-price-values {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a6fa8;
-            margin-bottom: 14px;
-        }
-
-        .le-price-slider {
-            position: relative;
-            height: 24px;
-            margin: 4px 6px 8px;
-        }
-        .le-price-track {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: #e8ebee;
-            border-radius: 4px;
-            transform: translateY(-50%);
-        }
-        .le-price-range {
-            position: absolute;
-            top: 50%;
-            height: 4px;
-            background: #006398;
-            border-radius: 4px;
-            transform: translateY(-50%);
-        }
-        /* Oba inputy nakładają się jeden na drugi - tylko uchwyty są "klikalne" */
-        .le-price-slider input[type=range] {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 24px;
-            background: transparent;
-            -webkit-appearance: none;
-            appearance: none;
-            pointer-events: none;   /* sam track nieklikalny... */
-            margin: 0;
-        }
-        .le-price-slider input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #fff;
-            border: 2px solid #006398;
-            cursor: pointer;
-            pointer-events: auto;   /* ...ale uchwyt już tak */
-            box-shadow: 0 1px 3px rgba(0,0,0,.15);
-        }
-        .le-price-slider input[type=range]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #fff;
-            border: 2px solid #006398;
-            cursor: pointer;
-            pointer-events: auto;
-            box-shadow: 0 1px 3px rgba(0,0,0,.15);
-        }
-
-        .le-price-bounds {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #aaa;
-        }
+        .le-date-range{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .le-input-date{min-width:0}
+        .le-page.disabled{opacity:.45;pointer-events:none}
+        .le-page.active{background:#075071;border-color:#075071;color:#fff}
+        .le-action-btn:disabled{opacity:.5;cursor:not-allowed}
+        .le-status-toggle-btn{border:0;background:transparent;cursor:pointer;padding:0}
     </style>
 </head>
 <body>
 <div class="adm-shell">
     @include('partials.admin-sidebar')
-
     <div class="adm-body">
         @include('partials.admin-topbar')
-
         <div class="adm-content">
             <div class="le-content">
-
-                {{-- NAGŁÓWEK --}}
-                <div class="le-breadcrumb">
-                    <span>Zarządzanie</span>
-                    <span>›</span>
-                    <span class="active">Inwentarz</span>
-                </div>
+                <div class="le-breadcrumb"><span>Zarządzanie</span><span>›</span><span class="active">Inwentarz</span></div>
                 <h1 class="le-title">Inwentarz</h1>
 
-                {{-- FILTRY --}}
                 <div class="le-filters">
                     <div class="le-filters-row">
                         <div class="le-filter-group">
                             <label class="le-filter-label">Kategoria</label>
-                            <select class="le-select" id="le-category-select" name="categories">
+                            <select class="le-select" id="le-category-select">
                                 <option value="">Cały sprzęt</option>
-                                {{-- Kategorie doładowywane przez JS --}}
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="le-filter-group le-price-group">
                             <label class="le-filter-label">Cena za dzień</label>
                             <button type="button" class="le-price-toggle" id="le-price-toggle" aria-haspopup="true" aria-expanded="false">
                                 <span id="le-price-label">Dowolna</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                             </button>
                             <div class="le-price-popover" id="le-price-popover">
-                                <div class="le-price-values">
-                                    <span><span id="le-price-min-val">0</span> zł</span>
-                                    <span><span id="le-price-max-val">2000</span> zł</span>
-                                </div>
+                                <div class="le-price-values"><span><span id="le-price-min-val">0</span> zł</span><span><span id="le-price-max-val">2000</span> zł</span></div>
                                 <div class="le-price-slider">
-                                    <div class="le-price-track"></div>
-                                    <div class="le-price-range" id="le-price-range"></div>
-                                    <input type="range" min="0" max="2000" value="0"    step="10" id="le-price-min" name="price_min">
-                                    <input type="range" min="0" max="2000" value="2000" step="10" id="le-price-max" name="price_max">
+                                    <div class="le-price-track"></div><div class="le-price-range" id="le-price-range"></div>
+                                    <input type="range" min="0" max="2000" value="0" step="10" id="le-price-min">
+                                    <input type="range" min="0" max="2000" value="2000" step="10" id="le-price-max">
                                 </div>
-                                <div class="le-price-bounds">
-                                    <span>0 zł</span>
-                                    <span>2000 zł</span>
-                                </div>
+                                <div class="le-price-bounds"><span>0 zł</span><span>2000 zł</span></div>
                             </div>
                         </div>
                         <div class="le-filter-group">
-                            <label class="le-filter-label">Dostępność</label>
-                            <input type="text" class="le-input-date" placeholder="Wybierz daty">
+                            <label class="le-filter-label">Dostępność w terminie</label>
+                            <div class="le-date-range">
+                                <input type="date" class="le-input-date" id="le-date-from" aria-label="Data od">
+                                <input type="date" class="le-input-date" id="le-date-to" aria-label="Data do">
+                            </div>
                         </div>
                         <div class="le-filter-group">
                             <label class="le-filter-label">Konserwacja</label>
-                            <div class="le-toggle-group" data-radio>
+                            <div class="le-toggle-group" id="le-status-toggle">
                                 <button type="button" class="le-toggle-btn active" data-value="sprawny">Sprawny</button>
                                 <button type="button" class="le-toggle-btn" data-value="serwis">Serwis</button>
                             </div>
                         </div>
                         <div class="le-filter-group">
                             <label class="le-filter-label">Sortuj według</label>
-                            <select class="le-select" id="le-sort-select" name="sort">
+                            <select class="le-select" id="le-sort-select">
                                 <option value="name_asc">Nazwa (A-Z)</option>
                                 <option value="name_desc">Nazwa (Z-A)</option>
                                 <option value="price_asc">Cena rosnąco</option>
@@ -192,457 +77,158 @@
                             </select>
                         </div>
                     </div>
-
                     <div class="le-search">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"/>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                        </svg>
-                        <input type="text" id="le-search-input" name="search" placeholder="Szukaj roweru, sprzętu, klienta...">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="le-search-input" placeholder="Szukaj roweru, sprzętu, numeru seryjnego...">
                     </div>
                 </div>
 
-                {{-- TABELA --}}
                 <div class="le-card">
                     <table class="le-table">
-                        <thead>
-                            <tr>
-                                <th>Sprzęt i identyfikacja</th>
-                                <th>Kategoria</th>
-                                <th>Stawka dobowa</th>
-                                <th>Status</th>
-                                <th class="right">Akcje</th>
-                            </tr>
-                        </thead>
-                        <tbody id="le-tbody">
-                            {{-- Skeleton - pokazywany do momentu fetchu --}}
-                            <tr id="le-skeleton-row">
-                                <td>
-                                    <div class="le-product">
-                                        <div class="le-product-img"></div>
-                                        <div>
-                                            <div class="le-product-name"><span class="le-skel" style="width:180px;height:14px;"></span></div>
-                                            <div class="le-product-sn"><span class="le-skel" style="width:110px;height:11px;"></span></div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="le-skel" style="width:70px;height:13px;"></span></td>
-                                <td><span class="le-skel" style="width:80px;height:13px;"></span></td>
-                                <td><span class="le-badge available"><span class="le-skel" style="width:60px;height:11px;"></span></span></td>
-                                <td class="right">
-                                    <div class="le-actions">
-                                        <span class="le-skel" style="width:80px;height:20px;"></span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
+                        <thead><tr><th>Sprzęt i identyfikacja</th><th>Kategoria</th><th>Stawka dobowa</th><th>Status</th><th class="right">Akcje</th></tr></thead>
+                        <tbody id="le-tbody"><tr><td colspan="5" style="text-align:center;padding:40px;color:#6b7280">Ładowanie produktów…</td></tr></tbody>
                     </table>
                 </div>
 
-                {{-- STOPKA --}}
                 <div class="le-footer">
-                    <div class="le-footer-count" id="le-footer-count">
-                        Wyświetlono <span>—</span> sztuk sprzętu
-                    </div>
-                    <div class="le-pagination" id="le-pagination">
-                        {{-- Wypełniane przez JS --}}
-                    </div>
+                    <div class="le-footer-count" id="le-footer-count">Wyświetlono — sztuk sprzętu</div>
+                    <div class="le-pagination" id="le-pagination"></div>
                 </div>
-
             </div>
-        </div>{{-- /adm-content --}}
-    </div>{{-- /adm-body --}}
-</div>{{-- /adm-shell --}}
+        </div>
+    </div>
+</div>
+
 <script>
-(function () {
+(function(){
     'use strict';
+    const url='/inwentarz';
+    const csrf=document.querySelector('meta[name="csrf-token"]').content;
+    const tbody=document.getElementById('le-tbody');
+    const footer=document.getElementById('le-footer-count');
+    const pager=document.getElementById('le-pagination');
+    const search=document.getElementById('le-search-input');
+    const category=document.getElementById('le-category-select');
+    const sort=document.getElementById('le-sort-select');
+    const dateFrom=document.getElementById('le-date-from');
+    const dateTo=document.getElementById('le-date-to');
+    const priceMin=document.getElementById('le-price-min');
+    const priceMax=document.getElementById('le-price-max');
+    let currentPage=1, debounce=null;
 
-    // ==============================================================
-    // Konfiguracja i selektory
-    // ==============================================================
-    const CATALOG_URL = '/catalog';
-    const CSRF = document.querySelector('meta[name="csrf-token"]')?.content || '';
-
-    const tbody      = document.getElementById('le-tbody');
-    const footerCnt  = document.getElementById('le-footer-count');
-    const pagerEl    = document.getElementById('le-pagination');
-
-    const searchInput   = document.getElementById('le-search-input');
-    const categorySel   = document.getElementById('le-category-select');
-    const sortSel       = document.getElementById('le-sort-select');
-    const priceMinIn    = document.getElementById('le-price-min');
-    const priceMaxIn    = document.getElementById('le-price-max');
-    const priceLabel    = document.getElementById('le-price-label');
-    const priceMinVal   = document.getElementById('le-price-min-val');
-    const priceMaxVal   = document.getElementById('le-price-max-val');
-    const priceRangeEl  = document.getElementById('le-price-range');
-
-    let currentPage = 1;
-    let debounceTimer = null;
-
-    // ==============================================================
-    // Utils
-    // ==============================================================
-    function escapeHtml(s) {
-        if (s === null || s === undefined) return '';
-        return String(s)
-            .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+    function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");}
+    function badge(status){
+        const s=String(status||'').toLowerCase();
+        if(s.includes('serw'))return '<span class="le-badge service">Serwis</span>';
+        if(s.includes('wyp'))return '<span class="le-badge rented">Wypożyczony</span>';
+        return '<span class="le-badge available">Dostępny</span>';
     }
-
-    function badgeForStatus(status) {
-        const s = (status || '').toLowerCase();
-        if (s.includes('dost')) return '<span class="le-badge available">Dostępny</span>';
-        if (s.includes('wyp'))  return '<span class="le-badge rented">Wypożyczony</span>';
-        if (s.includes('serw')) return '<span class="le-badge service">Serwis</span>';
-        if (s.includes('napr')) return '<span class="le-badge repair">Naprawa</span>';
-        return `<span class="le-badge available">${escapeHtml(status || '—')}</span>`;
-    }
-
-    // ==============================================================
-    // Renderowanie wiersza tabeli
-    // ==============================================================
-    function renderRow(p) {
-        // p = { id, image, title, sn, category, price, status }
-        return `
-        <tr>
-            <td>
-                <div class="le-product">
-                    <div class="le-product-img" style="${p.image ? `background:url('${p.image}') center/cover;` : ''}"></div>
-                    <div>
-                        <div class="le-product-name">${escapeHtml(p.title)}</div>
-                        <div class="le-product-sn">${escapeHtml(p.sn || '—')}</div>
-                    </div>
-                </div>
-            </td>
-            <td>${escapeHtml(p.category || '—')}</td>
-            <td>${p.price ? escapeHtml(p.price) : '—'}</td>
-            <td>${badgeForStatus(p.status)}</td>
-            <td class="right">
-                <div class="le-actions">
-                    <a href="/produkt/${p.id}/edytuj" class="le-action-btn" aria-label="Edytuj">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                        </svg>
-                    </a>
-                    <a href="/produkt/${p.id}" class="le-action-btn" aria-label="Podgląd">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </a>
-                    <button type="button" class="le-action-btn danger" aria-label="Usuń" disabled title="Usuwanie dostępne po dodaniu API">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="3 6 5 6 21 6"/>
-                            <path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        </svg>
-                    </button>
-                </div>
-            </td>
+    function row(p){
+        const image=p.image?`background:url('${esc(p.image)}') center/cover;`:'';
+        return `<tr data-id="${p.id}">
+            <td><div class="le-product"><div class="le-product-img" style="${image}"></div><div><div class="le-product-name">${esc(p.title)}</div><div class="le-product-sn"># ${esc(p.sn||'—')}</div></div></div></td>
+            <td>${esc(p.category||'—')}</td>
+            <td class="le-price">${Number(p.price||0).toLocaleString('pl-PL')} zł <span>/ dzień</span></td>
+            <td>${badge(p.status)}</td>
+            <td class="right"><div class="le-actions">
+                <a href="/produkt/${p.id}/edytuj" class="le-action-btn" aria-label="Edytuj" title="Edytuj">✎</a>
+                <a href="/produkt/${p.id}" class="le-action-btn" aria-label="Podgląd" title="Podgląd">⌕</a>
+                <button type="button" class="le-action-btn danger le-delete" data-id="${p.id}" aria-label="Usuń" title="Usuń">×</button>
+            </div></td>
         </tr>`;
     }
 
-    // ==============================================================
-    // Parsowanie partiala HTML (z /catalog + X-Requested-With)
-    // Wyciąga dane z kart produktów i buduje wiersze tabeli
-    // ==============================================================
-    function extractProductsFromHtml(html) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        const products = [];
-        // Twój partial ma karty z klasą .product-cards (mnoga)
-        const cards = doc.querySelectorAll('.product-cards, .product-card');
-
-        cards.forEach(card => {
-            // Link do produktu - z niego wyciągamy ID
-            const link = card.querySelector('a[href*="/produkt/"], a[href*="/product/"]');
-            let id = null;
-            if (link) {
-                const match = link.getAttribute('href').match(/\/(?:produkt|product)\/(\d+)/);
-                if (match) id = match[1];
-            }
-
-            // Obrazek
-            const imgEl = card.querySelector('img');
-            const image = imgEl ? imgEl.getAttribute('src') : null;
-
-            // Nazwa
-            const nameEl = card.querySelector('.product-title, .product-card-name, h3, h2');
-            const title = nameEl ? nameEl.textContent.trim() : '—';
-
-            // Kategoria
-            const catEl = card.querySelector('.product-category, .product-card-category');
-            const category = catEl ? catEl.textContent.trim() : '';
-
-            // Cena
-            const priceEl = card.querySelector('.price, .product-card-price, .price strong');
-            let price = '';
-            if (priceEl) {
-                // Wyciągamy tylko "X zł" bez "/dzień"
-                price = priceEl.textContent.replace(/\/\s*dzień/i, '').trim();
-            }
-
-            // Status (badge)
-            const badgeEl = card.querySelector('.product-badge, .product-card-badge, .badge-green, .badge-orange');
-            const status = badgeEl ? badgeEl.textContent.trim() : 'Dostępny';
-
-            // Numer seryjny - w kartach katalogu go zwykle nie ma, pominiemy albo bierzemy z data-attr
-            const sn = card.dataset.sn || card.querySelector('[data-sn]')?.dataset.sn || '';
-
-            products.push({ id, image, title, category, price, status, sn });
-        });
-
-        // Paginacja - też z partiala
-        const pageLinks = doc.querySelectorAll('.pagination-wrapper .pagination a, .katalog-pagination a');
-        const pagination = [];
-        pageLinks.forEach(a => {
-            pagination.push({
-                url: a.getAttribute('href'),
-                label: a.textContent.trim(),
-                active: a.classList.contains('active'),
-            });
-        });
-
-        // Info o łącznej liczbie
-        const info = doc.querySelector('.pagination .flex.justify-between p, .pagination-wrapper p');
-        const totalText = info ? info.textContent.trim() : '';
-
-        return { products, pagination, totalText };
+    function params(page){
+        const p=new URLSearchParams();
+        if(search.value.trim())p.set('search',search.value.trim());
+        if(category.value)p.set('category',category.value);
+        if(sort.value)p.set('sort',sort.value);
+        if(priceMin.value!=='0')p.set('price_min',priceMin.value);
+        if(priceMax.value!=='2000')p.set('price_max',priceMax.value);
+        if(dateFrom.value)p.set('date_from',dateFrom.value);
+        if(dateTo.value)p.set('date_to',dateTo.value);
+        p.set('status',document.querySelector('#le-status-toggle .le-toggle-btn.active').dataset.value);
+        p.set('page',page);
+        p.set('per_page',10);
+        return p;
     }
 
-    // ==============================================================
-    // Główny fetch
-    // ==============================================================
-    function buildParams(page) {
-        const params = new URLSearchParams();
-
-        if (searchInput?.value) params.append('search', searchInput.value);
-        if (categorySel?.value) params.append('categories[]', categorySel.value);
-        if (sortSel?.value)     params.append('sort', sortSel.value);
-
-        // Cena - jak MAX < 2000 to price_range
-        if (priceMaxIn) {
-            const priceMax = parseInt(priceMaxIn.value, 10);
-            if (priceMax < 2000) params.append('price_range', priceMax);
-        }
-
-        // Konserwacja - toggle "Sprawny" / "Serwis"
-        const activeToggle = document.querySelector('.le-toggle-group[data-radio] .le-toggle-btn.active');
-        // Nie mamy dedykowanego filtra w /catalog na "serwis" vs "sprawny",
-        // więc na razie ignorujemy - tylko wpływa na UI
-
-        params.append('page', page);
-
-        return params.toString();
-    }
-
-    async function fetchProducts(page = 1) {
-        currentPage = page;
-
-        // Skeleton na czas pobierania
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="5" style="text-align:center;padding:40px;color:#6b7280;">
-                    Ładowanie produktów...
-                </td>
-            </tr>`;
-
-        try {
-            const url = `${CATALOG_URL}?${buildParams(page)}`;
-            const response = await fetch(url, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'text/html',
-                    'X-CSRF-TOKEN': CSRF,
-                },
-                credentials: 'same-origin',
-            });
-
-            if (!response.ok) throw new Error('HTTP ' + response.status);
-
-            const html = await response.text();
-            const { products, pagination, totalText } = extractProductsFromHtml(html);
-
-            // Wypełnij tabelę
-            if (products.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align:center;padding:40px;color:#6b7280;">
-                            Brak produktów spełniających kryteria.
-                        </td>
-                    </tr>`;
-            } else {
-                tbody.innerHTML = products.map(renderRow).join('');
-            }
-
-            // Licznik
-            footerCnt.innerHTML = totalText
-                ? escapeHtml(totalText)
-                : `Wyświetlono <strong>${products.length}</strong> sztuk sprzętu`;
-
-            // Paginacja
-            renderPagination(pagination);
-
-        } catch (err) {
-            console.error('Błąd pobierania produktów:', err);
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5" style="text-align:center;padding:40px;color:#dc2626;">
-                        Nie udało się pobrać produktów. Spróbuj odświeżyć stronę.
-                    </td>
-                </tr>`;
+    async function load(page=1){
+        currentPage=page;
+        tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:40px;color:#6b7280">Ładowanie produktów…</td></tr>';
+        try{
+            const r=await fetch(`${url}?${params(page)}`,{headers:{'Accept':'application/json','X-Requested-With':'XMLHttpRequest'},credentials:'same-origin'});
+            const data=await r.json();
+            if(!r.ok)throw new Error(data.message||'Błąd pobierania');
+            tbody.innerHTML=data.data.length?data.data.map(row).join(''):'<tr><td colspan="5" style="text-align:center;padding:40px;color:#6b7280">Brak produktów spełniających kryteria.</td></tr>';
+            const m=data.meta;
+            footer.innerHTML=`Wyświetlono <strong>${m.from??0}–${m.to??0}</strong> z <strong>${m.total}</strong> sztuk sprzętu`;
+            renderPager(m);
+        }catch(e){
+            console.error(e);
+            tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:40px;color:#dc2626">Nie udało się pobrać produktów.</td></tr>';
+            pager.innerHTML='';
         }
     }
 
-    function renderPagination(pagination) {
-        if (!pagination || pagination.length === 0) {
-            pagerEl.innerHTML = '';
-            return;
-        }
-        pagerEl.innerHTML = pagination.map(p => {
-            // Wyciągamy numer strony z URL-a
-            const pageMatch = p.url ? p.url.match(/[?&]page=(\d+)/) : null;
-            const page = pageMatch ? pageMatch[1] : null;
-            const classes = ['le-page'];
-            if (p.active) classes.push('active');
-            if (p.label === '«' || p.label === '»' || p.label.includes('&laquo;') || p.label.includes('&raquo;'))
-                classes.push('nav');
-
-            return `<a href="#" data-page="${page || ''}" class="${classes.join(' ')}">${escapeHtml(p.label)}</a>`;
-        }).join('');
+    function renderPager(m){
+        if(m.last_page<=1){pager.innerHTML='';return;}
+        const items=[];
+        items.push({page:1,label:'«',disabled:m.current_page===1});
+        items.push({page:m.current_page-1,label:'‹',disabled:m.current_page===1});
+        const start=Math.max(1,m.current_page-2), end=Math.min(m.last_page,m.current_page+2);
+        for(let i=start;i<=end;i++)items.push({page:i,label:String(i),active:i===m.current_page});
+        items.push({page:m.current_page+1,label:'›',disabled:m.current_page===m.last_page});
+        items.push({page:m.last_page,label:'»',disabled:m.current_page===m.last_page});
+        pager.innerHTML=items.map(x=>`<a href="#" class="le-page ${x.active?'active':''} ${x.disabled?'disabled':''}" data-page="${x.page}">${x.label}</a>`).join('');
     }
 
-    // Klik w paginację
-    pagerEl.addEventListener('click', (e) => {
-        const link = e.target.closest('a[data-page]');
-        if (!link) return;
-        e.preventDefault();
-        const page = parseInt(link.dataset.page, 10);
-        if (page > 0) fetchProducts(page);
+    pager.addEventListener('click',e=>{
+        const a=e.target.closest('[data-page]');if(!a||a.classList.contains('disabled'))return;
+        e.preventDefault();load(Number(a.dataset.page));
     });
 
-    // ==============================================================
-    // Kategorie - pobieramy je z pierwszej strony /catalog (bez X-Requested-With)
-    // dostajemy pełną stronę i wyciągamy checkboxy kategorii
-    // ==============================================================
-    async function loadCategories() {
-        try {
-            const response = await fetch(CATALOG_URL, {
-                headers: { 'Accept': 'text/html' },
-                credentials: 'same-origin',
-            });
-            if (!response.ok) return;
+    tbody.addEventListener('click',async e=>{
+        const btn=e.target.closest('.le-delete');if(!btn)return;
+        const id=btn.dataset.id;
+        const name=btn.closest('tr').querySelector('.le-product-name')?.textContent||'produkt';
+        const ok=confirm(`UWAGA — USUNIĘCIE PRODUKTU\n\nProdukt „${name}” zostanie trwale wyłączony z inwentarza. Tej operacji nie można cofnąć z poziomu panelu. Historia rezerwacji i napraw pozostanie zachowana.\n\nCzy na pewno chcesz usunąć produkt?`);
+        if(!ok)return;
+        btn.disabled=true;
+        try{
+            const r=await fetch(`/produkt/${id}`,{method:'DELETE',headers:{'X-CSRF-TOKEN':csrf,'Accept':'application/json'},credentials:'same-origin'});
+            const data=await r.json();
+            if(!r.ok)throw new Error(data.message||'Nie udało się usunąć produktu.');
+            load(currentPage);
+        }catch(err){alert(err.message);btn.disabled=false;}
+    });
 
-            const html = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
+    function schedule(){clearTimeout(debounce);debounce=setTimeout(()=>load(1),350);}
+    search.addEventListener('input',schedule);
+    [category,sort,dateFrom,dateTo].forEach(x=>x.addEventListener('change',()=>load(1)));
 
-            const checkboxes = doc.querySelectorAll('input[name="categories[]"]');
-            checkboxes.forEach(cb => {
-                const label = cb.closest('label');
-                const name = label ? label.textContent.trim() : '';
-                if (name) {
-                    const opt = document.createElement('option');
-                    opt.value = cb.value;
-                    opt.textContent = name;
-                    categorySel.appendChild(opt);
-                }
-            });
-        } catch (err) {
-            console.warn('Nie udało się pobrać kategorii:', err);
-        }
-    }
-
-    // ==============================================================
-    // Cena - dual-range slider (istniejący kod)
-    // ==============================================================
-    if (priceMinIn && priceMaxIn && priceLabel) {
-        const MAX = parseInt(priceMaxIn.max, 10);
-
-        function updatePriceUI() {
-            let lo = parseInt(priceMinIn.value, 10);
-            let hi = parseInt(priceMaxIn.value, 10);
-            if (lo > hi - 10) {
-                if (this === priceMinIn) { lo = hi - 10; priceMinIn.value = lo; }
-                else                      { hi = lo + 10; priceMaxIn.value = hi; }
-            }
-            priceMinVal.textContent = lo;
-            priceMaxVal.textContent = hi;
-
-            const leftPct  = (lo / MAX) * 100;
-            const rightPct = (hi / MAX) * 100;
-            priceRangeEl.style.left  = leftPct + '%';
-            priceRangeEl.style.right = (100 - rightPct) + '%';
-
-            if (lo === 0 && hi === MAX) priceLabel.textContent = 'Dowolna';
-            else priceLabel.textContent = lo + ' - ' + hi + ' zł';
-        }
-
-        priceMinIn.addEventListener('input', updatePriceUI);
-        priceMaxIn.addEventListener('input', updatePriceUI);
-        // Dodatkowo debounce fetch na zmianę
-        priceMinIn.addEventListener('change', () => scheduleFetch());
-        priceMaxIn.addEventListener('change', () => scheduleFetch());
-
-        updatePriceUI();
-
-        // Toggle popovera
-        const toggle = document.getElementById('le-price-toggle');
-        const popover = document.getElementById('le-price-popover');
-        if (toggle && popover) {
-            toggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                popover.classList.toggle('open');
-                toggle.setAttribute('aria-expanded', popover.classList.contains('open') ? 'true' : 'false');
-            });
-            document.addEventListener('click', (e) => {
-                if (!popover.classList.contains('open')) return;
-                if (popover.contains(e.target) || toggle.contains(e.target)) return;
-                popover.classList.remove('open');
-                toggle.setAttribute('aria-expanded', 'false');
-            });
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && popover.classList.contains('open')) {
-                    popover.classList.remove('open');
-                    toggle.setAttribute('aria-expanded', 'false');
-                }
-            });
-        }
-    }
-
-    // ==============================================================
-    // Debouncing wyszukiwarki i sortowania
-    // ==============================================================
-    function scheduleFetch() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => fetchProducts(1), 400);
-    }
-
-    searchInput?.addEventListener('input', scheduleFetch);
-    categorySel?.addEventListener('change', () => fetchProducts(1));
-    sortSel?.addEventListener('change', () => fetchProducts(1));
-
-    // ==============================================================
-    // Konserwacja - grupy radio (bez fetchy - to tylko UI)
-    // ==============================================================
-    document.querySelectorAll('.le-toggle-group[data-radio]').forEach(group => {
-        const buttons = group.querySelectorAll('.le-toggle-btn');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                // Można by tu ograniczać po statusie ale /catalog tego nie ma
-            });
+    document.querySelectorAll('#le-status-toggle .le-toggle-btn').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            document.querySelectorAll('#le-status-toggle .le-toggle-btn').forEach(x=>x.classList.remove('active'));
+            btn.classList.add('active');load(1);
         });
     });
 
-    // ==============================================================
-    // START
-    // ==============================================================
-    loadCategories();
-    fetchProducts(1);
+    const toggle=document.getElementById('le-price-toggle'), pop=document.getElementById('le-price-popover');
+    toggle.addEventListener('click',e=>{e.stopPropagation();pop.classList.toggle('open');toggle.setAttribute('aria-expanded',pop.classList.contains('open')?'true':'false');});
+    document.addEventListener('click',e=>{if(pop.classList.contains('open')&&!pop.contains(e.target)&&!toggle.contains(e.target)){pop.classList.remove('open');toggle.setAttribute('aria-expanded','false');}});
+    function priceUI(){
+        let lo=+priceMin.value,hi=+priceMax.value;
+        if(lo>=hi){if(document.activeElement===priceMin)lo=hi-10;else hi=lo+10;priceMin.value=lo;priceMax.value=hi;}
+        document.getElementById('le-price-min-val').textContent=lo;
+        document.getElementById('le-price-max-val').textContent=hi;
+        document.getElementById('le-price-label').textContent=(lo===0&&hi===2000)?'Dowolna':`${lo} - ${hi} zł`;
+        document.getElementById('le-price-range').style.left=(lo/2000*100)+'%';
+        document.getElementById('le-price-range').style.right=(100-hi/2000*100)+'%';
+    }
+    priceMin.addEventListener('input',priceUI);priceMax.addEventListener('input',priceUI);
+    priceMin.addEventListener('change',()=>load(1));priceMax.addEventListener('change',()=>load(1));
+    priceUI();load(1);
 })();
 </script>
 </body>

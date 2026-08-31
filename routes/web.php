@@ -67,7 +67,14 @@ Route::middleware(['auth'])->group(function () {
 // Trasy panelu administracyjnego - tylko dla roli admina
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/produkt/{id}/edytuj', [ProductController::class, 'edit'])->name('product.edit');
-    Route::view('/inwentarz', 'list_equipment')->name('equipment.list');
+    Route::put('/produkt/{id}', [ProductController::class, 'update'])->name('product.update');
+    Route::patch('/produkt/{id}/status', [ProductController::class, 'toggleAvailability'])->name('product.status');
+    Route::delete('/produkt/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+    Route::get('/produkt/{id}/naprawy', [ProductController::class, 'repairs'])->name('product.repairs');
+    Route::post('/produkt/{id}/naprawy', [ProductController::class, 'storeRepair'])->name('product.repairs.store');
+    Route::delete('/produkt/{id}/naprawy/{repairId}', [ProductController::class, 'deleteRepair'])->name('product.repairs.destroy');
+    Route::get('/produkt/{id}/rezerwacje', [ProductController::class, 'reservations'])->name('product.reservations');
+    Route::get('/inwentarz', [ProductController::class, 'inventory'])->name('equipment.list');
     Route::view('/lista-uzytkownikow', 'list_users')->name('users.list');
     Route::view('/uzytkownik-szczegoly/{id}', 'user_details')->name('users.show');
     Route::view('/rejestr-wypozyczen', 'list_rentals')->name('rentals.list');

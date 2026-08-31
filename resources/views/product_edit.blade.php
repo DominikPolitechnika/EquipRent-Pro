@@ -4,313 +4,373 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Zarządzanie produktem – EquipRent Pro</title>
+    <title>{{ $product->title }} – EquipRent Pro</title>
     <link rel="stylesheet" href="{{ asset('style-admin.css') }}">
     <link rel="stylesheet" href="{{ asset('style-product-edit.css') }}">
     <style>
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
-        .placeholder { background: #e2e8f0; display: inline-block; border-radius: 3px; }
-        .placeholder-block { background: #e2e8f0; display: block; border-radius: 3px; }
-        .animate-pulse { animation: pulse 1.6s ease-in-out infinite; }
+        .pe-alert{padding:12px 16px;border-radius:8px;margin-bottom:18px;font-size:13px}
+        .pe-alert.success{background:#dcfce7;color:#166534}
+        .pe-alert.error{background:#fee2e2;color:#991b1b}
+        .pe-gallery-thumb{position:relative}
+        .pe-gallery-thumb button{position:absolute;right:4px;top:4px;width:24px;height:24px;border:0;border-radius:50%;background:#dc2626;color:#fff;cursor:pointer;font-weight:700}
+        .pe-gallery-thumb.removed{opacity:.35;filter:grayscale(1)}
+        .pe-gallery-thumb.removed::after{content:'USUNIĘTE';position:absolute;left:4px;bottom:4px;background:#dc2626;color:#fff;font-size:8px;padding:3px 5px;border-radius:3px}
+        .pe-gallery-help{font-size:11px;color:#6b7280;margin-top:8px}
+        .pe-empty{padding:24px;text-align:center;color:#9aa5ad;font-size:13px}
+        .pe-delete-repair{border:0;background:transparent;color:#dc2626;cursor:pointer;font-size:12px}
+        .pe-row-error{font-size:11px;color:#dc2626;margin-top:4px}
+        .pe-status-state.service{color:#6366f1}
     </style>
 </head>
 <body class="pe-page">
 <div class="adm-shell">
     @include('partials.admin-sidebar')
-
     <div class="adm-body">
         @include('partials.admin-topbar')
         <div class="adm-content">
 
-{{-- ===== NAGŁÓWEK STRONY ===== --}}
-<div class="pe-page-header">
-    <div class="pe-page-header-text">
-        <div class="pe-breadcrumb">
-            <span>Zarządzanie</span>
-            <span class="sep">›</span>
-            <a href="{{ route('equipment.list') }}">Inwentarz</a>
-            <span class="sep">›</span>
-            <span class="active">Zarządzanie Produktem</span>
+            <div class="pe-page-header">
+                <div class="pe-page-header-text">
+                    <div class="pe-breadcrumb">
+                        <span>Zarządzanie</span><span class="sep">›</span>
+                        <a href="{{ route('equipment.list') }}">Inwentarz</a><span class="sep">›</span>
+                        <span class="active">Edycja produktu</span>
+                    </div>
+                    <h1>
+                        {{ $product->title }}
+                        <span class="pe-title-badge {{ $product->is_available ? '' : 'unavailable' }}" id="pe-title-status">
+                            {{ $product->getStatus() }}
+                        </span>
+                    </h1>
+                    <p class="pe-serial"># Nr seryjny: {{ $product->serial_number }}</p>
+                </div>
+                <div class="pe-header-actions">
+                    <a href="{{ route('equipment.list') }}" class="pe-btn-secondary">Anuluj</a>
+                    <button type="submit" form="form-edycja-produktu" class="pe-btn-primary">Aktualizuj Produkt</button>
+                </div>
+            </div>
+
+            <div class="pe-wrapper">
+                <div class="pe-main">
+                    @if(session('success'))
+                        <div class="pe-alert success">{{ session('success') }}</div>
+                    @endif
+                    @if($errors->any())
+                        <div class="pe-alert error">
+                            <strong>Nie udało się zapisać zmian.</strong>
+                            <ul style="margin:6px 0 0 18px">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                        </div>
+                    @endif
+
+                    <form id="form-edycja-produktu" method="POST" action="{{ route('product.update', $product->id) }}" class="pe-section" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="is_available" id="pe-is-available" value="{{ $product->is_available ? 1 : 0 }}">
+
+                        <div class="pe-section-header">
+                            <div class="pe-section-title">
+                                <div class="pe-section-title-icon-box">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                </div>
+                                Informacje ogólne
+                            </div>
+                            <div class="pe-status-toggle">
+                                <span class="pe-status-toggle-label">Przełącz status</span>
+                                <span class="pe-status-state {{ $product->is_available ? '' : 'off' }}" id="pe-status-text">{{ $product->is_available ? 'Sprawny' : 'Serwis' }}</span>
+                                <label class="pe-switch">
+                                    <input type="checkbox" id="pe-status-switch" {{ $product->is_available ? 'checked' : '' }}>
+                                    <span class="pe-switch-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pe-form-row">
+                            <div class="pe-form-group">
+                                <label class="pe-form-label" for="title">Nazwa produktu</label>
+                                <input class="pe-form-input" id="title" name="title" value="{{ old('title', $product->title) }}" required maxlength="255">
+                            </div>
+                            <div class="pe-form-group">
+                                <label class="pe-form-label" for="equipment_category_id">Kategoria</label>
+                                <select class="pe-form-select" id="equipment_category_id" name="equipment_category_id" required>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" {{ (int)old('equipment_category_id', $product->equipment_category_id) === (int)$category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="pe-form-row">
+                            <div class="pe-form-group">
+                                <label class="pe-form-label" for="one_day_price">Stawka dobowa (PLN)</label>
+                                <input class="pe-form-input" id="one_day_price" name="one_day_price" type="number" min="0" step="1" value="{{ old('one_day_price', $product->one_day_price) }}" required>
+                            </div>
+                            <div class="pe-form-group">
+                                <label class="pe-form-label">Numer seryjny</label>
+                                <div class="pe-form-readonly">{{ $product->serial_number }}</div>
+                            </div>
+                        </div>
+
+                        <div class="pe-form-row single">
+                            <div class="pe-form-group">
+                                <label class="pe-form-label" for="body">Opis produktu</label>
+                                <textarea class="pe-form-textarea" id="body" name="body" rows="5">{{ old('body', $product->body) }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="pe-gallery-block">
+                            <div class="pe-gallery-head">
+                                <span class="pe-gallery-label">Galeria zdjęć</span>
+                                <span class="pe-gallery-count"><span id="pe-gallery-count">{{ $images->count() }}</span> / min. 3 zdjęcia</span>
+                            </div>
+                            <div class="pe-gallery-grid" id="pe-gallery-grid">
+                                @foreach($images as $image)
+                                    <div class="pe-gallery-thumb" data-image="{{ $image['name'] }}">
+                                        <img src="{{ $image['url'] }}" alt="Zdjęcie produktu {{ $loop->iteration }}">
+                                        <button type="button" title="Usuń zdjęcie" data-remove-image="{{ $image['name'] }}">×</button>
+                                    </div>
+                                @endforeach
+                                <label class="pe-gallery-upload">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                    <span>Prześlij</span>
+                                    <input type="file" id="pe-photos" name="photos[]" accept="image/jpeg,image/png,image/webp,image/avif" hidden multiple>
+                                </label>
+                            </div>
+                            <div class="pe-gallery-help">Minimum 3 zdjęcia. Pierwsze zapisane zdjęcie tworzy miniaturę 370×240, pozostałe są przygotowywane do 680×420. Proporcje obrazu są zachowywane.</div>
+                            <div id="pe-photo-error" class="pe-row-error"></div>
+                        </div>
+                    </form>
+
+                    <section class="pe-section">
+                        <div class="pe-section-header">
+                            <div class="pe-section-title">
+                                <div class="pe-section-title-icon-box">🔧</div>
+                                Konserwacja i Naprawy
+                            </div>
+                        </div>
+
+                        <div class="pe-maint-section-label">Zgłoś nową naprawę</div>
+                        <div class="pe-maint-form">
+                            <div class="pe-form-group">
+                                <label class="pe-form-label">Opis</label>
+                                <input type="text" id="repair-description" class="pe-form-input" placeholder="Opis usterki...">
+                            </div>
+                            <div class="pe-form-group">
+                                <label class="pe-form-label">Koszt</label>
+                                <input type="number" id="repair-cost" class="pe-form-input" min="0" step="1" placeholder="PLN">
+                            </div>
+                            <div class="pe-form-group">
+                                <label class="pe-form-label">Data</label>
+                                <input type="date" id="repair-date" class="pe-form-input" value="{{ now()->format('Y-m-d') }}">
+                            </div>
+                            <button type="button" class="pe-maint-add-btn" id="pe-repair-add">Dodaj</button>
+                        </div>
+                        <div id="pe-repair-error" class="pe-row-error"></div>
+
+                        <table class="pe-table" style="margin-top:20px;">
+                            <thead><tr><th>Data</th><th>Opis</th><th>Technik</th><th class="right">Koszt</th><th class="right"></th></tr></thead>
+                            <tbody id="pe-repairs-body"><tr><td colspan="5" class="pe-empty">Ładowanie…</td></tr></tbody>
+                        </table>
+                    </section>
+
+                    <section class="pe-section">
+                        <div class="pe-section-header">
+                            <div class="pe-section-title">
+                                <div class="pe-section-title-icon-box">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                </div>
+                                Historia Rezerwacji
+                            </div>
+                        </div>
+                        <table class="pe-table">
+                            <thead><tr><th>Użytkownik</th><th>Okres wynajmu</th><th>Status</th><th class="right">Przychód</th></tr></thead>
+                            <tbody id="pe-reservations-body"><tr><td colspan="4" class="pe-empty">Ładowanie…</td></tr></tbody>
+                        </table>
+                    </section>
+                </div>
+
+                <aside class="pe-side">
+                    <div class="pe-price-card">
+                        <div class="pe-price-title">Model Cennikowy</div>
+                        <div class="pe-price-label">Stawka dobowa</div>
+                        <div class="pe-price-daily">{{ number_format($product->one_day_price, 0, ',', ' ') }} zł</div>
+                        <div class="pe-price-label">Całkowity przychód</div>
+                        <div class="pe-price-income">{{ number_format($product->total_income ?? 0, 0, ',', ' ') }} zł</div>
+                    </div>
+                    <div class="pe-danger-card">
+                        <div class="pe-danger-title">Strefa zagrożenia</div>
+                        <div class="pe-danger-text"><strong>Uwaga: operacja jest nieodwracalna.</strong><br>Produkt zostanie trwale wyłączony z inwentarza (archiwizacja), a operacji nie można cofnąć z poziomu panelu. Rezerwacje i historia pozostaną zachowane.</div>
+                        <button type="button" class="pe-danger-btn" id="pe-delete-btn">Usuń z inwentarza</button>
+                    </div>
+                </aside>
+            </div>
         </div>
-        <h1>
-            <span class="placeholder animate-pulse" style="width:320px;height:32px;"></span>
-            <span class="pe-title-badge">
-                <span class="placeholder animate-pulse" style="width:70px;height:12px;background:#ffffff66;"></span>
-            </span>
-        </h1>
-        <p class="pe-serial">
-            # Nr seryjny: <span class="placeholder animate-pulse" style="width:120px;height:13px;"></span>
-        </p>
-    </div>
-    <div class="pe-header-actions">
-        <a href="{{ route('catalog') }}" class="pe-btn-secondary">Odrzuć</a>
-        <button type="submit" form="form-edycja-produktu" class="pe-btn-primary">Aktualizuj Produkt</button>
     </div>
 </div>
-
-<div class="pe-wrapper">
-
-    {{-- ===== LEWA KOLUMNA ===== --}}
-    <div class="pe-main">
-
-        {{-- INFORMACJE OGÓLNE --}}
-        <form id="form-edycja-produktu" method="POST" action="#" onsubmit="return false;" class="pe-section" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-
-            <div class="pe-section-header">
-                <div class="pe-section-title">
-                    <div class="pe-section-title-icon-box">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/>
-                            <line x1="16" y1="17" x2="8" y2="17"/>
-                        </svg>
-                    </div>
-                    Informacje ogólne
-                </div>
-
-                <div class="pe-status-toggle">
-                    <span class="pe-status-toggle-label">Przełącz status</span>
-                    <span class="pe-status-state" id="pe-status-text">
-                        <span class="placeholder animate-pulse" style="width:60px;height:12px;"></span>
-                    </span>
-                    <label class="pe-switch">
-                        <input type="checkbox" id="pe-status-switch" checked>
-                        <span class="pe-switch-slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="pe-form-row">
-                <div class="pe-form-group">
-                    <label class="pe-form-label">Nazwa produktu</label>
-                    <div class="pe-form-input" style="display:flex;align-items:center;">
-                        <span class="placeholder-block animate-pulse" style="width:60%;height:14px;"></span>
-                    </div>
-                </div>
-                <div class="pe-form-group">
-                    <label class="pe-form-label">Kategoria</label>
-                    <div class="pe-form-input" style="display:flex;align-items:center;">
-                        <span class="placeholder-block animate-pulse" style="width:50%;height:14px;"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pe-form-row single">
-                <div class="pe-form-group">
-                    <label class="pe-form-label">Opis produktu</label>
-                    <div class="pe-form-textarea" style="display:block;">
-                        <span class="placeholder-block animate-pulse" style="width:100%;height:12px;margin-bottom:8px;"></span>
-                        <span class="placeholder-block animate-pulse" style="width:95%;height:12px;margin-bottom:8px;"></span>
-                        <span class="placeholder-block animate-pulse" style="width:80%;height:12px;"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pe-form-row single">
-                <div class="pe-form-group">
-                    <label class="pe-form-label">Numer seryjny</label>
-                    <div class="pe-form-readonly">
-                        <span class="placeholder-block animate-pulse" style="width:160px;height:14px;"></span>
-                    </div>
-                </div>
-            </div>
-
-            {{-- GALERIA ZDJĘĆ --}}
-            <div class="pe-gallery-block">
-                <div class="pe-gallery-head">
-                    <span class="pe-gallery-label">Galeria zdjęć</span>
-                    <span class="pe-gallery-count">
-                        <span class="placeholder animate-pulse" style="width:70px;height:10px;"></span>
-                    </span>
-                </div>
-                <div class="pe-gallery-grid">
-                    <div class="pe-gallery-thumb animate-pulse"></div>
-                    <div class="pe-gallery-thumb animate-pulse"></div>
-                    <label class="pe-gallery-upload">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                            <circle cx="8.5" cy="8.5" r="1.5"/>
-                            <polyline points="21 15 16 10 5 21"/>
-                        </svg>
-                        <span>Prześlij</span>
-                        <input type="file" name="photos[]" accept="image/*" hidden multiple>
-                    </label>
-                </div>
-            </div>
-        </form>
-
-        {{-- KONSERWACJA I NAPRAWY --}}
-        <section class="pe-section">
-            <div class="pe-section-header">
-                <div class="pe-section-title">
-                    <div class="pe-section-title-icon-box">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-                        </svg>
-                    </div>
-                    Konserwacja i Naprawy
-                </div>
-                <button type="button" class="pe-btn-secondary" id="pe-maint-add-toggle">+ Dodaj wpis</button>
-            </div>
-
-            <div class="pe-maint-section-label">Zgłoś nową naprawę</div>
-            <div class="pe-maint-form">
-                <div class="pe-form-group">
-                    <input type="text" class="pe-form-input" placeholder="Opis usterki...">
-                </div>
-                <div class="pe-form-group">
-                    <input type="text" class="pe-form-input" placeholder="PLN Koszt">
-                </div>
-                <div class="pe-form-group">
-                    <input type="date" class="pe-form-input">
-                </div>
-                <button type="button" class="pe-maint-add-btn">Wyślij</button>
-            </div>
-
-            <table class="pe-table" style="margin-top:20px;">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Opis</th>
-                        <th>Technik</th>
-                        <th class="right">Koszt</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="placeholder animate-pulse" style="width:50px;height:13px;"></span></td>
-                        <td><span class="placeholder animate-pulse" style="width:160px;height:13px;"></span></td>
-                        <td><span class="placeholder animate-pulse" style="width:70px;height:13px;"></span></td>
-                        <td class="right"><span class="placeholder animate-pulse" style="width:50px;height:13px;"></span></td>
-                    </tr>
-                    <tr>
-                        <td><span class="placeholder animate-pulse" style="width:50px;height:13px;"></span></td>
-                        <td><span class="placeholder animate-pulse" style="width:180px;height:13px;"></span></td>
-                        <td><span class="placeholder animate-pulse" style="width:60px;height:13px;"></span></td>
-                        <td class="right"><span class="placeholder animate-pulse" style="width:45px;height:13px;"></span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        {{-- HISTORIA REZERWACJI --}}
-        <section class="pe-section">
-            <div class="pe-section-header">
-                <div class="pe-section-title">
-                    <div class="pe-section-title-icon-box">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="16" y1="2" x2="16" y2="6"/>
-                            <line x1="8" y1="2" x2="8" y2="6"/>
-                            <line x1="3" y1="10" x2="21" y2="10"/>
-                        </svg>
-                    </div>
-                    Historia Rezerwacji
-                </div>
-            </div>
-
-            <table class="pe-table">
-                <thead>
-                    <tr>
-                        <th>Użytkownik / Klub</th>
-                        <th>Okres wynajmu</th>
-                        <th>Status</th>
-                        <th class="right">Przychód</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div><span class="placeholder animate-pulse" style="width:110px;height:14px;"></span></div>
-                            <div class="pe-rez-user-id"><span class="placeholder animate-pulse" style="width:80px;height:11px;margin-top:4px;"></span></div>
-                        </td>
-                        <td><span class="placeholder animate-pulse" style="width:130px;height:13px;"></span></td>
-                        <td>
-                            <span class="pe-rez-badge done">
-                                <span class="placeholder animate-pulse" style="width:70px;height:11px;background:#ffffff66;"></span>
-                            </span>
-                        </td>
-                        <td class="right"><span class="placeholder animate-pulse" style="width:55px;height:13px;"></span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div><span class="placeholder animate-pulse" style="width:120px;height:14px;"></span></div>
-                            <div class="pe-rez-user-id"><span class="placeholder animate-pulse" style="width:80px;height:11px;margin-top:4px;"></span></div>
-                        </td>
-                        <td><span class="placeholder animate-pulse" style="width:130px;height:13px;"></span></td>
-                        <td>
-                            <span class="pe-rez-badge reserved">
-                                <span class="placeholder animate-pulse" style="width:80px;height:11px;background:#ffffff66;"></span>
-                            </span>
-                        </td>
-                        <td class="right"><span class="placeholder animate-pulse" style="width:55px;height:13px;"></span></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="pe-section-footer">
-                <a href="#">Pokaż wszystkie rezerwacje</a>
-            </div>
-        </section>
-
-    </div>
-
-    {{-- ===== PRAWA KOLUMNA ===== --}}
-    <aside class="pe-side">
-
-        {{-- MODEL CENNIKOWY --}}
-        <div class="pe-price-card">
-            <div class="pe-price-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="1" x2="12" y2="23"/>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                </svg>
-                Model Cennikowy
-            </div>
-
-            <div class="pe-price-label">Stawka dobowa</div>
-            <div class="pe-price-daily">
-                <span class="placeholder-block animate-pulse" style="width:90px;height:22px;"></span>
-            </div>
-
-            <div class="pe-price-label">Całkowity przychód</div>
-            <div class="pe-price-income">
-                <span class="placeholder-block animate-pulse" style="width:140px;height:28px;"></span>
-            </div>
-        </div>
-
-        {{-- STREFA ZAGROŻENIA --}}
-        <div class="pe-danger-card">
-            <div class="pe-danger-title">Strefa zagrożenia</div>
-            <div class="pe-danger-text">
-                Usunięcie tego sprzętu spowoduje trwałe zarchiwizowanie wszystkich danych operacyjnych. Tego procesu nie można cofnąć.
-            </div>
-            <button type="button" class="pe-danger-btn" id="pe-delete-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"/>
-                    <path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                </svg>
-                Usuń z inwentarza
-            </button>
-        </div>
-
-    </aside>
-</div>
-
-        </div>{{-- /adm-content --}}
-    </div>{{-- /adm-body --}}
-</div>{{-- /adm-shell --}}
 
 <script>
-(function() {
-    // Toggle statusu - tylko wizualne przełączenie (podgląd)
-    const sw = document.getElementById('pe-status-switch');
-    if (sw) {
-        sw.addEventListener('change', () => { /* podgląd - bez akcji */ });
+(function(){
+    'use strict';
+    const id = @json($product->id);
+    const csrf = document.querySelector('meta[name="csrf-token"]').content;
+    const headers = {'X-CSRF-TOKEN': csrf, 'Accept':'application/json', 'Content-Type':'application/json'};
+    const form = document.getElementById('form-edycja-produktu');
+    const switchEl = document.getElementById('pe-status-switch');
+    const statusText = document.getElementById('pe-status-text');
+    const hiddenAvailable = document.getElementById('pe-is-available');
+    const titleBadge = document.getElementById('pe-title-status');
+    const photoInput = document.getElementById('pe-photos');
+    const gallery = document.getElementById('pe-gallery-grid');
+    const countEl = document.getElementById('pe-gallery-count');
+    const photoError = document.getElementById('pe-photo-error');
+    const removed = new Set();
+
+    function escapeHtml(s){return String(s ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");}
+    function formatDate(v){ if(!v) return '—'; const d=new Date(v); return Number.isNaN(d.getTime()) ? escapeHtml(v) : d.toLocaleDateString('pl-PL'); }
+
+    function updateGalleryCount(){
+        const existing = [...gallery.querySelectorAll('.pe-gallery-thumb:not(.removed)')].length;
+        const added = photoInput.files.length;
+        countEl.textContent = existing + added;
+        photoError.textContent = (existing + added < 3) ? 'Produkt musi mieć co najmniej 3 zdjęcia.' : '';
     }
+
+    gallery.addEventListener('click', function(e){
+        const btn=e.target.closest('[data-remove-image]');
+        if(!btn) return;
+        const name=btn.dataset.removeImage;
+        removed.add(name);
+        const item=btn.closest('.pe-gallery-thumb');
+        item.classList.add('removed');
+        btn.textContent='✓';
+        btn.disabled=true;
+        const input=document.createElement('input');
+        input.type='hidden'; input.name='remove_photos[]'; input.value=name;
+        form.appendChild(input);
+        updateGalleryCount();
+    });
+
+    photoInput.addEventListener('change', function(){
+        const files=[...this.files];
+        if(!files.length){updateGalleryCount();return;}
+        // Pokazujemy podgląd nowych zdjęć. Ich kolejność odpowiada kolejności w input.
+        gallery.querySelectorAll('.pe-new-photo').forEach(x=>x.remove());
+        files.forEach((file)=>{
+            if(!file.type.startsWith('image/')) return;
+            const box=document.createElement('div');
+            box.className='pe-gallery-thumb pe-new-photo';
+            const img=document.createElement('img'); img.alt=file.name; img.src=URL.createObjectURL(file);
+            box.appendChild(img); gallery.insertBefore(box,gallery.querySelector('.pe-gallery-upload'));
+        });
+        updateGalleryCount();
+    });
+
+    switchEl.addEventListener('change', async function(){
+        const available=this.checked;
+        switchEl.disabled=true;
+        try{
+            const r=await fetch(`/produkt/${id}/status`,{
+                method:'PATCH',headers,
+                body:JSON.stringify({is_available:available})
+            });
+            const data=await r.json();
+            if(!r.ok) throw new Error(data.message||'Nie udało się zmienić statusu.');
+            hiddenAvailable.value=available?'1':'0';
+            statusText.textContent=available?'Sprawny':'Serwis';
+            statusText.classList.toggle('off',!available);
+            statusText.classList.toggle('service',!available);
+            titleBadge.textContent=data.status || (available?'Sprawny':'Serwis');
+            titleBadge.classList.toggle('unavailable',!available);
+        }catch(e){
+            switchEl.checked=!available;
+            alert(e.message);
+        }finally{switchEl.disabled=false;}
+    });
+
+    form.addEventListener('submit', function(e){
+        const existing=[...gallery.querySelectorAll('.pe-gallery-thumb:not(.removed):not(.pe-new-photo)')].length;
+        if(existing + photoInput.files.length < 3){
+            e.preventDefault();
+            photoError.textContent='Nie można zapisać produktu: wymagane są minimum 3 zdjęcia.';
+            gallery.scrollIntoView({behavior:'smooth',block:'center'});
+        }
+    });
+
+    async function loadRepairs(){
+        const body=document.getElementById('pe-repairs-body');
+        try{
+            const r=await fetch(`/produkt/${id}/naprawy`,{headers:{'Accept':'application/json'}});
+            const data=await r.json();
+            if(!r.ok) throw new Error(data.message||'Błąd');
+            body.innerHTML=data.data.length ? data.data.map(x=>`
+                <tr>
+                    <td>${formatDate(x.createdAt)}</td>
+                    <td>${escapeHtml(x.description)}</td>
+                    <td>Użytkownik #${escapeHtml(x.userId)}</td>
+                    <td class="right">${Number(x.repairCost||0).toLocaleString('pl-PL')} zł</td>
+                    <td class="right"><button type="button" class="pe-delete-repair" data-repair-id="${x.id}">Usuń</button></td>
+                </tr>`).join('') : '<tr><td colspan="5" class="pe-empty">Brak wpisów napraw.</td></tr>';
+        }catch(e){body.innerHTML=`<tr><td colspan="5" class="pe-empty">Nie udało się pobrać napraw.</td></tr>`;}
+    }
+
+    document.getElementById('pe-repair-add').addEventListener('click',async()=>{
+        const desc=document.getElementById('repair-description').value.trim();
+        const cost=document.getElementById('repair-cost').value;
+        const date=document.getElementById('repair-date').value;
+        const err=document.getElementById('pe-repair-error');
+        err.textContent='';
+        if(!desc || cost==='' || !date){err.textContent='Uzupełnij opis, koszt i datę.';return;}
+        try{
+            const r=await fetch(`/produkt/${id}/naprawy`,{method:'POST',headers,body:JSON.stringify({description:desc,repairCost:Number(cost),date})});
+            const data=await r.json();
+            if(!r.ok) throw new Error(data.message||'Nie udało się dodać naprawy.');
+            document.getElementById('repair-description').value='';
+            document.getElementById('repair-cost').value='';
+            await loadRepairs();
+        }catch(e){err.textContent=e.message;}
+    });
+
+    document.getElementById('pe-repairs-body').addEventListener('click',async(e)=>{
+        const btn=e.target.closest('[data-repair-id]'); if(!btn)return;
+        if(!confirm('Czy na pewno usunąć ten wpis naprawy? Operacji nie można cofnąć.'))return;
+        const r=await fetch(`/produkt/${id}/naprawy/${btn.dataset.repairId}`,{method:'DELETE',headers});
+        if(r.ok) loadRepairs(); else alert('Nie udało się usunąć wpisu naprawy.');
+    });
+
+    async function loadReservations(){
+        const body=document.getElementById('pe-reservations-body');
+        try{
+            const r=await fetch(`/produkt/${id}/rezerwacje`,{headers:{'Accept':'application/json'}});
+            const data=await r.json();
+            if(!r.ok) throw new Error(data.message||'Błąd');
+            body.innerHTML=data.data.length ? data.data.map(x=>{
+                const status=(x.statusOfReservation||'').toLowerCase();
+                let cls='reserved';
+                if(['completed','finished','zakończona','returned','zwrócona'].includes(status))cls='done';
+                if(['cancelled','canceled','anulowana'].includes(status))cls='late';
+                return `<tr>
+                    <td><div class="pe-cell-strong">Użytkownik #${escapeHtml(x.userId)}</div><div class="pe-rez-user-id">ID rezerwacji: ${escapeHtml(x.id)}</div></td>
+                    <td>${formatDate(x.startDate)} – ${formatDate(x.endDate)}</td>
+                    <td><span class="pe-rez-badge ${cls}">${escapeHtml(x.statusOfReservation)}</span></td>
+                    <td class="right pe-cell-price">${Number(x.totalPrice||0).toLocaleString('pl-PL')} zł</td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="4" class="pe-empty">Brak rezerwacji dla tego produktu.</td></tr>';
+        }catch(e){body.innerHTML='<tr><td colspan="4" class="pe-empty">Nie udało się pobrać rezerwacji.</td></tr>';}
+    }
+
+    document.getElementById('pe-delete-btn').addEventListener('click',async()=>{
+        const confirmed=confirm('UWAGA — USUNIĘCIE PRODUKTU\\n\\nProdukt zostanie trwale wyłączony z inwentarza. Tej operacji nie można cofnąć z poziomu panelu. Historia rezerwacji i napraw pozostanie zachowana.\\n\\nCzy na pewno chcesz kontynuować?');
+        if(!confirmed)return;
+        try{
+            const r=await fetch(`/produkt/${id}`,{method:'DELETE',headers});
+            const data=await r.json();
+            if(!r.ok) throw new Error(data.message||'Nie udało się usunąć produktu.');
+            window.location.href=data.redirect || '{{ route('equipment.list') }}';
+        }catch(e){alert(e.message);}
+    });
+
+    updateGalleryCount();
+    loadRepairs();
+    loadReservations();
 })();
 </script>
 </body>

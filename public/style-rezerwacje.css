@@ -541,8 +541,76 @@
             .rez-btn-rebook { margin: 0 18px 14px; }
             .rez-page-header {padding: 20px;}
         }
+
 /* ================================================
    ZAOKRĄGLENIA - dopasowane do konkretnych klas w HTML
 ================================================ */
 
 /* === SIDEBAR - karty "Termin zwrotów" i "Przegląd konta" === */
+
+/* ================================================
+   FAKTURY I KARY (dopięte do widoku rezerwacji)
+================================================ */
+
+/* Przycisk "Pobierz fakturę" */
+.rez-btn-invoice {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 9px 14px;
+    background: transparent;
+    border: 1px solid #075071;
+    color: #075071;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+.rez-btn-invoice:hover { background: #075071; color: #fff; }
+.rez-btn-invoice:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Blok kary - naliczona, nieopłacona faktura ze Stripe */
+.rez-penalty-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-size: 12px;
+}
+.rez-penalty-text i { margin-right: 6px; }
+.rez-penalty-desc {
+    font-size: 11px;
+    font-weight: 400;
+    color: #b45309;
+    margin-top: 2px;
+}
+.rez-btn-pay-penalty {
+    flex-shrink: 0;
+    display: inline-block;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    background: #dc2626;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.rez-btn-pay-penalty:hover { background: #b91c1c; }
+
+@media (max-width: 640px) {
+    .rez-penalty-box { flex-direction: column; align-items: flex-start; }
+}

@@ -180,14 +180,28 @@ class PaymentController extends Controller
         );
     }
 
+    public function listPenalties(Request $request)
+    {
+        return response()->json([
+            'data' => $this->stripeService->listOpenPenaltyInvoices($request->user()),
+        ]);
+    }
+
     public function listPayments(Request $request)
     {
-        return response()->json(
-            $request->user()
-                ->payments()
-                ->orderByDesc('id')
-                ->paginate(20)
-        );
+        $query = $request->user()->payments()->orderByDesc('id');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->string('status'));
+        }
+
+        if ($request->filled('reservation_id')) {
+            $query->where('reservationID', $request->integer('reservation_id'));
+        }
+
+        $perPage = min((int) $request->input('per_page', 20), 100);
+
+        return response()->json($query->paginate($perPage));
     }
 
     public function invoice(Request $request, Payment $payment)

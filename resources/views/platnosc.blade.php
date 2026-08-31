@@ -163,7 +163,8 @@
     </div>
 </main>
 
-{{-- ===== MODAL 3D SECURE (ZAŚLEPKA) ===== --}}
+{{-- ===== MODAL 3D SECURE (ZAŚLEPKA) --}}
+<div class="pay-tds-backdrop" id="pay-tds-backdrop">
     <div class="pay-tds-modal">
         <div class="pay-tds-bank-header">
             <span class="pay-tds-bank-dot"></span>
@@ -402,7 +403,6 @@
 
         list.innerHTML = savedHtml + newCardHtml;
 
-        // Domyślny wybór: pierwsza zapisana karta, jeśli istnieje.
         selectedMethodId = savedMethods.length > 0 ? String(savedMethods[0].id) : 'new';
         applySelection();
 
@@ -456,7 +456,7 @@
     }
 
     // ==============================================================
-    // 3DS (zaślepka)
+    // Modal 3DS (zaślepka)
     // ==============================================================
     let pendingPaymentId = null;
 
@@ -520,12 +520,10 @@
             throw new Error('Brak imienia i nazwiska posiadacza karty.');
         }
 
-        // 1) SetupIntent
         const siRes = await apiJson('POST', '/api/payments/setup-intent');
         if (!siRes.ok) throw new Error('Nie udało się zainicjować dodania karty.');
         const { client_secret } = await siRes.json();
 
-        // 2) Potwierdzenie karty po stronie Stripe.js (tryb testowy)
         const { setupIntent, error } = await stripe.confirmCardSetup(client_secret, {
             payment_method: {
                 card: cardElement,
@@ -538,7 +536,6 @@
             throw new Error(error.message || 'Błąd karty.');
         }
 
-        // 3) Zapis lokalny (save = checkbox "zapisz kartę")
         const save = $('#pay-save-card').checked && !$('#pay-save-card').disabled;
         const pmRes = await apiJson('POST', '/api/payments/payment-methods', {
             payment_method_id: setupIntent.payment_method,
@@ -578,7 +575,7 @@
                 reservation_id: parseInt(RESERVATION_ID, 10),
                 amount: Math.round(reservation.totalPrice * 100),
                 currency: 'pln',
-                description: `Wynajem — rezerwacja #${RESERVATION_ID}`,
+                description: `Wynajem: ${reservation.productTitle} (rezerwacja #${RESERVATION_ID}, ${formatDate(reservation.startDate)} – ${formatDate(reservation.endDate)})`,
                 payment_method_id: paymentMethodId,
                 idempotency_key: uuidv4(),
             });
@@ -622,7 +619,7 @@
 
     // ==============================================================
     // Timer 15 min (kosmetyczny - blokada terminu jest egzekwowana
-    // przez backend)
+    // przez backend
     // ==============================================================
     const timerEl = $('#pay-timer-text');
     if (timerEl) {

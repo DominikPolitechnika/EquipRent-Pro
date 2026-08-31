@@ -110,6 +110,7 @@ class UserController extends Controller
         $reservationsQuery = DB::table('reservation')
             ->where('userId', $user->id)
             ->where('isDeleted', false)
+            ->where('statusOfReservation', '!=', 'awaiting_payment')
             ->whereNotIn('statusOfReservation', $this->cancelledStatuses);
 
         $activeRentalsCount = (clone $reservationsQuery)
@@ -173,6 +174,7 @@ class UserController extends Controller
         });
 
         $totalSpent = $reservations
+            ->where('statusOfReservation', '!=', 'awaiting_payment')
             ->whereNotIn('statusOfReservation', $this->cancelledStatuses)
             ->sum('totalPrice');
 

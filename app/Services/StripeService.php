@@ -97,7 +97,6 @@ class StripeService
     }
 
     /**
-     *
      * @param  int
      * @param  string
      * @param  string|null
@@ -181,6 +180,7 @@ class StripeService
 
             $this->activateReservationIfAwaitingPayment($payment);
         } catch (CardException $e) {
+            // requires_action (np. 3DS przy off-session) albo odrzucona karta
             $status = $e->getStripeCode() === 'authentication_required'
                 ? Payment::STATUS_REQUIRES_ACTION
                 : Payment::STATUS_FAILED;
@@ -189,6 +189,10 @@ class StripeService
                 'status' => $status,
                 'stripe_payment_intent_id' => $e->getError()?->payment_intent?->id,
             ]);
+
+            if ($status === Payment::STATUS_FAILED) {
+                $this->voidInvoiceIfPossible($stripeInvoice ?? null);
+            }
 
             Log::warning('Płatność Stripe nieudana (karta odrzucona)', [
                 'payment_id' => $payment->id,
@@ -223,6 +227,7 @@ class StripeService
             if ($invoiceItemId) {
                 $this->cleanupOrphanedInvoiceItem($invoiceItemId);
             }
+            $this->voidInvoiceIfPossible($stripeInvoice ?? null);
 
             $payment->update(['status' => Payment::STATUS_FAILED]);
 
@@ -244,11 +249,13 @@ class StripeService
         return $payment->fresh();
     }
 
-    // zaślepka 3ds
     public function confirmThreeDsStub(Payment $payment, bool $approve): Payment
     {
         abort_unless($payment->status === Payment::STATUS_REQUIRES_ACTION, 409,
             'Ta płatność nie oczekuje na potwierdzenie 3D Secure.');
+
+        $invoice = $this->getInvoiceDetails($payment);
+        $this->voidInvoiceIfPossible($invoice);
 
         $payment->update([
             'status' => $approve ? Payment::STATUS_SUCCEEDED : Payment::STATUS_FAILED,
@@ -272,6 +279,79 @@ class StripeService
 
         if ($reservation && $reservation->statusOfReservation === 'awaiting_payment') {
             $reservation->update(['statusOfReservation' => 'active']);
+        }
+    }
+
+    /**
+     * @return array<int>, array{
+     *     reservation_id:int, invoice_id:string, amount_due:int,
+     *     currency:string, description:?string, hosted_invoice_url:?string,
+     *     invoice_pdf:?string, due_date:?int
+     * }>
+     */
+    public function listOpenPenaltyInvoices(User $user): array
+    {
+        if (! $user->stripe_customer_id) {
+            return [];
+        }
+
+        try {
+            $invoices = $this->stripe->invoices->all([
+                'customer' => $user->stripe_customer_id,
+                'status' => 'open',
+                'limit' => 100,
+            ]);
+        } catch (ApiErrorException $e) {
+            Log::warning('Nie udało się pobrać otwartych faktur (kar) ze Stripe.', [
+                'user_id' => $user->id,
+                'message' => $e->getMessage(),
+            ]);
+
+            return [];
+        }
+
+        $penalties = [];
+
+        foreach ($invoices->data as $invoice) {
+            $reservationId = $invoice->metadata['reservation_id'] ?? null;
+
+            if ($reservationId === null || $reservationId === '') {
+                continue;
+            }
+
+            $penalties[] = [
+                'reservation_id' => (int) $reservationId,
+                'invoice_id' => $invoice->id,
+                'amount_due' => $invoice->amount_due,
+                'currency' => strtoupper($invoice->currency),
+                'description' => $invoice->description,
+                'hosted_invoice_url' => $invoice->hosted_invoice_url,
+                'invoice_pdf' => $invoice->invoice_pdf,
+                'due_date' => $invoice->due_date,
+            ];
+        }
+
+        return $penalties;
+    }
+
+    protected function voidInvoiceIfPossible(?StripeInvoice $invoice): void
+    {
+        if (! $invoice) {
+            return;
+        }
+
+        try {
+            if ($invoice->status === 'draft') {
+                $this->stripe->invoices->delete($invoice->id);
+            } elseif ($invoice->status === 'open') {
+                $this->stripe->invoices->voidInvoice($invoice->id);
+            }
+            // 'paid' / 'void' / 'uncollectible' - nic do zrobienia.
+        } catch (Exception $e) {
+            Log::warning('Nie udało się zamknąć porzuconej faktury w Stripe.', [
+                'invoice_id' => $invoice->id,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -336,7 +416,7 @@ class StripeService
      * @param  int|null
      * @param  string|null
      *
-     * @throws PaymentFailedException  gdy płatność nie kwalifikuje się do zwrotu
+     * @throws PaymentFailedException
      */
     public function refund(
         Payment $payment,

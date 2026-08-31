@@ -114,6 +114,7 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
         Route::post('/{payment}/confirm-3ds-stub', [PaymentController::class, 'confirmThreeDsStub']);
 
         Route::get('/', [PaymentController::class, 'listPayments']);
+        Route::get('/penalties', [PaymentController::class, 'listPenalties']);
         Route::get('/{payment}/invoice', [PaymentController::class, 'invoice']);
         Route::post('/{payment}/refund', [PaymentController::class, 'refund']);
     });

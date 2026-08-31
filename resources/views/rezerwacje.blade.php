@@ -91,7 +91,6 @@
         {{-- AKTYWNE --}}
         <div class="rez-section-title">Aktywne wypożyczenia</div>
         <div id="rez-active-list">
-            {{-- Skeleton karta (widoczna tylko do fetch-a) --}}
             <div class="rez-card rez-skeleton" data-skeleton>
                 <div class="rez-card-img placeholder animate-pulse"></div>
                 <div class="rez-card-body">
@@ -173,6 +172,18 @@
             const params = new URLSearchParams({ from, to });
             return fetch(`/api/reservations/upcoming?${params}`, { headers: { 'Accept': 'application/json' } });
         },
+        paidPayments: () => fetch('/api/payments?status=succeeded&per_page=100', {
+            headers: { 'Accept': 'application/json' },
+            credentials: 'same-origin',
+        }),
+        invoice: (paymentId) => fetch(`/api/payments/${paymentId}/invoice`, {
+            headers: { 'Accept': 'application/json' },
+            credentials: 'same-origin',
+        }),
+        penalties: () => fetch('/api/payments/penalties', {
+            headers: { 'Accept': 'application/json' },
+            credentials: 'same-origin',
+        }),
         cancel:     (id) => fetch(`/api/reservations/${id}/cancel`, {
             method: 'PATCH',
             headers: {
@@ -192,9 +203,8 @@
         }),
     };
 
-    // Bezpieczne wyciągnięcie tablicy z odpowiedzi API - różne kształty (data:[], items:[], albo []).
     async function extractList(response) {
-        if (!response.ok) return [];
+        if (!response || !response.ok) return [];
         const data = await response.json().catch(() => null);
         if (!data) return [];
         if (Array.isArray(data)) return data;
@@ -284,7 +294,32 @@
             : `<div class="rez-card-img placeholder"></div>`;
     }
 
-    function renderActiveCard(r) {
+    function renderInvoiceButton(reservationId, paymentsByReservation) {
+        const paymentId = paymentsByReservation.get(String(reservationId));
+        if (!paymentId) return '';
+        return `<button class="rez-btn-invoice" type="button" data-action="download-invoice" data-payment-id="${escapeHtml(paymentId)}">
+            <i class="fa-solid fa-file-invoice"></i> Pobierz fakturę
+        </button>`;
+    }
+
+    function renderPenaltyBlock(reservationId, penaltiesByReservation) {
+        const penalty = penaltiesByReservation.get(String(reservationId));
+        if (!penalty) return '';
+        const amount = formatMoney((penalty.amount_due || 0) / 100);
+        return `
+        <div class="rez-penalty-box">
+            <div class="rez-penalty-text">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Naliczono karę: <strong>${escapeHtml(amount)}</strong>
+                ${penalty.description ? `<div class="rez-penalty-desc">${escapeHtml(penalty.description)}</div>` : ''}
+            </div>
+            <a class="rez-btn-pay-penalty" href="${escapeHtml(penalty.hosted_invoice_url)}" target="_blank" rel="noopener">
+                Zapłać karę
+            </a>
+        </div>`;
+    }
+
+    function renderActiveCard(r, paymentsByReservation, penaltiesByReservation) {
         const id         = get(r, 'id', 'reservationId', 'reservationID');
         const productId  = get(r, 'productId', 'product_id');
         const title      = get(r, 'productTitle', 'product_name', 'product_title', 'title') || 'Sprzęt';
@@ -312,11 +347,13 @@
                         ${productId ? `<a href="/produkt/${escapeHtml(productId)}" style="color:#1a6fa8;text-decoration:none;">Zobacz produkt →</a>` : ''}
                     </div>
                 </div>
+                ${renderPenaltyBlock(id, penaltiesByReservation)}
             </div>
             <div class="rez-card-actions">
                 ${awaitingPayment
                     ? `<a class="rez-btn-cancel" style="text-decoration:none;text-align:center;background:#075071;" href="/platnosc?reservation=${escapeHtml(id)}">Dokończ płatność</a>`
                     : ''}
+                ${renderInvoiceButton(id, paymentsByReservation)}
                 <button class="rez-btn-cancel" type="button" data-action="open-cancel" data-id="${escapeHtml(id)}" data-title="${escapeHtml(title)}">
                     Anuluj rezerwację
                 </button>
@@ -324,7 +361,7 @@
         </div>`;
     }
 
-    function renderDoneCard(r, index) {
+    function renderDoneCard(r, index, paymentsByReservation, penaltiesByReservation) {
         const id         = get(r, 'id', 'reservationId', 'reservationID');
         const productId  = get(r, 'productId', 'product_id');
         const title      = get(r, 'productTitle', 'product_name', 'product_title', 'title') || 'Sprzęt';
@@ -342,6 +379,8 @@
                 <div class="rez-card-name" style="margin-bottom:4px;">${escapeHtml(title)}</div>
                 <div class="rez-done-meta">Okres: ${formatDate(start)} — ${formatDate(end)}</div>
                 <div class="rez-done-cost">Zapłacono: <strong>${formatMoney(total)}</strong></div>
+                ${renderPenaltyBlock(id, penaltiesByReservation)}
+                ${renderInvoiceButton(id, paymentsByReservation)}
                 ${hasReview
                     ? `<div style="color:#16a34a;font-size:12px;margin-top:6px;">✓ Opinia dodana</div>`
                     : `<button class="rez-add-review-toggle" type="button" data-action="toggle-review" data-target="${reviewPanelId}">
@@ -540,7 +579,7 @@
 
             panel.classList.remove('open');
             // Podmień przycisk "Dodaj opinię" na potwierdzenie
-            const card = panel.previousElementSibling; // rez-card-done bezpośrednio nad panelem
+            const card = panel.previousElementSibling;
             if (card) {
                 const btn = card.querySelector('[data-action="toggle-review"]');
                 if (btn) {
@@ -552,10 +591,40 @@
         }
     }
 
-    // ==============================================================
-    // Delegacja kliknięć - jeden listener na body
-    // ==============================================================
-    document.body.addEventListener('click', (e) => {
+    async function downloadInvoice(button) {
+        const paymentId = button.dataset.paymentId;
+        const originalHtml = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = 'Ładowanie…';
+
+        try {
+            const res = await fetch(`/api/payments/${paymentId}/invoice`, {
+                headers: { 'Accept': 'application/json' },
+                credentials: 'same-origin',
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => null);
+                throw new Error(err?.message || 'Faktura niedostępna dla tej płatności.');
+            }
+
+            const invoice = await res.json();
+            const url = invoice.invoice_pdf || invoice.hosted_invoice_url;
+
+            if (!url) {
+                throw new Error('Faktura nie jest jeszcze dostępna.');
+            }
+
+            window.open(url, '_blank', 'noopener');
+        } catch (err) {
+            alert('Nie udało się pobrać faktury: ' + err.message);
+        } finally {
+            button.disabled = false;
+            button.innerHTML = originalHtml;
+        }
+    }
+
+    document.body.addEventListener('click', async (e) => {
         const target = e.target.closest('[data-action]');
         if (!target) return;
 
@@ -577,6 +646,9 @@
             case 'submit-review':
                 submitReview(target.dataset.target);
                 break;
+            case 'download-invoice':
+                await downloadInvoice(target);
+                break;
             case 'rebook':
                 const pid = target.dataset.productId;
                 if (pid && pid !== 'null') window.location.href = `/produkt/${pid}`;
@@ -597,22 +669,45 @@
         const doneList   = $('#rez-done-list');
 
         try {
-            const [activeRes, doneRes] = await Promise.all([
+            const [activeRes, doneRes, paymentsRes, penaltiesRes] = await Promise.all([
                 api.active(),
                 api.completed(),
+                api.paidPayments().catch(() => null),
+                api.penalties().catch(() => null),
             ]);
 
             const active    = await extractList(activeRes);
             const completed = await extractList(doneRes);
+            const payments  = await extractList(paymentsRes);
+            const penalties = await extractList(penaltiesRes);
+
+            // reservationId (string) -> paymentId — do przycisku "Pobierz fakturę".
+            const paymentsByReservation = new Map();
+            payments.forEach((p) => {
+                const resId = get(p, 'reservationID', 'reservationId', 'reservation_id');
+                const paymentId = get(p, 'id');
+                if (resId !== null && paymentId !== null) {
+                    paymentsByReservation.set(String(resId), paymentId);
+                }
+            });
+
+            // reservationId (string) -> obiekt kary — do bloku "Naliczono karę".
+            const penaltiesByReservation = new Map();
+            penalties.forEach((p) => {
+                const resId = get(p, 'reservation_id');
+                if (resId !== null) {
+                    penaltiesByReservation.set(String(resId), p);
+                }
+            });
 
             // Aktywne
             activeList.innerHTML = active.length
-                ? active.map(renderActiveCard).join('')
+                ? active.map((r) => renderActiveCard(r, paymentsByReservation, penaltiesByReservation)).join('')
                 : `<div class="rez-empty">Nie masz aktywnych wypożyczeń.</div>`;
 
             // Zakończone (z panelami opinii)
             doneList.innerHTML = completed.length
-                ? completed.map((r, i) => renderDoneCard(r, i)).join('')
+                ? completed.map((r, i) => renderDoneCard(r, i, paymentsByReservation, penaltiesByReservation)).join('')
                 : `<div class="rez-empty">Brak historii wypożyczeń.</div>`;
 
         } catch (e) {

@@ -152,6 +152,7 @@ class StripeService
             $stripeInvoice = $this->stripe->invoices->create([
                 'customer' => $customerId,
                 'collection_method' => 'charge_automatically',
+                'pending_invoice_items_behavior' => 'include',
                 'auto_advance' => false,
                 'default_payment_method' => $paymentMethod->stripe_payment_method_id,
                 'footer' => config('services.stripe.fake_seller_footer'),
@@ -175,6 +176,7 @@ class StripeService
             $payment->update([
                 'status' => Payment::STATUS_SUCCEEDED,
                 'stripe_payment_intent_id' => $stripeInvoice->payment_intent,
+                'stripe_invoice_id' =>$stripeInvoice->id,
                 'paid_at' => now(),
             ]);
 
@@ -283,7 +285,7 @@ class StripeService
     }
 
     /**
-     * @return array<int>, array{
+     * @return array<int, array{
      *     reservation_id:int, invoice_id:string, amount_due:int,
      *     currency:string, description:?string, hosted_invoice_url:?string,
      *     invoice_pdf:?string, due_date:?int
@@ -388,29 +390,43 @@ class StripeService
         return $fields;
     }
 
-    public function getInvoiceDetails(Payment $payment): ?StripeInvoice
-    {
-        if (! $payment->stripe_payment_intent_id) {
-            return null;
-        }
-
+public function getInvoiceDetails(Payment $payment): ?StripeInvoice
+{
+    if ($payment->stripe_invoice_id) {
         try {
-            $intent = $this->stripe->paymentIntents->retrieve($payment->stripe_payment_intent_id);
-
-            if (! $intent->invoice) {
-                return null;
-            }
-
-            return $this->stripe->invoices->retrieve($intent->invoice);
+            return $this->stripe->invoices->retrieve($payment->stripe_invoice_id);
         } catch (ApiErrorException $e) {
-            Log::error('Nie udało się pobrać faktury ze Stripe', [
-                'payment_id' => $payment->id,
-                'message' => $e->getMessage(),
-            ]);
-
             return null;
         }
     }
+
+    // Fallback dla starych płatności:
+    if (!$payment->stripe_payment_intent_id) {
+        return null;
+    }
+
+    try {
+        $intent = $this->stripe->paymentIntents->retrieve(
+            $payment->stripe_payment_intent_id,
+            ['expand' => ['invoice']] // Force expand relacji invoice
+        );
+
+        if (!$intent->invoice) {
+            return null;
+        }
+
+        return is_object($intent->invoice) 
+            ? $intent->invoice 
+            : $this->stripe->invoices->retrieve($intent->invoice);
+    } catch (ApiErrorException $e) {
+        Log::error('Nie udało się pobrać faktury ze Stripe', [
+            'payment_id' => $payment->id,
+            'message' => $e->getMessage(),
+        ]);
+
+        return null;
+    }
+}
 
     /**
      * @param  int|null

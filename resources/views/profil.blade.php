@@ -217,37 +217,8 @@
                 </div>
             </div>
 
-            <div class="prof-payment-grid">
-                <div class="prof-payment-card">
-                    <div class="prof-payment-logo visa">
-                        <span class="placeholder animate-pulse" style="width:38px;height:14px;background:#ffffff55;"></span>
-                    </div>
-                    <div class="prof-payment-info">
-                        <div class="prof-payment-number">
-                            <span class="placeholder animate-pulse" style="width:120px;height:16px;"></span>
-                        </div>
-                        <div class="prof-payment-expiry">
-                            <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
-                        </div>
-                    </div>
-                    <span class="prof-payment-default">
-                        <span class="placeholder animate-pulse" style="width:60px;height:12px;"></span>
-                    </span>
-                </div>
-
-                <div class="prof-payment-card">
-                    <div class="prof-payment-logo mc">
-                        <span class="placeholder animate-pulse" style="width:28px;height:14px;background:#ffffff55;"></span>
-                    </div>
-                    <div class="prof-payment-info">
-                        <div class="prof-payment-number">
-                            <span class="placeholder animate-pulse" style="width:120px;height:16px;"></span>
-                        </div>
-                        <div class="prof-payment-expiry">
-                            <span class="placeholder animate-pulse" style="width:90px;height:12px;"></span>
-                        </div>
-                    </div>
-                </div>
+            <div class="prof-payment-grid" id="prof-payment-methods">
+                <div style="grid-column:1/-1;font-size:12px;color:#9aa5ad;">Ładowanie zapisanych metod płatności…</div>
             </div>
 
             <div class="prof-payment-info-box">
@@ -366,7 +337,7 @@
         return null;
     }
 
-    function renderActiveReservationCard(r) {
+    function renderActiveReservationCard(r, penaltiesByReservation) {
         const id    = get(r, 'id', 'reservationId', 'reservationID');
         const title = get(r, 'productTitle', 'product_name', 'title') || 'Sprzęt';
         const start = get(r, 'startDate', 'start_date');
@@ -381,6 +352,11 @@
         else if (days === 0) badgeText = 'Zwrot dziś';
         else if (days <= 2) badgeText = 'Kończy się';
         else badgeText = 'Aktywna';
+
+        const penalty = penaltiesByReservation.get(String(id));
+        const penaltyValueHtml = penalty
+            ? `${formatCurrency((penalty.amount_due || 0) / 100)} — <a href="${escapeHtml(penalty.hosted_invoice_url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">zapłać</a>`
+            : 'Brak';
 
         return `
         <div class="prof-rez-card" data-reservation-id="${escapeHtml(id)}">
@@ -409,9 +385,9 @@
                     <div class="prof-rez-detail-label">Okres wynajmu</div>
                     <div class="prof-rez-detail-value">${formatDate(start)} – ${formatDate(end)}</div>
                 </div>
-                <div class="prof-rez-detail penalty">
+                <div class="prof-rez-detail${penalty ? ' penalty' : ''}">
                     <div class="prof-rez-detail-label">Naliczone kary</div>
-                    <div class="prof-rez-detail-value">—</div>
+                    <div class="prof-rez-detail-value">${penaltyValueHtml}</div>
                 </div>
             </div>
         </div>`;
@@ -422,7 +398,94 @@
         if (!container) return;
 
         try {
-            const response = await fetch('/api/reservations/active', {
+            const [reservationsRes, penaltiesRes] = await Promise.all([
+                fetch('/api/reservations/active', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    credentials: 'same-origin',
+                }),
+                fetch('/api/payments/penalties', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    credentials: 'same-origin',
+                }).catch(() => null),
+            ]);
+
+            if (!reservationsRes.ok) {
+                throw new Error('Nie udało się pobrać aktywnych rezerwacji.');
+            }
+
+            const json = await reservationsRes.json();
+            const reservations = Array.isArray(json.data) ? json.data : [];
+
+            const penaltiesByReservation = new Map();
+            if (penaltiesRes && penaltiesRes.ok) {
+                const penaltiesJson = await penaltiesRes.json().catch(() => null);
+                const penalties = Array.isArray(penaltiesJson?.data) ? penaltiesJson.data : [];
+                penalties.forEach((p) => {
+                    if (p.reservation_id !== null && p.reservation_id !== undefined) {
+                        penaltiesByReservation.set(String(p.reservation_id), p);
+                    }
+                });
+            }
+
+            container.innerHTML = reservations.length
+                ? reservations.map((r) => renderActiveReservationCard(r, penaltiesByReservation)).join('')
+                : '<div class="prof-rez-empty" style="padding:24px;color:#6b7280;font-size:13px;text-align:center;">Nie masz aktywnych rezerwacji.</div>';
+        } catch (error) {
+            container.innerHTML = '<div class="prof-rez-empty" style="padding:24px;color:#6b7280;font-size:13px;text-align:center;">Nie udało się pobrać aktywnych rezerwacji.</div>';
+            console.error(error);
+        }
+    }
+
+    // ==============================================================
+    // Zapisane metody płatności
+    // ==============================================================
+    function paymentLogoClass(brand) {
+        const b = String(brand || '').toLowerCase();
+        if (b === 'visa') return 'visa';
+        if (b === 'mastercard') return 'mc';
+        return 'generic';
+    }
+
+    function paymentLogoText(brand) {
+        const b = String(brand || '').toLowerCase();
+        if (b === 'visa') return 'VISA';
+        if (b === 'mastercard') return 'MC';
+        if (b === 'amex' || b === 'american_express') return 'AMEX';
+        return (brand || 'KARTA').toUpperCase().slice(0, 4);
+    }
+
+    function renderPaymentMethodCard(pm) {
+        const logoClass = paymentLogoClass(pm.brand);
+        const logoText = paymentLogoText(pm.brand);
+        const expiry = pm.exp_month && pm.exp_year
+            ? `Ważna do ${String(pm.exp_month).padStart(2, '0')}/${pm.exp_year}`
+            : '';
+
+        return `
+        <div class="prof-payment-card" data-payment-method-id="${escapeHtml(pm.id)}">
+            <div class="prof-payment-logo ${logoClass}">${escapeHtml(logoText)}</div>
+            <div class="prof-payment-info">
+                <div class="prof-payment-number">•••• ${escapeHtml(pm.last4 || '----')}</div>
+                <div class="prof-payment-expiry">
+                    ${pm.cardholder_name ? escapeHtml(pm.cardholder_name) + ' · ' : ''}${escapeHtml(expiry)}
+                </div>
+            </div>
+            <button type="button" class="prof-payment-remove" data-remove-payment-method="${escapeHtml(pm.id)}" title="Usuń kartę" aria-label="Usuń kartę">✕</button>
+        </div>`;
+    }
+
+    async function loadPaymentMethods() {
+        const container = document.getElementById('prof-payment-methods');
+        if (!container) return;
+
+        try {
+            const response = await fetch('/api/payments/payment-methods', {
                 headers: {
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -430,18 +493,38 @@
                 credentials: 'same-origin',
             });
 
-            if (!response.ok) {
-                throw new Error('Nie udało się pobrać aktywnych rezerwacji.');
-            }
+            if (!response.ok) throw new Error('Nie udało się pobrać metod płatności.');
 
-            const json = await response.json();
-            const reservations = Array.isArray(json.data) ? json.data : [];
+            const methods = await response.json();
 
-            container.innerHTML = reservations.length
-                ? reservations.map(renderActiveReservationCard).join('')
-                : '<div class="prof-rez-empty" style="padding:24px;color:#6b7280;font-size:13px;text-align:center;">Nie masz aktywnych rezerwacji.</div>';
+            container.innerHTML = Array.isArray(methods) && methods.length
+                ? methods.map(renderPaymentMethodCard).join('')
+                : '<div style="grid-column:1/-1;font-size:13px;color:#6b7280;">Nie masz jeszcze zapisanych metod płatności. Możesz zapisać kartę przy najbliższej płatności za wynajem.</div>';
+
+            container.querySelectorAll('[data-remove-payment-method]').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm('Usunąć tę zapisaną kartę?')) return;
+                    try {
+                        const res = await fetch(`/api/payments/payment-methods/${btn.dataset.removePaymentMethod}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            },
+                            credentials: 'same-origin',
+                        });
+                        if (res.ok || res.status === 204) {
+                            loadPaymentMethods();
+                        } else {
+                            alert('Nie udało się usunąć karty.');
+                        }
+                    } catch (e) {
+                        alert('Błąd sieci przy usuwaniu karty.');
+                    }
+                });
+            });
         } catch (error) {
-            container.innerHTML = '<div class="prof-rez-empty" style="padding:24px;color:#6b7280;font-size:13px;text-align:center;">Nie udało się pobrać aktywnych rezerwacji.</div>';
+            container.innerHTML = '<div style="grid-column:1/-1;font-size:13px;color:#6b7280;">Nie udało się pobrać zapisanych metod płatności.</div>';
             console.error(error);
         }
     }
@@ -564,6 +647,7 @@
 
         loadActiveReservations();
         loadNotifications();
+        loadPaymentMethods();
     });
 })();
 </script>

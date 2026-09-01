@@ -21,6 +21,7 @@ class Payment extends Model
         'totalPrice',
         'status',
         'stripe_payment_intent_id',
+        'stripe_invoice_id',
         'payment_method_id',
         'payment_type',
         'idempotency_key',

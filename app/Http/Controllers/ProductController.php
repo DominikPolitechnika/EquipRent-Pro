@@ -91,9 +91,6 @@ class ProductController extends Controller
         return view('pages.catalog', compact('products', 'categories'));
     }
 
-    /**
-     * Panel administracyjny: pełny inwentarz (również sprzęt w serwisie).
-     */
     public function inventory(Request $request)
     {
         $categories = EquipmentCategory::query()
@@ -159,7 +156,7 @@ class ProductController extends Controller
                         ->where('endDate', '>=', $from);
                 });
             } catch (\Throwable $e) {
-                // Niepoprawna data jest ignorowana; pozostałe filtry nadal działają.
+
             }
         }
 
@@ -221,9 +218,6 @@ class ProductController extends Controller
         return view('product_edit', compact('product', 'categories', 'images'));
     }
 
-    /**
-     * Zmiana dostępności: true = Sprawny, false = Serwis.
-     */
     public function toggleAvailability(Request $request, int $id)
     {
         $product = Product::where('is_deleted', false)->findOrFail($id);
@@ -251,12 +245,6 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Edycja danych produktu i przebudowanie galerii.
-     *
-     * Pierwsze zdjęcie: 370x240, kolejne: 680x420.
-     * Skalowanie odbywa się z zachowaniem proporcji (bez rozciągania).
-     */
     public function update(Request $request, int $id)
     {
         $product = Product::where('is_deleted', false)->findOrFail($id);
@@ -303,7 +291,6 @@ class ProductController extends Controller
         try {
             $disk->makeDirectory($directory);
 
-            // Najpierw odczytujemy zachowane pliki, dopiero potem czyścimy katalog.
             $items = [];
             foreach ($existing as $path) {
                 $items[] = [
@@ -311,7 +298,7 @@ class ProductController extends Controller
                     'extension' => 'avif',
                 ];
             }
-            // Wszystkie zdjęcia są zapisywane od nowa, dzięki czemu kolejność jest jednoznaczna.
+
             foreach ($disk->files($directory) as $oldPath) {
                 $disk->delete($oldPath);
             }
@@ -323,15 +310,14 @@ class ProductController extends Controller
             }
 
             foreach ($items as $index => $item) {
-                // Pierwsze zdjęcie jest jednocześnie głównym zdjęciem produktu i miniaturą.
                 if ($index === 0) {
-                    $this->saveResizedAvif($item['contents'], $disk, "{$directory}/1.avif", 680, 420);
-                    $this->saveResizedAvif($item['contents'], $disk, "{$directory}/1_thumb.avif", 370, 240);
+                    $this->saveResizedAvif($item['contents'], $disk, "{$directory}/1.avif", 1280, 720);
+                    $this->saveResizedAvif($item['contents'], $disk, "{$directory}/1_thumb.avif", 480, 240);
                     continue;
                 }
 
                 $target = ($index + 1) . '.avif';
-                $this->saveResizedAvif($item['contents'], $disk, "{$directory}/{$target}", 680, 420);
+                $this->saveResizedAvif($item['contents'], $disk, "{$directory}/{$target}", 1280, 720);
             }
         } catch (\Throwable $e) {
             return back()
@@ -353,9 +339,6 @@ class ProductController extends Controller
             ->with('success', 'Produkt został zaktualizowany.');
     }
 
-    /**
-     * Soft-delete produktu. Dane rezerwacji i napraw pozostają w bazie.
-     */
     public function destroy(Request $request, int $id)
     {
         $product = Product::findOrFail($id);
@@ -376,6 +359,7 @@ class ProductController extends Controller
 
         $validator = Validator::make($request->all(), [
             'description' => ['required', 'string', 'max:5000'],
+            'serviceman_name' => ['required', 'string', 'max:255'],
             'repairCost' => ['required', 'integer', 'min:0'],
             'date' => ['required', 'date'],
         ]);
@@ -391,6 +375,7 @@ class ProductController extends Controller
             'productId' => $product->id,
             'lastReservationId' => null,
             'description' => $request->input('description'),
+            'serviceman_name' => $request->input('serviceman_name'),
             'userId' => $request->user()->id,
             'repairCost' => (int) $request->input('repairCost'),
             'createdAt' => Carbon::parse($request->input('date'))->startOfDay(),
@@ -431,7 +416,7 @@ class ProductController extends Controller
             ->where('isDeleted', false)
             ->orderByDesc('createdAt')
             ->get([
-                'id', 'description', 'userId', 'repairCost',
+                'id', 'description', 'serviceman_name', 'repairCost',
                 'createdAt', 'updatedAt', 'lastReservationId',
             ]);
 
@@ -445,22 +430,21 @@ class ProductController extends Controller
     {
         Product::findOrFail($id);
 
-        $reservations = DB::table('reservation')
-            ->where('productId', $id)
-            ->where('isDeleted', false)
-            ->orderByDesc('startDate')
+        $reservations = DB::table('reservation as r')
+            ->leftJoin('users as u', 'u.id', '=', 'r.userId')
+            ->where('r.productId', $id)
+            ->where('r.isDeleted', false)
+            ->orderByDesc('r.startDate')
             ->get([
-                'id', 'userId', 'productId', 'startDate', 'endDate',
-                'totalPrice', 'statusOfReservation', 'createdAt', 'updatedAt',
+                'r.id', 'r.productId', 'r.startDate', 'r.endDate',
+                'r.totalPrice', 'r.statusOfReservation', 'r.createdAt', 'r.updatedAt',
+                DB::raw("TRIM(CONCAT(COALESCE(u.name, ''), ' ', COALESCE(u.surname, ''))) as userName"),
             ]);
 
         return response()->json(['data' => $reservations]);
     }
 
-    /**
-     * Skaluje zdjęcie bez zmiany proporcji i umieszcza je na środku płótna.
-     * Wymaga GD z obsługą AVIF, zgodnie z dotychczasowym formatem projektu.
-     */
+
     private function saveResizedAvif(string $contents, $disk, string $path, int $targetWidth, int $targetHeight): void
     {
         if (!function_exists('imageavif')) {

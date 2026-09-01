@@ -155,6 +155,10 @@
                                 <input type="text" id="repair-description" class="pe-form-input" placeholder="Opis usterki...">
                             </div>
                             <div class="pe-form-group">
+                                <label class="pe-form-label">Serwisant</label>
+                                <input type="text" id="repair-serviceman" class="pe-form-input" maxlength="255" placeholder="Imię i nazwisko serwisanta">
+                            </div>
+                            <div class="pe-form-group">
                                 <label class="pe-form-label">Koszt</label>
                                 <input type="number" id="repair-cost" class="pe-form-input" min="0" step="1" placeholder="PLN">
                             </div>
@@ -310,7 +314,6 @@
             return;
         }
 
-        // Kolejny wybór DODAJE pliki do dotychczasowej listy zamiast ją zastępować.
         const existingKeys=new Set(selectedPhotos.map(photoKey));
         files.forEach(file=>{
             const key=photoKey(file);
@@ -370,7 +373,7 @@
                 <tr>
                     <td>${formatDate(x.createdAt)}</td>
                     <td>${escapeHtml(x.description)}</td>
-                    <td>Użytkownik #${escapeHtml(x.userId)}</td>
+                    <td>${escapeHtml(x.serviceman_name || '—')}</td>
                     <td class="right">${Number(x.repairCost||0).toLocaleString('pl-PL')} zł</td>
                     <td class="right"><button type="button" class="pe-delete-repair" data-repair-id="${x.id}">Usuń</button></td>
                 </tr>`).join('') : '<tr><td colspan="5" class="pe-empty">Brak wpisów napraw.</td></tr>';
@@ -379,16 +382,18 @@
 
     document.getElementById('pe-repair-add').addEventListener('click',async()=>{
         const desc=document.getElementById('repair-description').value.trim();
+        const serviceman=document.getElementById('repair-serviceman').value.trim();
         const cost=document.getElementById('repair-cost').value;
         const date=document.getElementById('repair-date').value;
         const err=document.getElementById('pe-repair-error');
         err.textContent='';
-        if(!desc || cost==='' || !date){err.textContent='Uzupełnij opis, koszt i datę.';return;}
+        if(!desc || !serviceman || cost==='' || !date){err.textContent='Uzupełnij opis, serwisanta, koszt i datę.';return;}
         try{
-            const r=await fetch(`/produkt/${id}/naprawy`,{method:'POST',headers,body:JSON.stringify({description:desc,repairCost:Number(cost),date})});
+            const r=await fetch(`/produkt/${id}/naprawy`,{method:'POST',headers,body:JSON.stringify({description:desc,serviceman_name:serviceman,repairCost:Number(cost),date})});
             const data=await r.json();
             if(!r.ok) throw new Error(data.message||'Nie udało się dodać naprawy.');
             document.getElementById('repair-description').value='';
+            document.getElementById('repair-serviceman').value='';
             document.getElementById('repair-cost').value='';
             await loadRepairs();
         }catch(e){err.textContent=e.message;}
@@ -413,7 +418,7 @@
                 if(['completed','finished','zakończona','returned','zwrócona'].includes(status))cls='done';
                 if(['cancelled','canceled','anulowana'].includes(status))cls='late';
                 return `<tr>
-                    <td><div class="pe-cell-strong">Użytkownik #${escapeHtml(x.userId)}</div><div class="pe-rez-user-id">ID rezerwacji: ${escapeHtml(x.id)}</div></td>
+                    <td><div class="pe-cell-strong">${escapeHtml(x.userName || 'Nieznany użytkownik')}</div><div class="pe-rez-user-id">ID rezerwacji: ${escapeHtml(x.id)}</div></td>
                     <td>${formatDate(x.startDate)} – ${formatDate(x.endDate)}</td>
                     <td><span class="pe-rez-badge ${cls}">${escapeHtml(x.statusOfReservation)}</span></td>
                     <td class="right pe-cell-price">${Number(x.totalPrice||0).toLocaleString('pl-PL')} zł</td>

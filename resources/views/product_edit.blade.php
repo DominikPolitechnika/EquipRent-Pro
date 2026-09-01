@@ -224,17 +224,70 @@
     const photoError = document.getElementById('pe-photo-error');
     const removed = new Set();
 
+    let selectedPhotos = [];
+
     function escapeHtml(s){return String(s ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");}
     function formatDate(v){ if(!v) return '—'; const d=new Date(v); return Number.isNaN(d.getTime()) ? escapeHtml(v) : d.toLocaleDateString('pl-PL'); }
 
     function updateGalleryCount(){
-        const existing = [...gallery.querySelectorAll('.pe-gallery-thumb:not(.removed)')].length;
-        const added = photoInput.files.length;
+        const existing = [...gallery.querySelectorAll('.pe-gallery-thumb:not(.removed):not(.pe-new-photo)')].length;
+        const added = selectedPhotos.length;
         countEl.textContent = existing + added;
         photoError.textContent = (existing + added < 3) ? 'Produkt musi mieć co najmniej 3 zdjęcia.' : '';
     }
 
+    function syncPhotoInput(){
+        const transfer = new DataTransfer();
+        selectedPhotos.forEach(file => transfer.items.add(file));
+        photoInput.files = transfer.files;
+    }
+
+    function photoKey(file){
+        return [file.name, file.size, file.lastModified, file.type].join('|');
+    }
+
+    function renderNewPhotos(){
+        gallery.querySelectorAll('.pe-new-photo').forEach(x => {
+            const img = x.querySelector('img');
+            if(img && img.dataset.objectUrl) URL.revokeObjectURL(img.dataset.objectUrl);
+            x.remove();
+        });
+
+        selectedPhotos.forEach((file, index) => {
+            const box=document.createElement('div');
+            box.className='pe-gallery-thumb pe-new-photo';
+            box.dataset.photoIndex=String(index);
+
+            const img=document.createElement('img');
+            img.alt=file.name;
+            img.src=URL.createObjectURL(file);
+            img.dataset.objectUrl=img.src;
+            box.appendChild(img);
+
+            const btn=document.createElement('button');
+            btn.type='button';
+            btn.title='Usuń nowe zdjęcie';
+            btn.textContent='×';
+            btn.dataset.removeNewPhoto=String(index);
+            box.appendChild(btn);
+
+            gallery.insertBefore(box,gallery.querySelector('.pe-gallery-upload'));
+        });
+    }
+
     gallery.addEventListener('click', function(e){
+        const newBtn=e.target.closest('[data-remove-new-photo]');
+        if(newBtn){
+            const index=Number(newBtn.dataset.removeNewPhoto);
+            if(Number.isInteger(index) && index >= 0 && index < selectedPhotos.length){
+                selectedPhotos.splice(index,1);
+                syncPhotoInput();
+                renderNewPhotos();
+                updateGalleryCount();
+            }
+            return;
+        }
+
         const btn=e.target.closest('[data-remove-image]');
         if(!btn) return;
         const name=btn.dataset.removeImage;
@@ -250,18 +303,28 @@
     });
 
     photoInput.addEventListener('change', function(){
-        const files=[...this.files];
-        if(!files.length){updateGalleryCount();return;}
-        // Pokazujemy podgląd nowych zdjęć. Ich kolejność odpowiada kolejności w input.
-        gallery.querySelectorAll('.pe-new-photo').forEach(x=>x.remove());
-        files.forEach((file)=>{
-            if(!file.type.startsWith('image/')) return;
-            const box=document.createElement('div');
-            box.className='pe-gallery-thumb pe-new-photo';
-            const img=document.createElement('img'); img.alt=file.name; img.src=URL.createObjectURL(file);
-            box.appendChild(img); gallery.insertBefore(box,gallery.querySelector('.pe-gallery-upload'));
+        const files=[...this.files].filter(file => file.type.startsWith('image/'));
+        if(!files.length){
+            syncPhotoInput();
+            updateGalleryCount();
+            return;
+        }
+
+        // Kolejny wybór DODAJE pliki do dotychczasowej listy zamiast ją zastępować.
+        const existingKeys=new Set(selectedPhotos.map(photoKey));
+        files.forEach(file=>{
+            const key=photoKey(file);
+            if(!existingKeys.has(key)){
+                selectedPhotos.push(file);
+                existingKeys.add(key);
+            }
         });
+
+        syncPhotoInput();
+        renderNewPhotos();
         updateGalleryCount();
+
+        this.value='';
     });
 
     switchEl.addEventListener('change', async function(){
@@ -287,8 +350,10 @@
     });
 
     form.addEventListener('submit', function(e){
+        // Upewniamy się, że formularz zawsze wysyła aktualny zestaw nowych zdjęć.
+        syncPhotoInput();
         const existing=[...gallery.querySelectorAll('.pe-gallery-thumb:not(.removed):not(.pe-new-photo)')].length;
-        if(existing + photoInput.files.length < 3){
+        if(existing + selectedPhotos.length < 3){
             e.preventDefault();
             photoError.textContent='Nie można zapisać produktu: wymagane są minimum 3 zdjęcia.';
             gallery.scrollIntoView({behavior:'smooth',block:'center'});

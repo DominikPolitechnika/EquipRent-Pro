@@ -386,7 +386,7 @@
 /* ---- KONSERWACJA: formularz dodawania ---- */
 .pe-maint-form {
     display: grid;
-    grid-template-columns: 1fr 140px 150px auto;
+    grid-template-columns: minmax(220px, 1.7fr) minmax(180px, 1.2fr) 120px 150px auto;
     gap: 12px;
     align-items: end;
     margin-bottom: 4px;
@@ -408,6 +408,21 @@
     height: fit-content;
 }
 .pe-maint-add-btn:hover { background: #075071; }
+
+.pe-maint-add-btn {
+    align-self: end;
+    justify-self: end;
+    white-space: nowrap;
+    min-width: 92px;
+}
+
+@media (max-width: 1120px) and (min-width: 961px) {
+    .pe-maint-form {
+        grid-template-columns: minmax(180px, 1.5fr) minmax(160px, 1.2fr) 105px 135px auto;
+        gap: 10px;
+    }
+}
+
 
 .pe-maint-section-label {
     font-size: 10px;

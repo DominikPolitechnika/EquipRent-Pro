@@ -255,7 +255,7 @@ class ProductController extends Controller
             'equipment_category_id' => ['required', 'integer', 'exists:equipment_category,id'],
             'one_day_price' => ['required', 'integer', 'min:0'],
             'photos' => ['nullable', 'array'],
-            'photos.*' => ['image', 'mimes:jpg,jpeg,png,webp,avif', 'max:10240'],
+            'photos.*' => ['mimes:jpg,jpeg,png,webp,avif', 'max:10240'],
             'remove_photos' => ['nullable', 'array'],
             'remove_photos.*' => ['string'],
             'is_available' => ['nullable', 'boolean'],
@@ -311,13 +311,13 @@ class ProductController extends Controller
 
             foreach ($items as $index => $item) {
                 if ($index === 0) {
-                    $this->saveResizedAvif($item['contents'], $disk, "{$directory}/1.avif", 1280, 720);
+                    $this->saveResizedAvif($item['contents'], $disk, "{$directory}/1.avif", 1200, 1200);
                     $this->saveResizedAvif($item['contents'], $disk, "{$directory}/1_thumb.avif", 480, 240);
                     continue;
                 }
 
                 $target = ($index + 1) . '.avif';
-                $this->saveResizedAvif($item['contents'], $disk, "{$directory}/{$target}", 1280, 720);
+                $this->saveResizedAvif($item['contents'], $disk, "{$directory}/{$target}", 1200, 1200);
             }
         } catch (\Throwable $e) {
             return back()
@@ -423,9 +423,6 @@ class ProductController extends Controller
         return response()->json(['data' => $repairs]);
     }
 
-    /**
-     * Rezerwacje produktu dla panelu administracyjnego.
-     */
     public function reservations(int $id)
     {
         Product::findOrFail($id);
@@ -438,12 +435,12 @@ class ProductController extends Controller
             ->get([
                 'r.id', 'r.productId', 'r.startDate', 'r.endDate',
                 'r.totalPrice', 'r.statusOfReservation', 'r.createdAt', 'r.updatedAt',
-                DB::raw("TRIM(CONCAT(COALESCE(u.name, ''), ' ', COALESCE(u.surname, ''))) as userName"),
+                'r.userId',
+                DB::raw("NULLIF(TRIM(CONCAT(COALESCE(u.name, ''), ' ', COALESCE(u.surname, ''))), '') as \"userName\""),
             ]);
 
         return response()->json(['data' => $reservations]);
     }
-
 
     private function saveResizedAvif(string $contents, $disk, string $path, int $targetWidth, int $targetHeight): void
     {

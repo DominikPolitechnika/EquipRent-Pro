@@ -135,7 +135,7 @@
                                     <input type="file" id="pe-photos" name="photos[]" accept="image/jpeg,image/png,image/webp,image/avif" hidden multiple>
                                 </label>
                             </div>
-                            <div class="pe-gallery-help">Minimum 3 zdjęcia. Pierwsze zapisane zdjęcie tworzy miniaturę 370×240, pozostałe są przygotowywane do 680×420. Proporcje obrazu są zachowywane.</div>
+                            <div class="pe-gallery-help">Minimum 3 zdjęcia. Pierwsze zapisane zdjęcie tworzy miniaturę 480x240, pozostałe są przygotowywane do 1200x1200. Proporcje obrazu są zachowywane.</div>
                             <div id="pe-photo-error" class="pe-row-error"></div>
                         </div>
                     </form>
@@ -353,7 +353,6 @@
     });
 
     form.addEventListener('submit', function(e){
-        // Upewniamy się, że formularz zawsze wysyła aktualny zestaw nowych zdjęć.
         syncPhotoInput();
         const existing=[...gallery.querySelectorAll('.pe-gallery-thumb:not(.removed):not(.pe-new-photo)')].length;
         if(existing + selectedPhotos.length < 3){

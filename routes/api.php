@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\StripeWebhookController;
 use App\Http\Controllers\Api\StatisticsController;
+use App\Http\Controllers\Api\AdminReservationController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -29,3 +30,14 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('statistics')->group(functi
     Route::get('/weekly-income', [StatisticsController::class, 'weeklyIncome']);
     Route::get('/latest-reservations', [StatisticsController::class, 'latestReservations']);
 });
+
+
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/reservations', [AdminReservationController::class, 'index']);
+    Route::get('/reservations/{id}', [AdminReservationController::class, 'show']);
+    Route::patch('/reservations/{id}', [AdminReservationController::class, 'update']);
+});
+
+
+
+

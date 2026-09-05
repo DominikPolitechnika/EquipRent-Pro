@@ -91,12 +91,12 @@ class StatisticsController extends Controller
         $sevenDaysAgo = $now->copy()->subDays(6)->startOfDay();
 
         $byDay = Reservation::select(
-                DB::raw('DATE(createdAt) as day'),
-                DB::raw('SUM(totalPrice) as total')
+                DB::raw('DATE("createdAt") as day'),
+                DB::raw('SUM("totalPrice") as total')
             )
             ->where('isDeleted', false)
             ->whereBetween('createdAt', [$sevenDaysAgo, $now])
-            ->groupBy(DB::raw('DATE(createdAt)'))
+            ->groupBy(DB::raw('DATE("createdAt")'))
             ->pluck('total', 'day');
 
         $days = [];
@@ -105,20 +105,24 @@ class StatisticsController extends Controller
         for ($i = 6; $i >= 0; $i--) {
             $date = $now->copy()->subDays($i)->format('Y-m-d');
             $income = (int) ($byDay[$date] ?? 0);
+
             $totalIncome += $income;
 
-            $days[] = ['date' => $date, 'income' => $income];
+            $days[] = [
+                'date' => $date,
+                'income' => $income,
+            ];
         }
 
         return response()->json([
             'totalIncome' => $totalIncome,
-            'days'        => $days,
+            'days' => $days,
         ]);
     }
 
     public function latestReservations(): JsonResponse
     {
-        $reservations = Reservation::with(['user', 'product.equipmentCategory'])
+        $reservations = Reservation::with(['user', 'product.equipment_category'])
             ->where('isDeleted', false)
             ->orderByDesc('createdAt')
             ->limit(4)
@@ -130,7 +134,7 @@ class StatisticsController extends Controller
                 'surname'         => $r->user?->surname,
                 'avatarUrl'       => $r->user?->getAvatarUrl(),
                 'productTitle'    => $r->product?->title,
-                'productCategory' => $r->product?->equipmentCategory?->name,
+                'productCategory' => $r->product?->equipment_category?->name,
                 'startDate'       => optional($r->startDate)->format('Y-m-d'),
                 'endDate'         => optional($r->endDate)->format('Y-m-d'),
                 'status'          => $r->statusOfReservation,

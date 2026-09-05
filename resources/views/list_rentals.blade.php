@@ -109,145 +109,39 @@
                             <circle cx="11" cy="11" r="8"/>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                         </svg>
-                        <input type="text" placeholder="Szukaj klienta, ID faktury lub numeru seryjnego...">
+                        <input type="text" id="reservation-search" placeholder="Szukaj klienta, ID faktury lub numeru seryjnego...">
                     </div>
                     <button type="button" class="lr-tool-btn">
                         Najnowsze
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
-                    <button type="button" class="lr-tool-btn muted">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
-                        Filtruj Status
-                    </button>
-                    <button type="button" class="lr-tool-btn muted">
+                    <select id="status-filter" class="lr-tool-btn muted">
+                        <option value="">Wszystkie statusy</option>
+                        <option value="active">Aktywne</option>
+                        <option value="completed">Oddane</option>
+                        <option value="repair">Naprawa</option>
+                        <option value="cancelled">Anulowane</option>
+                    </select>
+                    <button type="button" class="lr-tool-btn muted" id="export-csv-btn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         Eksportuj CSV
                     </button>
                 </div>
 
-                {{-- KARTA 1 - po terminie --}}
-                <div class="lr-card">
-                    <div class="lr-thumb"></div>
-                    <div class="lr-col lr-col-client">
-                        <span class="lr-col-label">Klient</span>
-                        <span class="lr-col-val"><span class="lr-skel" style="width:110px;height:14px;"></span></span>
-                    </div>
-                    <div class="lr-col lr-col-equip">
-                        <span class="lr-col-label">Sprzęt</span>
-                        <span class="lr-col-val"><span class="lr-skel" style="width:130px;height:14px;"></span></span>
-                        <span class="lr-col-sub"><span class="lr-skel" style="width:90px;height:11px;"></span></span>
-                    </div>
-                    <div class="lr-col lr-col-period">
-                        <span class="lr-col-label">Okres wynajmu</span>
-                        <div class="lr-period">
-                            <span class="lr-skel" style="width:36px;height:14px;"></span>
-                            <span class="arrow">→</span>
-                            <span class="lr-skel" style="width:36px;height:14px;"></span>
-                        </div>
-                    </div>
-                    <div class="lr-col lr-col-value">
-                        <span class="lr-col-label">Wartość całkowita</span>
-                        <span class="lr-value-main"><span class="lr-skel" style="width:110px;height:18px;"></span></span>
-                        <span class="lr-value-penalty"><span class="lr-skel" style="width:90px;height:11px;"></span></span>
-                    </div>
-                    <span class="lr-badge late"><span class="lr-skel" style="width:80px;height:11px;"></span></span>
-                    <div class="lr-actions">
-                        <button type="button" class="lr-icon-btn" aria-label="Edytuj">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                        <button type="button" class="lr-icon-btn lr-cancel-btn" aria-label="Anuluj">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                        </button>
-                        <button type="button" class="lr-action-btn primary">Oznacz zwrot</button>
-                    </div>
-                </div>
-
-                {{-- KARTA 2 - wypożyczone --}}
-                <div class="lr-card">
-                    <div class="lr-thumb"></div>
-                    <div class="lr-col lr-col-client">
-                        <span class="lr-col-label">Klient</span>
-                        <span class="lr-col-val"><span class="lr-skel" style="width:120px;height:14px;"></span></span>
-                    </div>
-                    <div class="lr-col lr-col-equip">
-                        <span class="lr-col-label">Sprzęt</span>
-                        <span class="lr-col-val"><span class="lr-skel" style="width:140px;height:14px;"></span></span>
-                        <span class="lr-col-sub"><span class="lr-skel" style="width:90px;height:11px;"></span></span>
-                    </div>
-                    <div class="lr-col lr-col-period">
-                        <span class="lr-col-label">Okres wynajmu</span>
-                        <div class="lr-period">
-                            <span class="lr-skel" style="width:36px;height:14px;"></span>
-                            <span class="arrow">→</span>
-                            <span class="lr-skel" style="width:36px;height:14px;"></span>
-                        </div>
-                    </div>
-                    <div class="lr-col lr-col-value">
-                        <span class="lr-col-label">Wartość całkowita</span>
-                        <span class="lr-value-main"><span class="lr-skel" style="width:100px;height:18px;"></span></span>
-                        <span class="lr-value-daily"><span class="lr-skel" style="width:100px;height:11px;"></span></span>
-                    </div>
-                    <span class="lr-badge rented"><span class="lr-skel" style="width:80px;height:11px;"></span></span>
-                    <div class="lr-actions">
-                        <button type="button" class="lr-icon-btn" aria-label="Edytuj">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                        <button type="button" class="lr-icon-btn lr-cancel-btn" aria-label="Anuluj">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                        </button>
-                        <button type="button" class="lr-action-btn soft">Szczegóły</button>
-                    </div>
-                </div>
-
-                {{-- KARTA 3 - potwierdzone --}}
-                <div class="lr-card">
-                    <div class="lr-thumb"></div>
-                    <div class="lr-col lr-col-client">
-                        <span class="lr-col-label">Klient</span>
-                        <span class="lr-col-val"><span class="lr-skel" style="width:110px;height:14px;"></span></span>
-                    </div>
-                    <div class="lr-col lr-col-equip">
-                        <span class="lr-col-label">Sprzęt</span>
-                        <span class="lr-col-val"><span class="lr-skel" style="width:130px;height:14px;"></span></span>
-                        <span class="lr-col-sub"><span class="lr-skel" style="width:90px;height:11px;"></span></span>
-                    </div>
-                    <div class="lr-col lr-col-period">
-                        <span class="lr-col-label">Okres wynajmu</span>
-                        <div class="lr-period">
-                            <span class="lr-skel" style="width:36px;height:14px;"></span>
-                            <span class="arrow">→</span>
-                            <span class="lr-skel" style="width:36px;height:14px;"></span>
-                        </div>
-                    </div>
-                    <div class="lr-col lr-col-value">
-                        <span class="lr-col-label">Wartość całkowita</span>
-                        <span class="lr-value-main"><span class="lr-skel" style="width:100px;height:18px;"></span></span>
-                        <span class="lr-value-daily"><span class="lr-skel" style="width:100px;height:11px;"></span></span>
-                    </div>
-                    <span class="lr-badge confirmed"><span class="lr-skel" style="width:80px;height:11px;"></span></span>
-                    <div class="lr-actions">
-                        <button type="button" class="lr-icon-btn" aria-label="Edytuj">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                        <button type="button" class="lr-icon-btn lr-cancel-btn" aria-label="Anuluj">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                        </button>
-                        <button type="button" class="lr-action-btn soft">Wydaj sprzęt</button>
-                    </div>
-                </div>
+                <div id="reservations-list"></div>
 
                 {{-- STOPKA --}}
                 <div class="lr-footer">
-                    <div class="lr-footer-count">
-                        Wyświetlono <span class="lr-skel" style="width:14px;height:11px;"></span> z <span class="lr-skel" style="width:24px;height:11px;"></span> sztuk sprzętu
+                    <div
+                        class="lr-footer-count"
+                        id="reservations-count"
+                    >
+                        Wyświetlono 0 z 0 rezerwacji
                     </div>
-                    <div class="lr-pagination">
-                        <a href="#" class="lr-page nav">‹</a>
-                        <a href="#" class="lr-page active">1</a>
-                        <a href="#" class="lr-page">2</a>
-                        <a href="#" class="lr-page">3</a>
-                        <a href="#" class="lr-page nav">›</a>
-                    </div>
+                    <div
+                        class="lr-pagination"
+                        id="reservations-pagination"
+                    ></div>
                 </div>
 
             </div>
@@ -276,40 +170,740 @@
     </div>
 </div>
 
+<div class="lr-modal-backdrop" id="lr-edit-modal">
+    <div class="lr-modal">
+        <h3 class="lr-modal-title">Edytuj rezerwację</h3>
+
+        <div class="lr-edit-form">
+
+            <div class="lr-edit-info">
+                <div>Klient: <strong id="edit-client">-</strong></div>
+                <div>Sprzęt: <strong id="edit-product">-</strong></div>
+            </div>
+
+            <div class="lr-edit-field">
+                <label for="edit-start-date">Data rozpoczęcia</label>
+                <input type="date" id="edit-start-date">
+            </div>
+
+            <div class="lr-edit-field">
+                <label for="edit-end-date">Data zakończenia</label>
+                <input type="date" id="edit-end-date">
+            </div>
+
+            <div class="lr-edit-field">
+                <label for="edit-status">Status</label>
+
+                <select id="edit-status">
+                    <option value="pending">Oczekująca</option>
+                    <option value="confirmed">Zarezerwowana</option>
+                    <option value="active">Aktywna</option>
+                    <option value="completed">Zakończona</option>
+                    <option value="cancelled">Anulowana</option>
+                    <option value="repair">Naprawa</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="lr-modal-actions" style="margin-top:24px;">
+            <button
+                type="button"
+                class="lr-modal-btn lr-modal-btn-cancel"
+                id="lr-edit-cancel"
+            >
+                Wróć
+            </button>
+
+            <button
+                type="button"
+                class="lr-modal-btn lr-modal-btn-confirm"
+                id="lr-edit-save"
+            >
+                Zapisz
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
-(function() {
-    const modal      = document.getElementById('lr-cancel-modal');
-    const btnCancel  = document.getElementById('lr-modal-cancel');
+document.addEventListener('DOMContentLoaded', () => {
+
+    let allReservations = [];
+    let currentPage = 1;
+
+    const reservationsPerPage = 5;
+    const reservationsCount = document.getElementById('reservations-count');
+
+    const pagination = document.getElementById('reservations-pagination');
+
+    const reservationsList = document.getElementById('reservations-list');
+    const reservationSearch = document.getElementById('reservation-search');
+    const statusFilter = document.getElementById('status-filter');
+
+    const modal = document.getElementById('lr-cancel-modal');
+    const btnCancel = document.getElementById('lr-modal-cancel');
     const btnConfirm = document.getElementById('lr-modal-confirm');
-    const triggers   = document.querySelectorAll('.lr-cancel-btn');
 
-    if (!modal) return;
+    const editModal = document.getElementById('lr-edit-modal');
+    const editStartDate = document.getElementById('edit-start-date');
+    const editEndDate = document.getElementById('edit-end-date');
+    const editStatus = document.getElementById('edit-status');
+    const editClient = document.getElementById('edit-client');
+    const editProduct = document.getElementById('edit-product');
+    const editCancel = document.getElementById('lr-edit-cancel');
+    const editSave = document.getElementById('lr-edit-save');
 
-    function open()  { modal.classList.add('open'); }
-    function close() { modal.classList.remove('open'); }
+    const exportCsvBtn = document.getElementById('export-csv-btn');
 
-    // Każdy przycisk X otwiera ten sam modal
-    triggers.forEach(t => t.addEventListener('click', open));
+    let editedReservationId = null;
 
-    // "Wróć" - zamyka bez akcji
-    btnCancel.addEventListener('click', close);
 
-    // "Tak, anuluj" - na razie tylko zamyka (czysty podgląd)
+    // WCZYTANIE WSZYSTKICH REZERWACJI 
+
+    function loadReservations() {
+
+        const params = new URLSearchParams();
+
+        const status = statusFilter.value;
+        const search = reservationSearch.value.trim();
+
+        if (status) {
+            params.append('status', status);
+        }
+
+        if (search) {
+            params.append('search', search);
+        }
+
+        let url = '/api/admin/reservations';
+
+        if (params.toString()) {
+            url += `?${params.toString()}`;
+        }
+
+        fetch(url, {
+            headers: {
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Błąd pobierania rezerwacji: ${response.status}`);
+            }
+
+            return response.json();
+        })
+        .then(response => {
+            allReservations = response.data ?? [];
+
+            currentPage = 1;
+
+            renderCurrentPage();
+        })
+        .catch(error => {
+            console.error('Reservations API:', error);
+
+            reservationsList.innerHTML = `
+                <div style="
+                    text-align:center;
+                    padding:40px;
+                    font-size:14px;
+                ">
+                    Nie udało się wczytać rezerwacji
+                </div>
+            `;
+        });
+    }
+
+    function renderCurrentPage() {
+
+        const totalReservations = allReservations.length;
+
+        const totalPages = Math.ceil(
+            totalReservations / reservationsPerPage
+        );
+
+        if (currentPage > totalPages && totalPages > 0) {
+            currentPage = totalPages;
+        }
+
+        const startIndex =
+            (currentPage - 1) * reservationsPerPage;
+
+        const endIndex =
+            startIndex + reservationsPerPage;
+
+        const pageReservations =
+            allReservations.slice(startIndex, endIndex);
+
+        renderReservations(pageReservations);
+
+        updatePagination(
+            totalReservations,
+            totalPages,
+            startIndex,
+            pageReservations.length
+        );
+    }
+
+    function updatePagination(
+        totalReservations,
+        totalPages,
+        startIndex,
+        visibleCount
+    ) {
+
+        if (totalReservations === 0) {
+            reservationsCount.textContent =
+                'Wyświetlono 0 z 0 rezerwacji';
+
+            pagination.innerHTML = '';
+
+            return;
+        }
+
+        const firstVisible = startIndex + 1;
+        const lastVisible = startIndex + visibleCount;
+
+        reservationsCount.textContent =
+            `Wyświetlono ${firstVisible}–${lastVisible} z ${totalReservations} rezerwacji`;
+
+        pagination.innerHTML = '';
+
+        const prevButton = document.createElement('button');
+
+        prevButton.type = 'button';
+        prevButton.className = 'lr-page nav';
+        prevButton.textContent = '‹';
+
+        prevButton.disabled = currentPage === 1;
+
+        prevButton.addEventListener('click', () => {
+
+            if (currentPage > 1) {
+
+                currentPage--;
+
+                renderCurrentPage();
+            }
+        });
+
+        pagination.appendChild(prevButton);
+
+
+        for (let page = 1; page <= totalPages; page++) {
+
+            const pageButton =
+                document.createElement('button');
+
+            pageButton.type = 'button';
+
+            pageButton.className =
+                page === currentPage
+                    ? 'lr-page active'
+                    : 'lr-page';
+
+            pageButton.textContent = page;
+
+            pageButton.addEventListener('click', () => {
+
+                currentPage = page;
+
+                renderCurrentPage();
+            });
+
+            pagination.appendChild(pageButton);
+        }
+
+
+        const nextButton = document.createElement('button');
+
+        nextButton.type = 'button';
+        nextButton.className = 'lr-page nav';
+        nextButton.textContent = '›';
+
+        nextButton.disabled =
+            currentPage === totalPages;
+
+        nextButton.addEventListener('click', () => {
+
+            if (currentPage < totalPages) {
+
+                currentPage++;
+
+                renderCurrentPage();
+            }
+        });
+
+        pagination.appendChild(nextButton);
+    }
+
+
+    // RENDEROWANIE KART
+
+    function renderReservations(reservations) {
+        reservationsList.innerHTML = '';
+
+        if (reservations.length === 0) {
+            reservationsList.innerHTML = `
+                <div style="
+                    text-align:center;
+                    padding:40px;
+                    font-size:14px;
+                ">
+                    Brak rezerwacji
+                </div>
+            `;
+
+            return;
+        }
+
+        reservations.forEach(reservation => {
+
+            const card = document.createElement('div');
+            card.className = 'lr-card';
+
+            let statusClass = 'confirmed';
+
+            if (
+                reservation.statusOfReservation === 'active' ||
+                reservation.statusOfReservation === 'rented'
+            ) {
+                statusClass = 'rented';
+            }
+
+            if (
+                reservation.statusOfReservation === 'late' ||
+                reservation.statusOfReservation === 'overdue' ||
+                reservation.statusOfReservation === 'repair' ||
+                reservation.statusOfReservation === 'cancelled'
+            ) {
+                statusClass = 'late';
+            }
+
+            card.innerHTML = `
+                <div class="lr-thumb">
+                    ${
+                        reservation.client?.avatar
+                            ? `<img src="${reservation.client.avatar}" alt="${reservation.client.name ?? 'Klient'}">`
+                            : ''
+                    }
+                </div>
+
+                <div class="lr-col lr-col-client">
+                    <span class="lr-col-label">Klient</span>
+
+                    <span class="lr-col-val">
+                        ${reservation.client?.name ?? 'Brak danych'}
+                    </span>
+                </div>
+
+                <div class="lr-col lr-col-equip">
+                    <span class="lr-col-label">Sprzęt</span>
+
+                    <span class="lr-col-val">
+                        ${reservation.product?.title ?? 'Brak danych'}
+                    </span>
+
+                    <span class="lr-col-sub">
+                        ${reservation.product?.serialNumber ?? ''}
+                    </span>
+                </div>
+
+                <div class="lr-col lr-col-period">
+                    <span class="lr-col-label">Okres wynajmu</span>
+
+                    <div class="lr-period">
+                        <span>
+                            ${formatDate(reservation.rentalPeriod?.startDate)}
+                        </span>
+
+                        <span class="arrow">→</span>
+
+                        <span>
+                            ${formatDate(reservation.rentalPeriod?.endDate)}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="lr-col lr-col-value">
+                    <span class="lr-col-label">Wartość całkowita</span>
+
+                    <span class="lr-value-main">
+                        ${formatPrice(reservation.totalPrice)}
+                    </span>
+
+                    <span class="lr-value-daily">
+                        ${reservation.rentalPeriod?.days ?? 0} dni
+                    </span>
+                </div>
+
+                <span class="lr-badge ${statusClass}">
+                    ${reservation.statusLabel ?? reservation.statusOfReservation}
+                </span>
+
+                <div class="lr-actions">
+
+                    <button
+                        type="button"
+                        class="lr-icon-btn lr-edit-btn"
+                        aria-label="Edytuj"
+                        data-id="${reservation.id}"
+                    >
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="lr-icon-btn lr-cancel-btn"
+                        aria-label="Anuluj"
+                        data-id="${reservation.id}"
+                    >
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="lr-action-btn soft"
+                        data-id="${reservation.id}"
+                    >
+                        Szczegóły
+                    </button>
+
+                </div>
+            `;
+
+            reservationsList.appendChild(card);
+        });
+    }
+
+
+    // KLIKNIĘCIA W KARTY
+
+    reservationsList.addEventListener('click', event => {
+
+        // EDYCJA
+        const editButton = event.target.closest('.lr-edit-btn');
+
+        if (editButton) {
+            const reservationId = editButton.dataset.id;
+
+            fetch(`/api/admin/reservations/${reservationId}`, {
+                headers: {
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Błąd pobierania rezerwacji: ${response.status}`);
+                }
+
+                return response.json();
+            })
+            .then(response => {
+                const reservation = response.data;
+
+                editedReservationId = reservation.id;
+
+                editStartDate.value =
+                    reservation.rentalPeriod?.startDate
+                        ? reservation.rentalPeriod.startDate.substring(0, 10)
+                        : '';
+
+                editEndDate.value =
+                    reservation.rentalPeriod?.endDate
+                        ? reservation.rentalPeriod.endDate.substring(0, 10)
+                        : '';
+
+                editStatus.value =
+                    reservation.statusOfReservation ?? 'pending';
+
+                editClient.textContent =
+                    reservation.client?.name ?? 'Brak danych';
+
+                editProduct.textContent =
+                    reservation.product?.title ?? 'Brak danych';
+
+                editModal.classList.add('open');
+            })
+            .catch(error => {
+                console.error('Reservation details API:', error);
+            });
+
+            return;
+        }
+
+
+        // ANULOWANIE
+
+        const cancelButton = event.target.closest('.lr-cancel-btn');
+
+        if (cancelButton) {
+            console.log('Rezerwacja do anulowania:', cancelButton.dataset.id);
+
+            modal.classList.add('open');
+        }
+    });
+
+
+    // FORMATOWANIE DATY
+
+    function formatDate(date) {
+        if (!date) {
+            return '-';
+        }
+
+        const parsedDate = new Date(date);
+
+        return parsedDate.toLocaleDateString('pl-PL', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+
+    // FORMATOWANIE CENY
+
+    function formatPrice(price) {
+        const value = Number(price ?? 0);
+
+        return `${value.toLocaleString('pl-PL')} zł`;
+    }
+
+
+    // MODAL ANULOWANIA
+
+    btnCancel.addEventListener('click', () => {
+        modal.classList.remove('open');
+    });
+
     btnConfirm.addEventListener('click', () => {
-        // TODO: tutaj będzie wywołanie fetch/form na backend
-        close();
+        // Na razie nic nie wysyłamy
+        modal.classList.remove('open');
     });
 
-    // Klik w tło zamyka
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) close();
+    modal.addEventListener('click', event => {
+        if (event.target === modal) {
+            modal.classList.remove('open');
+        }
     });
 
-    // Escape zamyka
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('open')) close();
+
+    // MODAL EDYCJI
+
+    editCancel.addEventListener('click', () => {
+        editModal.classList.remove('open');
+        editedReservationId = null;
     });
-})();
+
+    editSave.addEventListener('click', () => {
+
+        if (!editedReservationId) {
+            return;
+        }
+
+        const startDate = editStartDate.value;
+        const endDate = editEndDate.value;
+        const statusOfReservation = editStatus.value;
+
+        if (!startDate || !endDate) {
+            alert('Uzupełnij obie daty.');
+            return;
+        }
+
+        if (endDate < startDate) {
+            alert('Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.');
+            return;
+        }
+
+        fetch(`/api/admin/reservations/${editedReservationId}`, {
+            method: 'PATCH',
+
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute('content')
+            },
+
+            credentials: 'same-origin',
+
+            body: JSON.stringify({
+                startDate: `${startDate} 00:00:00`,
+                endDate: `${endDate} 23:59:59`,
+                statusOfReservation: statusOfReservation
+            })
+        })
+        .then(async response => {
+
+            const data = await response.json();
+
+            if (!response.ok) {
+
+                console.error('PATCH error:', data);
+
+                if (response.status === 422) {
+                    alert('Niepoprawne dane rezerwacji.');
+                    return;
+                }
+
+                throw new Error(
+                    `Błąd edycji rezerwacji: ${response.status}`
+                );
+            }
+
+            return data;
+        })
+        .then(data => {
+
+            if (!data) {
+                return;
+            }
+
+            console.log('Rezerwacja zaktualizowana:', data);
+
+            editModal.classList.remove('open');
+            editedReservationId = null;
+
+            loadReservations();
+        })
+        .catch(error => {
+
+            console.error('Reservation PATCH API:', error);
+
+            alert('Nie udało się zapisać zmian.');
+        });
+    });
+
+    editModal.addEventListener('click', event => {
+        if (event.target === editModal) {
+            editModal.classList.remove('open');
+            editedReservationId = null;
+        }
+    });
+
+
+    // ESC
+
+    document.addEventListener('keydown', event => {
+        if (event.key !== 'Escape') {
+            return;
+        }
+
+        modal.classList.remove('open');
+        editModal.classList.remove('open');
+        editedReservationId = null;
+    });
+
+    exportCsvBtn.addEventListener('click', () => {
+
+        if (allReservations.length === 0) {
+            alert('Brak rezerwacji do eksportu.');
+            return;
+        }
+
+        const rows = [
+            [
+                'ID',
+                'Klient',
+                'Email',
+                'Sprzęt',
+                'Numer seryjny',
+                'Data rozpoczęcia',
+                'Data zakończenia',
+                'Liczba dni',
+                'Cena',
+                'Status'
+            ]
+        ];
+
+        allReservations.forEach(reservation => {
+            rows.push([
+                reservation.id,
+                reservation.client?.name ?? '',
+                reservation.client?.email ?? '',
+                reservation.product?.title ?? '',
+                reservation.product?.serialNumber ?? '',
+                reservation.rentalPeriod?.startDate ?? '',
+                reservation.rentalPeriod?.endDate ?? '',
+                reservation.rentalPeriod?.days ?? '',
+                reservation.totalPrice ?? '',
+                reservation.statusLabel ?? reservation.statusOfReservation ?? ''
+            ]);
+        });
+
+        const csvContent = rows
+            .map(row =>
+                row
+                    .map(value => `"${String(value).replace(/"/g, '""')}"`)
+                    .join(';')
+            )
+            .join('\n');
+
+        const blob = new Blob(
+            ['\uFEFF' + csvContent],
+            {
+                type: 'text/csv;charset=utf-8;'
+            }
+        );
+
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+
+        link.href = url;
+        link.download = `rezerwacje-${new Date().toISOString().slice(0, 10)}.csv`;
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+    });
+
+    // START
+
+    statusFilter.addEventListener('change', () => {
+        loadReservations();
+    });
+
+    let searchTimeout;
+
+    reservationSearch.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+
+        searchTimeout = setTimeout(() => {
+            loadReservations();
+        }, 300);
+    });
+
+    loadReservations();
+
+});
 </script>
 </body>
 </html>

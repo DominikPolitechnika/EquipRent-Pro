@@ -4,6 +4,10 @@
    DASHBOARD / PANEL GŁÓWNY (panel admina)
    Spójny ze style-admin.css
 ================================================ */
+body {
+    font-family: "Poppins", sans-serif;
+}
+
 .db-content {
     padding: 28px 40px 60px;
     max-width: 1240px;

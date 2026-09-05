@@ -53,9 +53,6 @@ class StripeService
         ]);
     }
 
-    /**
-     * @param  bool
-     */
     public function savePaymentMethod(User $user, string $paymentMethodId, bool $save = true): PaymentMethodModel
     {
         $customerId = $this->getOrCreateCustomer($user);
@@ -96,11 +93,6 @@ class StripeService
         $paymentMethod->update(['is_active' => false]);
     }
 
-    /**
-     * @param  int
-     * @param  string
-     * @param  string|null
-     */
     public function charge(
         User $user,
         int $amount,
@@ -182,7 +174,6 @@ class StripeService
 
             $this->activateReservationIfAwaitingPayment($payment);
         } catch (CardException $e) {
-            // requires_action (np. 3DS przy off-session) albo odrzucona karta
             $status = $e->getStripeCode() === 'authentication_required'
                 ? Payment::STATUS_REQUIRES_ACTION
                 : Payment::STATUS_FAILED;
@@ -284,13 +275,6 @@ class StripeService
         }
     }
 
-    /**
-     * @return array<int, array{
-     *     reservation_id:int, invoice_id:string, amount_due:int,
-     *     currency:string, description:?string, hosted_invoice_url:?string,
-     *     invoice_pdf:?string, due_date:?int
-     * }>
-     */
     public function listOpenPenaltyInvoices(User $user): array
     {
         if (! $user->stripe_customer_id) {
@@ -348,7 +332,6 @@ class StripeService
             } elseif ($invoice->status === 'open') {
                 $this->stripe->invoices->voidInvoice($invoice->id);
             }
-            // 'paid' / 'void' / 'uncollectible' - nic do zrobienia.
         } catch (Exception $e) {
             Log::warning('Nie udało się zamknąć porzuconej faktury w Stripe.', [
                 'invoice_id' => $invoice->id,
@@ -390,8 +373,8 @@ class StripeService
         return $fields;
     }
 
-public function getInvoiceDetails(Payment $payment): ?StripeInvoice
-{
+    public function getInvoiceDetails(Payment $payment): ?StripeInvoice
+    {
     if ($payment->stripe_invoice_id) {
         try {
             return $this->stripe->invoices->retrieve($payment->stripe_invoice_id);
@@ -400,7 +383,6 @@ public function getInvoiceDetails(Payment $payment): ?StripeInvoice
         }
     }
 
-    // Fallback dla starych płatności:
     if (!$payment->stripe_payment_intent_id) {
         return null;
     }
@@ -408,7 +390,7 @@ public function getInvoiceDetails(Payment $payment): ?StripeInvoice
     try {
         $intent = $this->stripe->paymentIntents->retrieve(
             $payment->stripe_payment_intent_id,
-            ['expand' => ['invoice']] // Force expand relacji invoice
+            ['expand' => ['invoice']]
         );
 
         if (!$intent->invoice) {
@@ -428,18 +410,12 @@ public function getInvoiceDetails(Payment $payment): ?StripeInvoice
     }
 }
 
-    /**
-     * @param  int|null
-     * @param  string|null
-     *
-     * @throws PaymentFailedException
-     */
     public function refund(
         Payment $payment,
         ?int $amount,
         ?string $reason,
-        string $idempotencyKey,
-    ): Payment {
+        string $idempotencyKey,): Payment 
+    {
         if (! in_array($payment->status, [Payment::STATUS_SUCCEEDED, Payment::STATUS_PARTIALLY_REFUNDED], true)) {
             throw new PaymentFailedException(
                 "Płatność #{$payment->id} nie jest w stanie kwalifikującym się do zwrotu (status: {$payment->status}).",

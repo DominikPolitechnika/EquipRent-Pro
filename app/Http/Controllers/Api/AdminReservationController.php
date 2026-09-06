@@ -7,6 +7,7 @@ use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -123,6 +124,25 @@ class AdminReservationController extends Controller
         ]);
     }
 
+    /**
+     * Incydenty/naprawy zgłoszone dla sprzętu w ramach tej konkretnej rezerwacji.
+     */
+    public function incidents(int $id): JsonResponse
+    {
+        $reservation = Reservation::where('isDeleted', false)->findOrFail($id);
+
+        $incidents = DB::table('repairs')
+            ->where('productId', $reservation->productId)
+            ->where('lastReservationId', $reservation->id)
+            ->where('isDeleted', false)
+            ->orderByDesc('createdAt')
+            ->get(['id', 'description', 'serviceman_name', 'repairCost', 'createdAt']);
+
+        return response()->json([
+            'data' => $incidents,
+        ]);
+    }
+
     private function formatReservation(Reservation $reservation): array
     {
         $user = $reservation->user;
@@ -136,12 +156,14 @@ class AdminReservationController extends Controller
                 'avatar' => $user?->getAvatarUrl(),
                 'name' => trim(($user?->name ?? '') . ' ' . ($user?->surname ?? '')),
                 'email' => $user?->email,
+                'telephoneNumber' => $user?->telephone_number,
             ],
 
             'product' => [
                 'id' => $product?->id,
                 'title' => $product?->title,
                 'serialNumber' => $product?->serial_number,
+                'thumbnailUrl' => $product?->getThumbnailUrl(),
             ],
 
             'rentalPeriod' => [
@@ -153,6 +175,7 @@ class AdminReservationController extends Controller
             'totalPrice' => $reservation->totalPrice,
             'statusOfReservation' => $reservation->statusOfReservation,
             'statusLabel' => $this->getStatusLabel($reservation->statusOfReservation),
+            'createdAt' => $reservation->createdAt?->format('Y-m-d H:i:s'),
         ];
     }
 

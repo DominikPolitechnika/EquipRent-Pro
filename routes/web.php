@@ -78,6 +78,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::view('/lista-uzytkownikow', 'list_users')->name('users.list');
     Route::view('/uzytkownik-szczegoly/{id}', 'user_details')->name('users.show');
     Route::view('/rejestr-wypozyczen', 'list_rentals')->name('rentals.list');
+    Route::view('/rejestr-wypozyczen/{id}', 'reservation_details')->name('rentals.show');
     Route::view('/panel-glowny', 'dashboard')->name('dashboard');
 });
 

@@ -36,6 +36,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/reservations', [AdminReservationController::class, 'index']);
     Route::get('/reservations/{id}', [AdminReservationController::class, 'show']);
     Route::patch('/reservations/{id}', [AdminReservationController::class, 'update']);
+    Route::get('/reservations/{id}/incidents', [AdminReservationController::class, 'incidents']);
 });
 
 

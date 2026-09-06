@@ -362,6 +362,7 @@ class ProductController extends Controller
             'serviceman_name' => ['required', 'string', 'max:255'],
             'repairCost' => ['required', 'integer', 'min:0'],
             'date' => ['required', 'date'],
+            'reservationId' => ['nullable', 'integer'],
         ]);
 
         if ($validator->fails()) {
@@ -371,9 +372,24 @@ class ProductController extends Controller
             ], 422);
         }
 
+        $lastReservationId = null;
+
+        if ($request->filled('reservationId')) {
+            $lastReservationId = DB::table('reservation')
+                ->where('id', $request->input('reservationId'))
+                ->where('productId', $product->id)
+                ->value('id');
+
+            if (!$lastReservationId) {
+                return response()->json([
+                    'message' => 'Podana rezerwacja nie należy do tego produktu.',
+                ], 422);
+            }
+        }
+
         $repairId = DB::table('repairs')->insertGetId([
             'productId' => $product->id,
-            'lastReservationId' => null,
+            'lastReservationId' => $lastReservationId,
             'description' => $request->input('description'),
             'serviceman_name' => $request->input('serviceman_name'),
             'userId' => $request->user()->id,

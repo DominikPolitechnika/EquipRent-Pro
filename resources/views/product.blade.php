@@ -164,9 +164,9 @@
                             <span class="placeholder animate-pulse" style="width:60px;height:12px;border-radius:3px;display:inline-block;"></span>
                         </div>
 
-                        {{-- Formularz opinii - pokazywany tylko jeśli canReview=true --}}
+                        {{-- Formularz opinii - pokazywany jeśli canReview=true LUB gdy edytujemy istniejącą opinię --}}
                         <div id="opinion-form-wrapper" style="display:none;">
-                            <div class="product-add-review-title">Twoja ocena</div>
+                            <div class="product-add-review-title" id="opinion-form-title">Twoja ocena</div>
                             <div class="product-star-input" id="star-input" data-selected="0">
                                 <span data-v="1" style="cursor:pointer;padding:0 3px;">☆</span>
                                 <span data-v="2" style="cursor:pointer;padding:0 3px;">☆</span>
@@ -177,6 +177,7 @@
                             <div class="product-add-review-title">Komentarz</div>
                             <textarea id="opinion-description" class="product-review-textarea" placeholder="Podziel się swoją opinią..." maxlength="2000"></textarea>
                             <button id="opinion-submit-btn" class="product-btn-submit" type="button">Wyślij opinię</button>
+                            <button id="opinion-delete-btn" class="product-btn-submit" type="button" style="display:none;background:transparent;color:#dc2626;border:1px solid #dc2626;margin-top:8px;">Usuń opinię</button>
                         </div>
 
                         {{-- Komunikat gdy nie może dodać opinii --}}
@@ -556,30 +557,52 @@
     // GWIAZDKI DO OCENY OPINII (5 osobnych spanów)
     // ==============================================================
     const starInput = document.getElementById('star-input');
-    if (starInput) {
-        const stars = starInput.querySelectorAll('span');
-        let selected = 0;
+    let selected = 0;
 
-        function paint(count) {
-            stars.forEach((star, i) => {
-                star.textContent = (i < count) ? '★' : '☆';
-            });
-        }
-        stars.forEach(star => {
+    function paint(count) {
+        starInput.querySelectorAll('span').forEach((star, i) => {
+            star.textContent = (i < count) ? '★' : '☆';
+        });
+    }
+
+    function setStarRating(value) {
+        selected = value;
+        starInput.dataset.selected = String(selected);
+        paint(selected);
+    }
+
+    if (starInput) {
+        starInput.querySelectorAll('span').forEach(star => {
             const value = parseInt(star.dataset.v, 10);
             star.addEventListener('mouseenter', () => paint(value));
-            star.addEventListener('click', () => {
-                selected = value;
-                starInput.dataset.selected = String(selected);
-                paint(selected);
-            });
+            star.addEventListener('click', () => setStarRating(value));
         });
         starInput.addEventListener('mouseleave', () => paint(selected));
     }
 
     // ==============================================================
-    // Wysyłanie opinii - POST /api/products/{id}/opinions
+    // Opinia - dodawanie (POST) i edycja (PATCH) tego samego formularza
     // ==============================================================
+    let editingOpinionId = null;
+
+    function resetOpinionForm() {
+        editingOpinionId = null;
+        document.getElementById('opinion-description').value = '';
+        setStarRating(0);
+        document.getElementById('opinion-form-title').textContent = 'Twoja ocena';
+        document.getElementById('opinion-submit-btn').textContent = 'Wyślij opinię';
+        document.getElementById('opinion-delete-btn').style.display = 'none';
+    }
+
+    function fillOpinionFormForEdit(opinion) {
+        editingOpinionId = opinion.id;
+        document.getElementById('opinion-description').value = opinion.description || '';
+        setStarRating(opinion.scaleValue || 0);
+        document.getElementById('opinion-form-title').textContent = 'Edytuj swoją opinię';
+        document.getElementById('opinion-submit-btn').textContent = 'Zapisz zmiany';
+        document.getElementById('opinion-delete-btn').style.display = '';
+    }
+
     document.getElementById('opinion-submit-btn')?.addEventListener('click', async () => {
         const scaleValue  = parseInt(starInput?.dataset.selected || '0', 10);
         const description = document.getElementById('opinion-description').value.trim();
@@ -588,25 +611,41 @@
         if (description.length < 3) { alert('Napisz choć kilka słów opinii.'); return; }
 
         try {
-            const res = await apiJson('POST', `/api/products/${PRODUCT_ID}/opinions`, {
-                scaleValue, description,
-            });
-            if (res.status === 201) {
-                alert('Dziękujemy za opinię!');
-                // Odśwież listę opinii i summary
+            const res = editingOpinionId
+                ? await apiJson('PATCH', `/api/opinions/${editingOpinionId}`, { scaleValue, description })
+                : await apiJson('POST', `/api/products/${PRODUCT_ID}/opinions`, { scaleValue, description });
+
+            if (res.status === 201 || res.status === 200) {
+                alert(editingOpinionId ? 'Opinia została zaktualizowana.' : 'Dziękujemy za opinię!');
                 loadOpinions();
                 loadOpinionsSummary();
                 loadCanReview();
-                document.getElementById('opinion-description').value = '';
-                if (starInput) { starInput.dataset.selected = '0'; starInput.querySelectorAll('span').forEach(s => s.textContent = '☆'); }
                 return;
             }
             if (res.status === 403) { alert('Opinię możesz dodać dopiero po zakończonym wypożyczeniu.'); return; }
             if (res.status === 409) { alert('Dodałeś już opinię dla tego produktu.'); return; }
             if (res.status === 422) { alert('Nieprawidłowe dane opinii.'); return; }
-            alert('Nie udało się dodać opinii.');
+            alert('Nie udało się zapisać opinii.');
         } catch (e) {
-            alert('Błąd sieci przy dodawaniu opinii.');
+            alert('Błąd sieci przy zapisywaniu opinii.');
+            console.error(e);
+        }
+    });
+
+    document.getElementById('opinion-delete-btn')?.addEventListener('click', async () => {
+        if (!editingOpinionId) return;
+        if (!confirm('Czy na pewno chcesz usunąć swoją opinię?')) return;
+
+        try {
+            const res = await apiJson('DELETE', `/api/opinions/${editingOpinionId}`);
+            if (!res.ok) { alert('Nie udało się usunąć opinii.'); return; }
+
+            alert('Opinia została usunięta.');
+            loadOpinions();
+            loadOpinionsSummary();
+            loadCanReview();
+        } catch (e) {
+            alert('Błąd sieci przy usuwaniu opinii.');
             console.error(e);
         }
     });
@@ -800,9 +839,14 @@
             const formWrap = document.getElementById('opinion-form-wrapper');
             const msgEl    = document.getElementById('opinion-blocked-message');
 
-            if (data.canReview) {
+            if (data.alreadyReviewed && data.myOpinion) {
                 formWrap.style.display = '';
                 msgEl.style.display = 'none';
+                fillOpinionFormForEdit(data.myOpinion);
+            } else if (data.canReview) {
+                formWrap.style.display = '';
+                msgEl.style.display = 'none';
+                resetOpinionForm();
             } else {
                 formWrap.style.display = 'none';
                 msgEl.style.display = '';

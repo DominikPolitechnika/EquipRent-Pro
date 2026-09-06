@@ -136,8 +136,14 @@ class OpinionController extends Controller
         }
 
         $hasCompletedReservation = $this->hasCompletedReservation($userId, $productId);
-        $alreadyReviewed = $this->alreadyReviewed($userId, $productId);
 
+        $myOpinion = DB::table('Opinions')
+            ->where('userId', $userId)
+            ->where('productId', $productId)
+            ->where('isDeleted', false)
+            ->first(['id', 'description', 'scaleValue']);
+
+        $alreadyReviewed = $myOpinion !== null;
         $canReview = $hasCompletedReservation && !$alreadyReviewed;
 
         if (!$hasCompletedReservation) {
@@ -155,6 +161,7 @@ class OpinionController extends Controller
                 'hasCompletedReservation' => $hasCompletedReservation,
                 'alreadyReviewed' => $alreadyReviewed,
                 'message' => $message,
+                'myOpinion' => $myOpinion,
             ],
         ]);
     }

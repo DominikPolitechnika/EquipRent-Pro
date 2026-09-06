@@ -581,13 +581,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         </svg>
                     </button>
 
-                    <button
-                        type="button"
+                    <a
+                        href="/rejestr-wypozyczen/${reservation.id}"
                         class="lr-action-btn soft"
-                        data-id="${reservation.id}"
+                        style="text-decoration:none; display:inline-flex; align-items:center;"
                     >
                         Szczegóły
-                    </button>
+                    </a>
 
                 </div>
             `;

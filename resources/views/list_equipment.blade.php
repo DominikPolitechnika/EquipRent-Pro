@@ -24,7 +24,19 @@
         <div class="adm-content">
             <div class="le-content">
                 <div class="le-breadcrumb"><span>Zarządzanie</span><span>›</span><span class="active">Inwentarz</span></div>
-                <h1 class="le-title">Inwentarz</h1>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:16px;flex-wrap:wrap;">
+                    <h1 class="le-title" style="margin:0;">Inwentarz</h1>
+                    <a href="{{ url('/products/create') }}"
+                       style="display:inline-flex;align-items:center;gap:8px;background:#075071;color:#fff;padding:10px 18px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;text-decoration:none;transition:background .15s;"
+                       onmouseover="this.style.background='#0a638b'"
+                       onmouseout="this.style.background='#075071'">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Dodaj sprzęt
+                    </a>
+                </div>
 
                 <div class="le-filters">
                     <div class="le-filters-row">

@@ -66,6 +66,8 @@ Route::middleware(['auth'])->group(function () {
 
 // Trasy panelu administracyjnego - tylko dla roli admina
 Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/products/create', [ProductController::class, 'create'])->name('product.create');
+    Route::post('/products', [ProductController::class, 'store'])->name('product.store');
     Route::get('/produkt/{id}/edytuj', [ProductController::class, 'edit'])->name('product.edit');
     Route::put('/produkt/{id}', [ProductController::class, 'update'])->name('product.update');
     Route::patch('/produkt/{id}/status', [ProductController::class, 'toggleAvailability'])->name('product.status');

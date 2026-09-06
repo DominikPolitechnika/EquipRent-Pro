@@ -126,6 +126,10 @@
         return d.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
     }
 
+    function initials(name, surname) {
+        return ((name || '').charAt(0) + (surname || '').charAt(0)).toUpperCase() || '?';
+    }
+
     const blockIconSvg = `
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
@@ -149,7 +153,12 @@
         <tr data-user-id="${escapeHtml(u.id)}">
             <td>
                 <div class="lu-profile">
-                    <div class="lu-avatar"><span class="lu-avatar-dot ${blocked ? 'off' : ''}"></span></div>
+                    <div class="lu-avatar">
+                        ${u.avatarUrl
+                            ? `<img src="${escapeHtml(u.avatarUrl)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+                            : `<span style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:14px;font-weight:700;color:#6b7280;">${initials(u.name, u.surname)}</span>`}
+                        <span class="lu-avatar-dot ${blocked ? 'off' : ''}"></span>
+                    </div>
                     <div>
                         <div class="lu-profile-name">${escapeHtml(u.fullName || u.name)}</div>
                         <div class="lu-profile-role">${escapeHtml(u.roleName || '—')}</div>

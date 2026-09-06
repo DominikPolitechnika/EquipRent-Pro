@@ -341,10 +341,8 @@ class ReservationController extends Controller
         $totalIncome = DB::table('reservation')
             ->where('userId', $userId)
             ->where('isDeleted', false)
-            ->where(function ($query) {
-                $query->whereIn('statusOfReservation', $this->completedStatuses)
-                    ->orWhere('endDate', '<', now());
-            })
+            ->where('statusOfReservation', '!=', 'awaiting_payment')
+            ->whereNotIn('statusOfReservation', $this->cancelledStatuses)
             ->sum('totalPrice');
 
         return response()->json([

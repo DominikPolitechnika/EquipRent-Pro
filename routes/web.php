@@ -104,9 +104,7 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/reservations/summary/count', [ReservationController::class, 'countSummary']);
     Route::get('/reservations/upcoming', [ReservationController::class, 'upcoming']);
     Route::get('/products/{productId}/reservations/booked-dates', [ReservationController::class, 'bookedDates']);
-
-    Route::get('/products/create', [ProductController::class, 'create'])->name('product.create');
-    Route::post('/products', [ProductController::class, 'store'])->name('product.store'); //dodawanie nowego produktu
+    
     //trasa wykorzystywana przez system płatności
     Route::get('/reservations/{reservationId}', [ReservationController::class, 'show'])
         ->whereNumber('reservationId');

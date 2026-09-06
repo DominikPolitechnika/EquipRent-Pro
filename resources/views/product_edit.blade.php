@@ -120,7 +120,7 @@
                         <div class="pe-gallery-block">
                             <div class="pe-gallery-head">
                                 <span class="pe-gallery-label">Galeria zdjęć</span>
-                                <span class="pe-gallery-count"><span id="pe-gallery-count">{{ $images->count() }}</span> / min. 3 zdjęcia</span>
+                                <span class="pe-gallery-count"><span id="pe-gallery-count">{{ $images->count() }}</span> / maks. 10 zdjęć</span>
                             </div>
                             <div class="pe-gallery-grid" id="pe-gallery-grid">
                                 @foreach($images as $image)
@@ -135,7 +135,7 @@
                                     <input type="file" id="pe-photos" name="photos[]" accept="image/jpeg,image/png,image/webp,image/avif" hidden multiple>
                                 </label>
                             </div>
-                            <div class="pe-gallery-help">Minimum 3 zdjęcia. Pierwsze zapisane zdjęcie tworzy miniaturę 480x240, pozostałe są przygotowywane do 1200x1200. Proporcje obrazu są zachowywane.</div>
+                            <div class="pe-gallery-help">Maksymalnie 10 zdjęć. Pierwsze zapisane zdjęcie tworzy miniaturę 480x240, pozostałe są przygotowywane do 1200x1200. Proporcje obrazu są zachowywane.</div>
                             <div id="pe-photo-error" class="pe-row-error"></div>
                         </div>
                     </form>
@@ -236,8 +236,9 @@
     function updateGalleryCount(){
         const existing = [...gallery.querySelectorAll('.pe-gallery-thumb:not(.removed):not(.pe-new-photo)')].length;
         const added = selectedPhotos.length;
-        countEl.textContent = existing + added;
-        photoError.textContent = (existing + added < 3) ? 'Produkt musi mieć co najmniej 3 zdjęcia.' : '';
+        const total = existing + added;
+        countEl.textContent = total;
+        photoError.textContent = total > 10 ? 'Produkt może mieć maksymalnie 10 zdjęć.' : '';
     }
 
     function syncPhotoInput(){
@@ -314,18 +315,31 @@
             return;
         }
 
-        const existingKeys=new Set(selectedPhotos.map(photoKey));
+        const existingCount = [...gallery.querySelectorAll('.pe-gallery-thumb:not(.removed):not(.pe-new-photo)')].length;
+        const existingKeys = new Set(selectedPhotos.map(photoKey));
+        const availableSlots = Math.max(0, 10 - existingCount - selectedPhotos.length);
+        let addedCount = 0;
+        let skippedCount = 0;
+
         files.forEach(file=>{
             const key=photoKey(file);
-            if(!existingKeys.has(key)){
-                selectedPhotos.push(file);
-                existingKeys.add(key);
+            if(existingKeys.has(key)) return;
+            if(addedCount >= availableSlots){
+                skippedCount++;
+                return;
             }
+            selectedPhotos.push(file);
+            existingKeys.add(key);
+            addedCount++;
         });
 
         syncPhotoInput();
         renderNewPhotos();
         updateGalleryCount();
+
+        if(skippedCount > 0){
+            photoError.textContent = 'Możesz mieć maksymalnie 10 zdjęć. Nadmiarowe zdjęcia nie zostały dodane.';
+        }
 
         this.value='';
     });
@@ -355,9 +369,9 @@
     form.addEventListener('submit', function(e){
         syncPhotoInput();
         const existing=[...gallery.querySelectorAll('.pe-gallery-thumb:not(.removed):not(.pe-new-photo)')].length;
-        if(existing + selectedPhotos.length < 3){
+        if(existing + selectedPhotos.length > 10){
             e.preventDefault();
-            photoError.textContent='Nie można zapisać produktu: wymagane są minimum 3 zdjęcia.';
+            photoError.textContent='Nie można zapisać produktu: maksymalna liczba zdjęć to 10.';
             gallery.scrollIntoView({behavior:'smooth',block:'center'});
         }
     });

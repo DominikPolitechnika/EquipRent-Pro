@@ -218,6 +218,77 @@ class ProductController extends Controller
         return view('product_edit', compact('product', 'categories', 'images'));
     }
 
+    public function create()
+    {
+        $categories = EquipmentCategory::orderBy('name')->get(['id', 'name']);
+
+        return view('product_create', compact('categories'));
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => ['required', 'string', 'max:255'],
+            'body' => ['nullable', 'string'],
+            'equipment_category_id' => ['required', 'integer', 'exists:equipment_category,id'],
+            'serial_number' => ['required', 'string', 'max:255', 'unique:products,serial_number'],
+            'one_day_price' => ['required', 'integer', 'min:0'],
+            'is_available' => ['nullable', 'boolean'],
+            'photos' => ['nullable', 'array', 'max:10'],
+            'photos.*' => ['file', 'mimes:jpg,jpeg,png,webp,avif', 'max:10240'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $newFiles = collect($request->file('photos', []))
+            ->filter(fn ($file) => $file && $file->isValid())
+            ->values();
+
+        $product = new Product();
+        $product->title = $request->string('title')->toString();
+        $product->body = $request->input('body');
+        $product->equipment_category_id = (int) $request->input('equipment_category_id');
+        $product->serial_number = $request->string('serial_number')->toString();
+        $product->one_day_price = (int) $request->input('one_day_price');
+        $product->is_available = $request->boolean('is_available', true);
+        $product->total_income = 0;
+        $product->is_deleted = false;
+        $product->save();
+
+        $disk = Storage::disk('public');
+        $directory = "images/products/{$product->id}";
+
+        try {
+            $disk->makeDirectory($directory);
+
+            foreach ($newFiles as $index => $file) {
+                $contents = file_get_contents($file->getRealPath());
+
+                if ($index === 0) {
+                    $this->saveResizedAvif($contents, $disk, "{$directory}/1.avif", 1200, 1200);
+                    $this->saveResizedAvif($contents, $disk, "{$directory}/1_thumb.avif", 480, 240);
+                    continue;
+                }
+
+                $target = ($index + 1) . '.avif';
+                $this->saveResizedAvif($contents, $disk, "{$directory}/{$target}", 1200, 1200);
+            }
+        } catch (\Throwable $e) {
+            $disk->deleteDirectory($directory);
+            $product->delete();
+
+            return back()
+                ->withErrors(['photos' => 'Nie udało się przetworzyć zdjęć: ' . $e->getMessage()])
+                ->withInput();
+        }
+
+        return redirect()
+            ->route('product.edit', $product->id)
+            ->with('success', 'Produkt został dodany.');
+    }
+
     public function toggleAvailability(Request $request, int $id)
     {
         $product = Product::where('is_deleted', false)->findOrFail($id);
@@ -255,7 +326,7 @@ class ProductController extends Controller
             'equipment_category_id' => ['required', 'integer', 'exists:equipment_category,id'],
             'one_day_price' => ['required', 'integer', 'min:0'],
             'photos' => ['nullable', 'array'],
-            'photos.*' => ['mimes:jpg,jpeg,png,webp,avif', 'max:10240'],
+            'photos.*' => ['file','mimes:jpg,jpeg,png,webp,avif', 'max:10240'],
             'remove_photos' => ['nullable', 'array'],
             'remove_photos.*' => ['string'],
             'is_available' => ['nullable', 'boolean'],
@@ -282,9 +353,9 @@ class ProductController extends Controller
 
         $newFiles = collect($request->file('photos', []))->filter(fn ($file) => $file && $file->isValid())->values();
 
-        if ($existing->count() + $newFiles->count() < 3) {
+        if ($existing->count() + $newFiles->count() > 10) {
             return back()
-                ->withErrors(['photos' => 'Produkt musi posiadać co najmniej 3 zdjęcia.'])
+                ->withErrors(['photos' => 'Produkt może posiadać maksymalnie 10 zdjęć.'])
                 ->withInput();
         }
 

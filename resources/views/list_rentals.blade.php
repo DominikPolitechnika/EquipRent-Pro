@@ -42,7 +42,7 @@
         }
         .lr-modal-icon svg { width: 24px; height: 24px; }
         .lr-modal-title {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 22px;
             font-weight: 700;
             color: #2a3439;
@@ -62,7 +62,7 @@
             justify-content: center;
         }
         .lr-modal-btn {
-            font-family: 'Barlow Condensed', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 12px;
             font-weight: 700;
             letter-spacing: .06em;
@@ -601,6 +601,53 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // WCZYTANIE KONKRETNEJ REZERWACJI DO EDYCJI
+
+    function loadReservationForEdit(reservationId) {
+
+        fetch(`/api/admin/reservations/${reservationId}`, {
+            headers: {
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Błąd pobierania rezerwacji: ${response.status}`);
+            }
+
+            return response.json();
+        })
+        .then(response => {
+            const reservation = response.data;
+
+            editedReservationId = reservation.id;
+
+            editStartDate.value =
+                reservation.rentalPeriod?.startDate
+                    ? reservation.rentalPeriod.startDate.substring(0, 10)
+                    : '';
+
+            editEndDate.value =
+                reservation.rentalPeriod?.endDate
+                    ? reservation.rentalPeriod.endDate.substring(0, 10)
+                    : '';
+
+            editStatus.value =
+                reservation.statusOfReservation ?? 'pending';
+
+            editClient.textContent =
+                reservation.client?.name ?? 'Brak danych';
+
+            editProduct.textContent =
+                reservation.product?.title ?? 'Brak danych';
+
+            editModal.classList.add('open');
+        })
+        .catch(error => {
+            console.error('Reservation details API:', error);
+        });
+    }
 
     // KLIKNIĘCIA W KARTY
 
@@ -907,6 +954,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     loadReservations();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const reservationIdFromUrl = urlParams.get('reservation');
+
+    if (reservationIdFromUrl) {
+        loadReservationForEdit(reservationIdFromUrl);
+    }
 
 });
 </script>

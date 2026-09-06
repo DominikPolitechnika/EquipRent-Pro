@@ -163,9 +163,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-    // =====================================================
     // LICZBA REZERWACJI
-    // =====================================================
 
     fetch('/api/statistics/reservations-count', {
         headers: {
@@ -202,9 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // =====================================================
     // PRZYCHÓD MIESIĘCZNY
-    // =====================================================
 
     fetch('/api/statistics/monthly-revenue', {
         headers: {
@@ -241,9 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // =====================================================
     // DOCHÓD Z OSTATNICH 7 DNI
-    // =====================================================
 
     fetch('/api/statistics/weekly-income', {
         headers: {
@@ -296,9 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // =====================================================
     // POPULARNY SPRZĘT
-    // =====================================================
 
     fetch('/api/statistics/top-products', {
         headers: {
@@ -400,9 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // =====================================================
     // OSTATNIE REZERWACJE
-    // =====================================================
 
     fetch('/api/statistics/latest-reservations', {
         headers: {
@@ -547,17 +537,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
 
                 <td>
-                    <button
-                        type="button"
-                        class="db-dots"
-                        aria-label="Więcej"
-                    >
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="5" cy="12" r="1.6"/>
-                            <circle cx="12" cy="12" r="1.6"/>
-                            <circle cx="19" cy="12" r="1.6"/>
-                        </svg>
-                    </button>
+                    <div class="db-action-menu">
+                        <button
+                            type="button"
+                            class="db-dots"
+                            aria-label="Akcja"
+                            onclick="this.nextElementSibling.classList.toggle('open')"
+                        >
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="5" cy="12" r="1.6"/>
+                                <circle cx="12" cy="12" r="1.6"/>
+                                <circle cx="19" cy="12" r="1.6"/>
+                            </svg>
+                        </button>
+
+                        <div class="db-action-dropdown">
+                            <a href="{{ route('rentals.list') }}?reservation=${reservation.id}">
+                                Zarządzaj rezerwacją
+                            </a>
+                        </div>
+                    </div>
                 </td>
             `;
 

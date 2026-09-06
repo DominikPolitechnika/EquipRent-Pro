@@ -197,6 +197,41 @@ body {
 }
 .db-section-link:hover { text-decoration: underline; }
 
+.db-action-menu {
+    position: relative;
+}
+
+.db-action-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 6px;
+    min-width: 190px;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+}
+
+.db-action-dropdown.open {
+    display: block;
+}
+
+.db-action-dropdown a {
+    display: block;
+    padding: 9px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: inherit;
+    white-space: nowrap;
+}
+
+.db-action-dropdown a:hover {
+    background: #f5f5f5;
+}
+
 /* ---- TABELA OSTATNIE REZERWACJE ---- */
 .db-card {
     background: #fff;

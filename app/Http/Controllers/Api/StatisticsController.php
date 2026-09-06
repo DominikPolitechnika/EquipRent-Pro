@@ -130,6 +130,7 @@ class StatisticsController extends Controller
 
         $data = $reservations->map(function (Reservation $r) {
             return [
+                'id'              => $r->id,
                 'name'            => $r->user?->name,
                 'surname'         => $r->user?->surname,
                 'avatarUrl'       => $r->user?->getAvatarUrl(),

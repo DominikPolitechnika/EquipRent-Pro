@@ -34,7 +34,6 @@ class StripeWebhookController extends Controller
                 'invoice.paid' => $this->onInvoicePaid($event->data->object),
                 'invoice.payment_failed' => $this->onInvoicePaymentFailed($event->data->object),
                 'invoice.payment_action_required' => $this->onInvoiceActionRequired($event->data->object),
-                'charge.refunded' => $this->onChargeRefunded($event->data->object),
                 default => null,
             };
         } catch (\Throwable $e) {
@@ -84,28 +83,6 @@ class StripeWebhookController extends Controller
     {
         $this->findPayment($stripeInvoice)?->update([
             'status' => Payment::STATUS_REQUIRES_ACTION,
-        ]);
-    }
-
-    protected function onChargeRefunded($charge): void
-    {
-        if (! $charge->payment_intent) {
-            return;
-        }
-
-        $payment = Payment::where('stripe_payment_intent_id', $charge->payment_intent)->first();
-
-        if (! $payment) {
-            return;
-        }
-
-        $refundedAmount = $charge->amount_refunded;
-
-        $payment->update([
-            'refunded_amount' => $refundedAmount,
-            'status' => $refundedAmount >= $payment->totalPrice
-                ? Payment::STATUS_REFUNDED
-                : Payment::STATUS_PARTIALLY_REFUNDED,
         ]);
     }
 }

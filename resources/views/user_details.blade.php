@@ -238,6 +238,7 @@
                                 <th>Data</th>
                                 <th class="center">Status</th>
                                 <th class="right">Kwota</th>
+                                <th class="right"></th>
                             </tr>
                         </thead>
                         <tbody id="ud-history-tbody">
@@ -251,6 +252,7 @@
                                 <td><span class="ud-skel" style="width:150px;height:13px;"></span></td>
                                 <td class="center"><span class="ud-badge active"><span class="ud-skel" style="width:60px;height:10px;background:rgba(26,111,168,.25);"></span></span></td>
                                 <td class="right"><span class="ud-skel" style="width:70px;height:13px;"></span></td>
+                                <td class="right"><span class="ud-skel" style="width:60px;height:13px;"></span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -269,12 +271,14 @@
                         </div>
                     </div>
 
-                    <div class="ud-empty">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                        </svg>
-                        <div class="ud-empty-text">Brak zgłoszonych incydentów</div>
+                    <div id="ud-incidents-list">
+                        <div class="ud-empty">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            <div class="ud-empty-text">Ładowanie…</div>
+                        </div>
                     </div>
                 </div>
 
@@ -411,7 +415,48 @@
             <td>${formatDate(r.startDate, { day: '2-digit', month: '2-digit', year: 'numeric' })} — ${formatDate(r.endDate, { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>
             <td class="center">${statusBadge(r.statusOfReservation, r.endDate)}</td>
             <td class="right">${formatMoney(r.totalPrice)}</td>
+            <td class="right"><a href="/rejestr-wypozyczen/${escapeHtml(r.id)}" style="color:#075071;font-size:12px;font-weight:600;text-decoration:none;">Szczegóły</a></td>
         </tr>`;
+    }
+
+    // ===== Incydenty / naprawy =====
+    function renderIncidentItem(incident) {
+        return `
+        <div class="ud-incident">
+            <div class="ud-incident-top">
+                <div class="ud-incident-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                </div>
+                <div class="ud-incident-body">
+                    <div class="ud-incident-title">${escapeHtml(incident.productTitle)}</div>
+                </div>
+                <div class="ud-incident-date">${formatDate(incident.createdAt, { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+            </div>
+            <div class="ud-incident-text">${escapeHtml(incident.description)} — zgłosił: ${escapeHtml(incident.serviceman_name || '—')}</div>
+            <div class="ud-incident-footer">
+                <span class="ud-incident-tag">${formatMoney(incident.repairCost)}</span>
+                <a href="/rejestr-wypozyczen/${escapeHtml(incident.reservationId)}" class="ud-incident-link">Szczegóły rezerwacji</a>
+            </div>
+        </div>`;
+    }
+
+    function renderIncidents(incidents) {
+        const container = document.getElementById('ud-incidents-list');
+
+        container.innerHTML = incidents.length
+            ? incidents.map(renderIncidentItem).join('')
+            : `
+                <div class="ud-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <div class="ud-empty-text">Brak zgłoszonych incydentów</div>
+                </div>`;
     }
 
     // ===== Render profilu =====
@@ -445,7 +490,9 @@
         const reservations = u.reservations || [];
         tbody.innerHTML = reservations.length
             ? reservations.map(renderHistoryRow).join('')
-            : '<tr><td colspan="4" style="text-align:center;color:#9aa5ad;padding:20px;">Brak historii wypożyczeń.</td></tr>';
+            : '<tr><td colspan="5" style="text-align:center;color:#9aa5ad;padding:20px;">Brak historii wypożyczeń.</td></tr>';
+
+        renderIncidents(u.incidents || []);
 
         const blockLabel = document.getElementById('ud-block-btn-label');
         blockLabel.textContent = u.isBlocked ? 'Odblokuj konto' : 'Zablokuj konto';

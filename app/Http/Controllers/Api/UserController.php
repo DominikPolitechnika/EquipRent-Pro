@@ -178,6 +178,23 @@ class UserController extends Controller
             ->whereNotIn('statusOfReservation', $this->cancelledStatuses)
             ->sum('totalPrice');
 
+        $incidents = DB::table('repairs')
+            ->join('reservation', 'repairs.lastReservationId', '=', 'reservation.id')
+            ->join('products', 'repairs.productId', '=', 'products.id')
+            ->whereIn('repairs.lastReservationId', $reservations->pluck('id'))
+            ->where('repairs.isDeleted', false)
+            ->select(
+                'repairs.id',
+                'repairs.description',
+                'repairs.serviceman_name',
+                'repairs.repairCost',
+                'repairs.createdAt',
+                'repairs.lastReservationId as reservationId',
+                'products.title as productTitle'
+            )
+            ->orderByDesc('repairs.createdAt')
+            ->get();
+
         return response()->json([
             'data' => [
                 'id' => $user->id,
@@ -196,6 +213,7 @@ class UserController extends Controller
                 'lastLogin' => $user->lastLogin,
                 'totalSpent' => (float) $totalSpent,
                 'reservations' => $reservations->values(),
+                'incidents' => $incidents,
             ],
         ]);
     }

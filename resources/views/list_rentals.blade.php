@@ -118,6 +118,7 @@
                     <select id="status-filter" class="lr-tool-btn muted">
                         <option value="">Wszystkie statusy</option>
                         <option value="active">Aktywne</option>
+                        <option value="awaiting_payment">Oczekujące na płatność</option>
                         <option value="completed">Oddane</option>
                         <option value="repair">Naprawa</option>
                         <option value="cancelled">Anulowane</option>
@@ -481,6 +482,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 reservation.statusOfReservation === 'cancelled'
             ) {
                 statusClass = 'late';
+            }
+
+            if (reservation.statusOfReservation === 'awaiting_payment') {
+                statusClass = 'pending-payment';
             }
 
             card.innerHTML = `

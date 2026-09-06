@@ -193,6 +193,7 @@
     function statusClass(status) {
         if (status === 'active' || status === 'rented') return 'rented';
         if (['late', 'overdue', 'repair', 'cancelled'].includes(status)) return 'late';
+        if (status === 'awaiting_payment') return 'pending-payment';
         return 'confirmed';
     }
 

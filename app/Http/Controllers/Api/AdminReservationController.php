@@ -204,6 +204,7 @@ class AdminReservationController extends Controller
             'completed' => 'Oddane',
             'repair' => 'Naprawa',
             'cancelled' => 'Anulowana',
+            'awaiting_payment' => 'Oczekuje na płatność',
             default => $status ?? 'Nieznany',
         };
     }

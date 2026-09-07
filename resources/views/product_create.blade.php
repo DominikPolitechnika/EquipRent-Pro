@@ -33,7 +33,7 @@
                         <span class="active">Dodaj sprzęt</span>
                     </div>
                     <h1>Nowy sprzęt</h1>
-                    <p class="pe-serial">Wypełnij dane produktu i dodaj minimum 3 zdjęcia (max 10).</p>
+                    <p class="pe-serial">Wypełnij dane produktu i dodaj zdjęcia (max 10).</p>
                 </div>
                 <div class="pe-header-actions">
                     <a href="{{ route('equipment.list') }}" class="pe-btn-secondary">Anuluj</a>
@@ -137,7 +137,7 @@
                         <div class="pe-gallery-block">
                             <div class="pe-gallery-head">
                                 <span class="pe-gallery-label">Galeria zdjęć</span>
-                                <span class="pe-gallery-count"><span id="pe-gallery-count">0</span> / min. 3, max 10 zdjęć</span>
+                                <span class="pe-gallery-count"><span id="pe-gallery-count">0</span> / max 10 zdjęć</span>
                             </div>
                             <div class="pe-gallery-grid" id="pe-gallery-grid">
                                 <label class="pe-gallery-upload">
@@ -148,7 +148,7 @@
                                            hidden multiple>
                                 </label>
                             </div>
-                            <div class="pe-gallery-help">Minimum 3, maksymalnie 10 zdjęć. Każde do 10 MB. Formaty: JPG, PNG, WEBP, AVIF.</div>
+                            <div class="pe-gallery-help">Maksymalnie 10 zdjęć. Każde do 10 MB. Formaty: JPG, PNG, WEBP, AVIF.</div>
                             <div id="pe-photo-error" class="pe-row-error"></div>
                         </div>
                     </form>
@@ -235,9 +235,7 @@
         const count = selectedPhotos.length;
         countEl.textContent = count;
 
-        if(count < 3){
-            photoError.textContent = 'Produkt musi mieć co najmniej 3 zdjęcia.';
-        } else if(count > MAX_PHOTOS){
+        if(count > MAX_PHOTOS){
             photoError.textContent = `Maksymalnie ${MAX_PHOTOS} zdjęć.`;
         } else {
             photoError.textContent = '';
@@ -301,12 +299,6 @@
     // SUBMIT - walidacja frontowa, potem klasyczny POST
     // ==============================================================
     form.addEventListener('submit', function(e){
-        if(selectedPhotos.length < 3){
-            e.preventDefault();
-            photoError.textContent = 'Nie można dodać produktu: wymagane są minimum 3 zdjęcia.';
-            gallery.scrollIntoView({behavior:'smooth', block:'center'});
-            return;
-        }
         if(selectedPhotos.length > MAX_PHOTOS){
             e.preventDefault();
             photoError.textContent = `Maksymalnie ${MAX_PHOTOS} zdjęć.`;

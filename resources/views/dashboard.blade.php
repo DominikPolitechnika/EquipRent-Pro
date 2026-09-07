@@ -36,7 +36,7 @@
                         <div class="db-stat-value">
                             <span id="reservations-current">0</span>
 
-                            <span class="db-stat-trend">
+                            <span class="db-stat-trend" id="reservations-trend">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="17 6 23 6 23 12"/>
                                     <line x1="23" y1="6" x2="13" y2="16"/>
@@ -60,7 +60,7 @@
                         <div class="db-stat-value">
                             <span id="revenue-current">0 zł</span>
 
-                            <span class="db-stat-trend">
+                            <span class="db-stat-trend" id="revenue-trend">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="17 6 23 6 23 12"/>
                                     <line x1="23" y1="6" x2="13" y2="16"/>
@@ -73,7 +73,7 @@
                         </div>
 
                         <div class="db-progress">
-                            <div class="db-progress-bar" style="width:82%"></div>
+                            <div class="db-progress-bar" id="revenue-progress-bar" style="width:0%"></div>
                         </div>
 
                         <div class="db-progress-label">
@@ -182,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const current = document.getElementById('reservations-current');
         const previous = document.getElementById('reservations-previous');
         const change = document.getElementById('reservations-change');
+        const trend = document.getElementById('reservations-trend');
 
         if (current) {
             current.textContent = data.currentMonth;
@@ -193,6 +194,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (change) {
             change.textContent = `${data.percentageChange}%`;
+        }
+
+        if (trend) {
+            trend.classList.toggle('negative', data.percentageChange < 0);
         }
     })
     .catch(error => {
@@ -219,6 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const current = document.getElementById('revenue-current');
         const previous = document.getElementById('revenue-previous');
         const change = document.getElementById('revenue-change');
+        const trend = document.getElementById('revenue-trend');
+        const progressBar = document.getElementById('revenue-progress-bar');
 
         if (current) {
             current.textContent = `${data.currentMonth} zł`;
@@ -230,6 +237,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (change) {
             change.textContent = `${data.percentageChange}%`;
+        }
+
+        if (trend) {
+            trend.classList.toggle('negative', data.percentageChange < 0);
+        }
+
+        if (progressBar) {
+            const previousMonth = Number(data.previousMonth) || 0;
+            const currentMonth = Number(data.currentMonth) || 0;
+
+            let progress = previousMonth > 0
+                ? (currentMonth / previousMonth) * 100
+                : (currentMonth > 0 ? 100 : 0);
+
+            const exceeded = progress > 100;
+
+            progress = Math.max(0, Math.min(100, progress));
+
+            progressBar.style.width = `${progress}%`;
+            progressBar.classList.toggle('over', exceeded);
         }
     })
     .catch(error => {

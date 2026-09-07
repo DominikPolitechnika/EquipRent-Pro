@@ -18,9 +18,11 @@ class StatisticsController extends Controller
         ];
 
         $current = Reservation::where('isDeleted', false)
+            ->whereNotIn('statusOfReservation', ['cancelled','canceled','anulowana','awaiting_payment'])
             ->whereBetween('createdAt', [$startThis, $now])->count();
 
         $previous = Reservation::where('isDeleted', false)
+            ->whereNotIn('statusOfReservation', ['cancelled','canceled','anulowana','awaiting_payment'])
             ->whereBetween('createdAt', [$startPrev, $endPrev])->count();
 
         return response()->json([
@@ -39,9 +41,11 @@ class StatisticsController extends Controller
         ];
 
         $current = (int) Reservation::where('isDeleted', false)
+            ->whereNotIn('statusOfReservation', ['cancelled','canceled','anulowana','awaiting_payment'])
             ->whereBetween('createdAt', [$startThis, $now])->sum('totalPrice');
 
         $previous = (int) Reservation::where('isDeleted', false)
+            ->whereNotIn('statusOfReservation', ['cancelled','canceled','anulowana','awaiting_payment'])
             ->whereBetween('createdAt', [$startPrev, $endPrev])->sum('totalPrice');
 
         return response()->json([
@@ -96,6 +100,7 @@ class StatisticsController extends Controller
             )
             ->where('isDeleted', false)
             ->whereBetween('createdAt', [$sevenDaysAgo, $now])
+            ->whereNotIn('statusOfReservation', ['cancelled','canceled','anulowana','awaiting_payment'])
             ->groupBy(DB::raw('DATE("createdAt")'))
             ->pluck('total', 'day');
 
